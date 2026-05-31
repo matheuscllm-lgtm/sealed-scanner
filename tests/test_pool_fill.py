@@ -1,4 +1,4 @@
-"""Tests for sealed/pool_fill.py.
+"""Tests for pool_fill.py.
 
 Fixtures usam DADOS REAIS do scan 2026-05-27 22:25 UTC + qtys capturadas
 pelo adapter F1.5 (sprite imgunid). Outlier R$ 925.33 do PHF pack é typo
@@ -6,7 +6,7 @@ real da Liga e DEVE ser descartado pelo filtro de mediana.
 """
 import pytest
 
-from sealed.pool_fill import fill_pool
+from pool_fill import fill_pool
 
 
 @pytest.fixture

@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 """
-build_us_reference.py — popula sealed/data/us_reference.json com preços REAIS
+build_us_reference.py — popula data/us_reference.json com preços REAIS
 do TCGPlayer, via tcgcsv.com.
 
 tcgcsv.com é um espelho público da API do TCGPlayer (grátis, sem auth,
 sem CloudFlare). Atualiza diariamente ~20:00 UTC.
 
-Lê sealed/sku_registry.yaml. Para cada SKU com `tcgplayer_product_id`
+Lê sku_registry.yaml. Para cada SKU com `tcgplayer_product_id`
 e `tcgplayer_group_id`, busca o preço Market do TCGPlayer (1 fetch por
-group). Escreve sealed/data/us_reference.json no mesmo formato que o
+group). Escreve data/us_reference.json no mesmo formato que o
 scanner já consome.
 
 Uso:
-    python sealed/build_us_reference.py
-    python sealed/build_us_reference.py --price-field marketPrice   # default
-    python sealed/build_us_reference.py --price-field lowPrice
-    python sealed/build_us_reference.py --price-field midPrice
+    python build_us_reference.py
+    python build_us_reference.py --price-field marketPrice   # default
+    python build_us_reference.py --price-field lowPrice
+    python build_us_reference.py --price-field midPrice
 
 Categoria Pokémon no TCGPlayer = 3 (constante).
 """
@@ -31,7 +31,7 @@ from pathlib import Path
 try:
     import yaml
 except ImportError:
-    print("ERRO: PyYAML não instalado. pip install -r sealed/requirements.txt")
+    print("ERRO: PyYAML não instalado. pip install -r requirements.txt")
     sys.exit(2)
 
 SCRIPT_DIR = Path(__file__).resolve().parent

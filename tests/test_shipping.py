@@ -1,5 +1,5 @@
-"""Tests for sealed/lib/shipping.py."""
-from sealed.lib.shipping import (
+"""Tests for lib/shipping.py."""
+from lib.shipping import (
     compute_shipping, weight_for_sku, shipping_for_sku,
     DEFAULT_TABLE, DEFAULT_WEIGHTS,
 )

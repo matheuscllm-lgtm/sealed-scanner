@@ -53,7 +53,7 @@ from pathlib import Path
 try:
     import yaml
 except ImportError:
-    print("ERRO: PyYAML não instalado. Rode: pip install -r sealed/requirements.txt")
+    print("ERRO: PyYAML não instalado. Rode: pip install -r requirements.txt")
     sys.exit(2)
 
 SCRIPT_DIR = Path(__file__).resolve().parent
