@@ -1,0 +1,102 @@
+{
+  "_comment": "Dados MOCKADOS de anúncios brasileiros — NÃO são preços reais. Servem para exercitar o pipeline ponta a ponta antes do scraping real da Liga Pokémon. Os preços US são reais (data/us_reference.json via tcgcsv), por isso a maioria dos mocks aparece como GREEN. F1.5+ inclui qty_avail (estoque por vendedor) pra exercitar o pool_fill. Múltiplos vendedores por SKU (L1+L1b+L1c, L2+L2b, etc.) demonstram volume aggregation. Cada anúncio exercita um caminho: match limpo, ambíguo (L4), carta avulsa (L6), idioma errado (L8).",
+  "source": "mock",
+  "scanned_at": "2026-05-21T10:00:00",
+  "listings": [
+    {
+      "id": "L1",
+      "title": "Booster Box Surging Sparks (Inglês) - Pokémon TCG Lacrado",
+      "price_brl": 850.00,
+      "qty_avail": 8,
+      "seller": "Loja Exemplo SP",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L1"
+    },
+    {
+      "id": "L1b",
+      "title": "Booster Box Surging Sparks (Inglês) - Pokémon TCG Lacrado",
+      "price_brl": 875.00,
+      "qty_avail": 3,
+      "seller": "Loja Outra SP",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L1b"
+    },
+    {
+      "id": "L1c",
+      "title": "Booster Box Surging Sparks (Inglês) - Pokémon TCG Lacrado",
+      "price_brl": 899.00,
+      "qty_avail": 5,
+      "seller": "Card Shop MG",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L1c"
+    },
+    {
+      "id": "L2",
+      "title": "Elite Trainer Box Surging Sparks Inglês Lacrada",
+      "price_brl": 320.00,
+      "qty_avail": 12,
+      "seller": "Card Shop Mock",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L2"
+    },
+    {
+      "id": "L2b",
+      "title": "Elite Trainer Box Surging Sparks Inglês Lacrada",
+      "price_brl": 335.00,
+      "qty_avail": 4,
+      "seller": "Loja Pro RJ",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L2b"
+    },
+    {
+      "id": "L3",
+      "title": "Booster Box Stellar Crown EN selado",
+      "price_brl": 1180.00,
+      "qty_avail": 2,
+      "seller": "Mock Collectibles",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L3"
+    },
+    {
+      "id": "L4",
+      "title": "ETB Prismatic Evolutions Inglês",
+      "price_brl": 540.00,
+      "qty_avail": 6,
+      "seller": "Loja Exemplo RJ",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L4"
+    },
+    {
+      "id": "L5",
+      "title": "Booster Bundle Prismatic Evolutions (EN) lacrado",
+      "price_brl": 185.00,
+      "qty_avail": 18,
+      "seller": "Mock Game Store",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L5"
+    },
+    {
+      "id": "L5b",
+      "title": "Booster Bundle Prismatic Evolutions (EN) lacrado",
+      "price_brl": 195.00,
+      "qty_avail": null,
+      "seller": "Mock Sem Estoque Info",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L5b"
+    },
+    {
+      "id": "L6",
+      "title": "Carta Pikachu ex Surging Sparks (238/191) Inglês NM",
+      "price_brl": 220.00,
+      "seller": "Singles Mock",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L6"
+    },
+    {
+      "id": "L7",
+      "title": "Booster Bundle Pokémon 151 (Inglês) lacrado",
+      "price_brl": 240.00,
+      "qty_avail": 10,
+      "seller": "Mock Hobby",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L7"
+    },
+    {
+      "id": "L8",
+      "title": "Caixa de Booster Surging Sparks Japonês",
+      "price_brl": 690.00,
+      "qty_avail": 15,
+      "seller": "Import Mock",
+      "url": "https://www.ligapokemon.com.br/?view=cards/card&mock=L8"
+    }
+  ]
+}

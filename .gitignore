@@ -1,0 +1,27 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Secrets — NEVER commit
+.env
+.env.*
+!.env.example
+*.pem
+credentials.json
+
+# Playwright session profiles (binary state)
+.pw_profile_*/
+
+# Scanner outputs (data, logs, debug artifacts)
+*.xlsx
+*.log
+*.html
+*_cache.json
+
+# Run artifacts (cada scan escreve um dir timestamped fresco)
+results/
+.config_local_run.yaml
+
+# Watchdog runtime lock (PID + heartbeat — nunca commitar)
+.watchdog.lock

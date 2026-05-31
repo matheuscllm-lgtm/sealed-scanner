@@ -1,0 +1,771 @@
+# Registry curado de SKUs de produtos selados Pokémon TCG.
+#
+# Para selado, o catálogo é pequeno e enumerável — algumas centenas de SKUs
+# no total — diferente dos ~16k singles. Por isso o "matcher" é uma busca
+# determinística contra este registry curado, não um fuzzy matcher.
+#
+# Cada SKU é casado contra um anúncio brasileiro assim:
+#   - set_terms:    pelo menos UM precisa aparecer no título normalizado
+#   - type_terms:   pelo menos UM precisa aparecer
+#   - exclude_terms: se QUALQUER UM aparecer, o SKU é descartado
+# Normalização: minúsculas, acentos removidos ("Inglês" -> "ingles").
+#
+# match_confidence:
+#   HIGH   -> exatamente 1 SKU casou
+#   REVIEW -> 2+ SKUs casaram (ambíguo, ex.: "ETB Prismatic" sem dizer se é
+#             a versão Pokémon Center)
+#   NONE   -> 0 SKUs casaram
+#
+# tcgplayer_group_id / tcgplayer_product_id apontam o produto canônico em
+# tcgcsv.com (espelho da API do TCGPlayer) para puxar o preço de referência
+# US via sealed/build_us_reference.py. Pokémon = categoryId 3.
+
+skus:
+  - id: ssp-booster-box-en
+    name: Surging Sparks Booster Box (English)
+    product_type: Booster Box
+    set: Surging Sparks
+    set_code: SSP
+    language: EN
+    pack_count: 36
+    tcgplayer_group_id: 23651
+    tcgplayer_product_id: 565606
+    match:
+      set_terms: [surging sparks]
+      type_terms: [booster box, caixa de booster, display de booster, booster display]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, etb, elite trainer, bundle, blister, tin, lata]
+
+  - id: ssp-etb-en
+    name: Surging Sparks Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Surging Sparks
+    set_code: SSP
+    language: EN
+    pack_count: 9
+    tcgplayer_group_id: 23651
+    tcgplayer_product_id: 565630
+    match:
+      set_terms: [surging sparks]
+      type_terms: [elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, pokemon center]
+
+  - id: pre-etb-en
+    name: Prismatic Evolutions Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Prismatic Evolutions
+    set_code: PRE
+    language: EN
+    pack_count: 9
+    tcgplayer_group_id: 23821
+    tcgplayer_product_id: 593355
+    match:
+      set_terms: [prismatic evolutions]
+      type_terms: [elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, pokemon center]
+
+  - id: pre-etb-pc-en
+    name: Prismatic Evolutions Pokemon Center Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Prismatic Evolutions
+    set_code: PRE
+    language: EN
+    pack_count: 10
+    tcgplayer_group_id: 23821
+    tcgplayer_product_id: 593324
+    # Sem "pokemon center" como termo obrigatório: um anúncio que diz só
+    # "ETB Prismatic Evolutions" é genuinamente ambíguo entre este SKU e o
+    # pre-etb-en, e deve cair em REVIEW em vez de ser casado por engano.
+    match:
+      set_terms: [prismatic evolutions]
+      type_terms: [elite trainer box, etb]
+      requires_terms: [pokemon center]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister]
+
+  - id: pre-booster-bundle-en
+    name: Prismatic Evolutions Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Prismatic Evolutions
+    set_code: PRE
+    language: EN
+    pack_count: 6
+    tcgplayer_group_id: 23821
+    tcgplayer_product_id: 600518
+    match:
+      set_terms: [prismatic evolutions]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+
+  - id: scr-booster-box-en
+    name: Stellar Crown Booster Box (English)
+    product_type: Booster Box
+    set: Stellar Crown
+    set_code: SCR
+    language: EN
+    pack_count: 36
+    tcgplayer_group_id: 23537
+    tcgplayer_product_id: 557354
+    match:
+      # Mantemos só o nome em inglês — vendedores BR que usam o nome PT
+      # ("Coroa Estelar") quase sempre estão vendendo a edição brasileira.
+      set_terms: [stellar crown]
+      type_terms: [booster box, caixa de booster, display de booster, booster display]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, etb, elite trainer, bundle, blister, tin, lata]
+
+  - id: sv151-booster-bundle-en
+    name: Pokemon 151 Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Scarlet & Violet 151
+    set_code: MEW
+    language: EN
+    pack_count: 6
+    tcgplayer_group_id: 23237
+    tcgplayer_product_id: 502000
+    match:
+      set_terms: [151]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+  - id: ah-etb-en
+    name: Ascended Heroes Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Ascended Heroes
+    set_code: AH
+    language: EN
+    tcgplayer_group_id: 24541
+    tcgplayer_product_id: 668496
+    match:
+      set_terms: [ascended heroes]
+      type_terms: [elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle, pokemon center]
+
+  - id: ah-etb-pc-en
+    name: Ascended Heroes Pokemon Center Elite Trainer Box (Exclusive) (English)
+    product_type: Elite Trainer Box
+    set: Ascended Heroes
+    set_code: AH
+    language: EN
+    tcgplayer_group_id: 24541
+    tcgplayer_product_id: 668497
+    match:
+      set_terms: [ascended heroes]
+      type_terms: [elite trainer box, etb]
+      requires_terms: [pokemon center]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle]
+
+  - id: ah-bundle-en
+    name: Ascended Heroes Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Ascended Heroes
+    set_code: AH
+    language: EN
+    tcgplayer_group_id: 24541
+    tcgplayer_product_id: 668541
+    match:
+      set_terms: [ascended heroes]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+
+  - id: po-box-en
+    name: Perfect Order Booster Box (English)
+    product_type: Booster Box
+    set: Perfect Order
+    set_code: PO
+    language: EN
+    tcgplayer_group_id: 24587
+    tcgplayer_product_id: 672394
+    match:
+      set_terms: [perfect order]
+      type_terms: [booster box, caixa de booster, display de booster, booster display]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, etb, elite trainer, bundle, blister, tin, lata, build, battle]
+
+  - id: po-etb-en
+    name: Perfect Order Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Perfect Order
+    set_code: PO
+    language: EN
+    tcgplayer_group_id: 24587
+    tcgplayer_product_id: 672401
+    match:
+      set_terms: [perfect order]
+      type_terms: [elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle, pokemon center]
+
+  - id: po-etb-pc-en
+    name: Perfect Order Pokemon Center Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Perfect Order
+    set_code: PO
+    language: EN
+    tcgplayer_group_id: 24587
+    tcgplayer_product_id: 672404
+    match:
+      set_terms: [perfect order]
+      type_terms: [elite trainer box, etb]
+      requires_terms: [pokemon center]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle]
+
+  - id: po-bundle-en
+    name: Perfect Order Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Perfect Order
+    set_code: PO
+    language: EN
+    tcgplayer_group_id: 24587
+    tcgplayer_product_id: 672396
+    match:
+      set_terms: [perfect order]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+
+  - id: cr-box-en
+    name: Chaos Rising Booster Box (English)
+    product_type: Booster Box
+    set: Chaos Rising
+    set_code: CR
+    language: EN
+    tcgplayer_group_id: 24655
+    tcgplayer_product_id: 684444
+    match:
+      set_terms: [chaos rising]
+      type_terms: [booster box, caixa de booster, display de booster, booster display]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, etb, elite trainer, bundle, blister, tin, lata, build, battle]
+
+  - id: cr-etb-en
+    name: Chaos Rising Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Chaos Rising
+    set_code: CR
+    language: EN
+    tcgplayer_group_id: 24655
+    tcgplayer_product_id: 684450
+    match:
+      set_terms: [chaos rising]
+      type_terms: [elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle, pokemon center]
+
+  - id: cr-etb-pc-en
+    name: Chaos Rising Pokemon Center Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Chaos Rising
+    set_code: CR
+    language: EN
+    tcgplayer_group_id: 24655
+    tcgplayer_product_id: 684452
+    match:
+      set_terms: [chaos rising]
+      type_terms: [elite trainer box, etb]
+      requires_terms: [pokemon center]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle]
+
+  - id: cr-bundle-en
+    name: Chaos Rising Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Chaos Rising
+    set_code: CR
+    language: EN
+    tcgplayer_group_id: 24655
+    tcgplayer_product_id: 684456
+    match:
+      set_terms: [chaos rising]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+
+  - id: pb-box-en
+    name: Pitch Black Booster Box (English)
+    product_type: Booster Box
+    set: Pitch Black
+    set_code: PB
+    language: EN
+    tcgplayer_group_id: 24688
+    tcgplayer_product_id: 692939
+    match:
+      set_terms: [pitch black]
+      type_terms: [booster box, caixa de booster, display de booster, booster display]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, etb, elite trainer, bundle, blister, tin, lata, build, battle]
+
+  - id: pb-etb-en
+    name: Pitch Black Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Pitch Black
+    set_code: PB
+    language: EN
+    tcgplayer_group_id: 24688
+    tcgplayer_product_id: 692947
+    match:
+      set_terms: [pitch black]
+      type_terms: [elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle, pokemon center]
+
+  - id: pb-etb-pc-en
+    name: Pitch Black Pokemon Center Elite Trainer Box (Exclusive) (English)
+    product_type: Elite Trainer Box
+    set: Pitch Black
+    set_code: PB
+    language: EN
+    tcgplayer_group_id: 24688
+    tcgplayer_product_id: 692949
+    match:
+      set_terms: [pitch black]
+      type_terms: [elite trainer box, etb]
+      requires_terms: [pokemon center]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle]
+
+  - id: pb-bundle-en
+    name: Pitch Black Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Pitch Black
+    set_code: PB
+    language: EN
+    tcgplayer_group_id: 24688
+    tcgplayer_product_id: 692942
+    match:
+      set_terms: [pitch black]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+
+  - id: phf-box-en
+    name: Phantasmal Flames Booster Box (English)
+    product_type: Booster Box
+    set: Phantasmal Flames
+    set_code: PHF
+    language: EN
+    tcgplayer_group_id: 24448
+    tcgplayer_product_id: 654137
+    match:
+      set_terms: [phantasmal flames]
+      type_terms: [booster box, caixa de booster, display de booster, booster display]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, etb, elite trainer, bundle, blister, tin, lata, build, battle]
+
+  - id: phf-etb-en
+    name: Phantasmal Flames Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Phantasmal Flames
+    set_code: PHF
+    language: EN
+    tcgplayer_group_id: 24448
+    tcgplayer_product_id: 654136
+    match:
+      set_terms: [phantasmal flames]
+      type_terms: [elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle, pokemon center]
+
+  - id: phf-etb-pc-en
+    name: Phantasmal Flames Pokemon Center Elite Trainer Box (Exclusive) (English)
+    product_type: Elite Trainer Box
+    set: Phantasmal Flames
+    set_code: PHF
+    language: EN
+    tcgplayer_group_id: 24448
+    tcgplayer_product_id: 654135
+    match:
+      set_terms: [phantasmal flames]
+      type_terms: [elite trainer box, etb]
+      requires_terms: [pokemon center]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle]
+
+  - id: phf-bundle-en
+    name: Phantasmal Flames Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Phantasmal Flames
+    set_code: PHF
+    language: EN
+    tcgplayer_group_id: 24448
+    tcgplayer_product_id: 654160
+    match:
+      set_terms: [phantasmal flames]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+
+  - id: tef-box-en
+    name: Temporal Forces Booster Box (English)
+    product_type: Booster Box
+    set: Temporal Forces
+    set_code: TEF
+    language: EN
+    tcgplayer_group_id: 23381
+    tcgplayer_product_id: 536225
+    match:
+      set_terms: [temporal forces]
+      type_terms: [booster box, caixa de booster, display de booster, booster display]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, etb, elite trainer, bundle, blister, tin, lata, build, battle]
+
+  - id: tef-etb-ww-en
+    name: Temporal Forces Elite Trainer Box (Walking Wake) (English)
+    product_type: Elite Trainer Box
+    set: Temporal Forces
+    set_code: TEF
+    language: EN
+    tcgplayer_group_id: 23381
+    tcgplayer_product_id: 532845
+    match:
+      set_terms: [temporal forces]
+      type_terms: [walking wake, elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, iron leaves]
+
+  - id: tef-etb-il-en
+    name: Temporal Forces Elite Trainer Box (Iron Leaves) (English)
+    product_type: Elite Trainer Box
+    set: Temporal Forces
+    set_code: TEF
+    language: EN
+    tcgplayer_group_id: 23381
+    tcgplayer_product_id: 532848
+    match:
+      set_terms: [temporal forces]
+      type_terms: [iron leaves, elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, walking wake]
+
+  - id: tef-bundle-en
+    name: Temporal Forces Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Temporal Forces
+    set_code: TEF
+    language: EN
+    tcgplayer_group_id: 23381
+    tcgplayer_product_id: 541017
+    match:
+      set_terms: [temporal forces]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+
+  - id: twm-box-en
+    name: Twilight Masquerade Booster Box (English)
+    product_type: Booster Box
+    set: Twilight Masquerade
+    set_code: TWM
+    language: EN
+    tcgplayer_group_id: 23473
+    tcgplayer_product_id: 543846
+    match:
+      set_terms: [twilight masquerade]
+      type_terms: [booster box, caixa de booster, display de booster, booster display]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, etb, elite trainer, bundle, blister, tin, lata, build, battle]
+
+  - id: twm-etb-en
+    name: Twilight Masquerade Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Twilight Masquerade
+    set_code: TWM
+    language: EN
+    tcgplayer_group_id: 23473
+    tcgplayer_product_id: 543845
+    match:
+      set_terms: [twilight masquerade]
+      type_terms: [elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle, pokemon center]
+
+  - id: twm-etb-pc-en
+    name: Twilight Masquerade Pokemon Center Elite Trainer Box (Exclusive) (English)
+    product_type: Elite Trainer Box
+    set: Twilight Masquerade
+    set_code: TWM
+    language: EN
+    tcgplayer_group_id: 23473
+    tcgplayer_product_id: 543844
+    match:
+      set_terms: [twilight masquerade]
+      type_terms: [elite trainer box, etb]
+      requires_terms: [pokemon center]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle]
+
+  - id: twm-bundle-en
+    name: Twilight Masquerade Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Twilight Masquerade
+    set_code: TWM
+    language: EN
+    tcgplayer_group_id: 23473
+    tcgplayer_product_id: 543852
+    match:
+      set_terms: [twilight masquerade]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+
+  - id: dri-box-en
+    name: Destined Rivals Booster Box (English)
+    product_type: Booster Box
+    set: Destined Rivals
+    set_code: DRI
+    language: EN
+    tcgplayer_group_id: 24269
+    tcgplayer_product_id: 624679
+    match:
+      set_terms: [destined rivals]
+      type_terms: [booster box, caixa de booster, display de booster, booster display]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, etb, elite trainer, bundle, blister, tin, lata, build, battle]
+
+  - id: dri-etb-en
+    name: Destined Rivals Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Destined Rivals
+    set_code: DRI
+    language: EN
+    tcgplayer_group_id: 24269
+    tcgplayer_product_id: 624676
+    match:
+      set_terms: [destined rivals]
+      type_terms: [elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle, pokemon center]
+
+  - id: dri-etb-pc-en
+    name: Destined Rivals Pokemon Center Elite Trainer Box (Exclusive) (English)
+    product_type: Elite Trainer Box
+    set: Destined Rivals
+    set_code: DRI
+    language: EN
+    tcgplayer_group_id: 24269
+    tcgplayer_product_id: 624675
+    match:
+      set_terms: [destined rivals]
+      type_terms: [elite trainer box, etb]
+      requires_terms: [pokemon center]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle]
+
+  - id: dri-bundle-en
+    name: Destined Rivals Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Destined Rivals
+    set_code: DRI
+    language: EN
+    tcgplayer_group_id: 24269
+    tcgplayer_product_id: 625670
+    match:
+      set_terms: [destined rivals]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+
+  - id: jtg-box-en
+    name: Journey Together Booster Box (English)
+    product_type: Booster Box
+    set: Journey Together
+    set_code: JTG
+    language: EN
+    tcgplayer_group_id: 24073
+    tcgplayer_product_id: 610931
+    match:
+      set_terms: [journey together]
+      type_terms: [booster box, caixa de booster, display de booster, booster display]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, etb, elite trainer, bundle, blister, tin, lata, build, battle]
+
+  - id: jtg-etb-en
+    name: Journey Together Elite Trainer Box (English)
+    product_type: Elite Trainer Box
+    set: Journey Together
+    set_code: JTG
+    language: EN
+    tcgplayer_group_id: 24073
+    tcgplayer_product_id: 610930
+    match:
+      set_terms: [journey together]
+      type_terms: [elite trainer box, etb]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle, pokemon center]
+
+  - id: jtg-etb-pc-en
+    name: Journey Together Pokemon Center Elite Trainer Box (Exclusive) (English)
+    product_type: Elite Trainer Box
+    set: Journey Together
+    set_code: JTG
+    language: EN
+    tcgplayer_group_id: 24073
+    tcgplayer_product_id: 610929
+    match:
+      set_terms: [journey together]
+      type_terms: [elite trainer box, etb]
+      requires_terms: [pokemon center]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, bundle, blister, build, battle]
+
+  - id: jtg-bundle-en
+    name: Journey Together Booster Bundle (English)
+    product_type: Booster Bundle
+    set: Journey Together
+    set_code: JTG
+    language: EN
+    tcgplayer_group_id: 24073
+    tcgplayer_product_id: 610953
+    match:
+      set_terms: [journey together]
+      type_terms: [booster bundle, bundle]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, booster box, elite trainer, etb, blister]
+
+  - id: jtg-pack-en
+    name: Journey Together Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Journey Together
+    set_code: JTG
+    language: EN
+    tcgplayer_group_id: 24073
+    tcgplayer_product_id: 610935
+    bulk_qty: 24
+    match:
+      set_terms: [journey together]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: ssp-pack-en
+    name: Surging Sparks Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Surging Sparks
+    set_code: SSP
+    language: EN
+    tcgplayer_group_id: 23651
+    tcgplayer_product_id: 565604
+    bulk_qty: 24
+    match:
+      set_terms: [surging sparks]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: scr-pack-en
+    name: Stellar Crown Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Stellar Crown
+    set_code: SCR
+    language: EN
+    tcgplayer_group_id: 23537
+    tcgplayer_product_id: 557331
+    bulk_qty: 24
+    match:
+      set_terms: [stellar crown]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: pre-pack-en
+    name: Prismatic Evolutions Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Prismatic Evolutions
+    set_code: PRE
+    language: EN
+    tcgplayer_group_id: 23821
+    tcgplayer_product_id: 593294
+    bulk_qty: 24
+    match:
+      set_terms: [prismatic evolutions]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: ah-pack-en
+    name: Ascended Heroes Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Ascended Heroes
+    set_code: AH
+    language: EN
+    tcgplayer_group_id: 24541
+    tcgplayer_product_id: 672434
+    bulk_qty: 24
+    match:
+      set_terms: [ascended heroes]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: po-pack-en
+    name: Perfect Order Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Perfect Order
+    set_code: PO
+    language: EN
+    tcgplayer_group_id: 24587
+    tcgplayer_product_id: 672398
+    bulk_qty: 24
+    match:
+      set_terms: [perfect order]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: cr-pack-en
+    name: Chaos Rising Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Chaos Rising
+    set_code: CR
+    language: EN
+    tcgplayer_group_id: 24655
+    tcgplayer_product_id: 684446
+    bulk_qty: 24
+    match:
+      set_terms: [chaos rising]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: pb-pack-en
+    name: Pitch Black Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Pitch Black
+    set_code: PB
+    language: EN
+    tcgplayer_group_id: 24688
+    tcgplayer_product_id: 692944
+    bulk_qty: 24
+    match:
+      set_terms: [pitch black]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: phf-pack-en
+    name: Phantasmal Flames Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Phantasmal Flames
+    set_code: PHF
+    language: EN
+    tcgplayer_group_id: 24448
+    tcgplayer_product_id: 654144
+    bulk_qty: 24
+    match:
+      set_terms: [phantasmal flames]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: tef-pack-en
+    name: Temporal Forces Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Temporal Forces
+    set_code: TEF
+    language: EN
+    tcgplayer_group_id: 23381
+    tcgplayer_product_id: 532841
+    bulk_qty: 24
+    match:
+      set_terms: [temporal forces]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: twm-pack-en
+    name: Twilight Masquerade Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Twilight Masquerade
+    set_code: TWM
+    language: EN
+    tcgplayer_group_id: 23473
+    tcgplayer_product_id: 543843
+    bulk_qty: 24
+    match:
+      set_terms: [twilight masquerade]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: dri-pack-en
+    name: Destined Rivals Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Destined Rivals
+    set_code: DRI
+    language: EN
+    tcgplayer_group_id: 24269
+    tcgplayer_product_id: 624683
+    bulk_qty: 24
+    match:
+      set_terms: [destined rivals]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+
+  - id: mew-pack-en
+    name: Scarlet & Violet 151 Booster Pack (English)
+    product_type: Sleeved Booster
+    set: Scarlet & Violet 151
+    set_code: MEW
+    language: EN
+    tcgplayer_group_id: 23237
+    tcgplayer_product_id: 504467
+    bulk_qty: 24
+    match:
+      set_terms: [151]
+      type_terms: [booster pack, booster avulso, pacote de booster, pacote pokemon]
+      exclude_terms: [japones, japonesa, japanese, portugues, portuguesa, portuguese, pt br, ptbr, copag, chines, chinesa, chinese, coreano, coreana, korean, espanhol, espanhola, spanish, frances, francesa, french, alemao, alema, german, italiano, italiana, italian, acrylic, acrilico, magnetic, protector, protetor, storage, case for, capa para, box, bundle, elite trainer, etb, blister, sleeved, build, battle, case, tin, lata, display]
+

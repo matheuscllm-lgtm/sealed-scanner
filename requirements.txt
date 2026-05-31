@@ -1,0 +1,20 @@
+# TCG Sealed Arbitrage Scanner — dependências do módulo sealed/
+
+# Núcleo — pipeline + adapter Amazon (--source amazon, operacional):
+pyyaml>=6.0
+openpyxl>=3.1.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Liga adapter (--source liga). A Liga bloqueia IP de datacenter no
+# Cloudflare. O adapter tem 2 modos:
+#  - mode=local      : Chrome real via patchright (RODAR EM CASA)
+#  - mode=scraperapi : proxy residencial via api.scraperapi.com (custos)
+#
+# OpenCV + numpy decodificam o sprite anti-scraping de preço (em qualquer modo).
+opencv-python-headless>=4.8.0
+numpy>=1.24.0
+# patchright só é usado em mode=local. Comentado por padrão pra não
+# baixar Chromium em ambientes que vão usar só mode=scraperapi/olx/amazon.
+# Pra ativar o modo local:  pip install patchright
+#patchright>=1.40
