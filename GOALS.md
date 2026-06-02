@@ -6,6 +6,7 @@
 
 ## Em andamento agora
 
+- [ ] **P1** (operador) Rodar no PC o re-scan com o registry novo (104 SKUs, latas re-adicionadas) e entregar o XLSX condensado no Drive. Comandos em `RUNBOOK.md` (refresh US → `run_all_sources.py` → `build_delivery_xlsx.py`). Não roda na nuvem (CF da Liga bloqueia IP de datacenter).
 - [ ] **P1** Pós-Pool-Fill: validar manualmente os Top 5 GREEN do `Pool Analysis` num scan Liga real (confirmar qty + frete real antes de mover capital). Rodar: `python sealed\sealed_arbitrage_scanner.py --source liga --pool-budget 5000`.
 - [ ] **P2** OLX block CF WAF é por IP (não Turnstile) — patchright NÃO resolve (validado). Pra firmar: proxy residencial (ScraperAPI/Firecrawl). Decisão de capital — fora de escopo de código.
 
@@ -24,8 +25,13 @@
 - [ ] **P2** Expandir registry pra sets antigos quando inventário de sets recentes virar commodity: Crown Zenith, Silver Tempest, Lost Origin, Astral Radiance, Brilliant Stars.
 - [ ] **P3** Modelar comissões TCGPlayer Direct vs eBay separadamente (hoje usa 13% genérico).
 - [ ] **P3** Filtrar Liga local por sets do registry antes de baixar página de produto, pra não desperdiçar tempo em produtos fora do scope (PT-BR, JAP, etc).
+- [ ] **P1** Gap de cobertura: **Surging Sparks não tem SKU de Booster Bundle** (único set de 20 sem). Um anúncio "Booster Bundle Surging Sparks" cai em NONE (descartado), não em REVIEW. Achado em 2026-06-02; deferido a pedido (escopo). Adicionar `ssp-bundle-en` + preço US.
+- [ ] **P3** Limpeza pós-mudança de critério: `config.yaml::deal_criteria` ainda descreve o guardrail de margem líquida como ativo, mas o scanner classifica só por margem bruta desde `d48d025`. `min_net_margin_pct` (linha ~362) virou código morto. Alinhar comentário + remover o dead code.
 
 ## Feito recente
+
+- [x] (2026-06-02) **Tins re-adicionados com SPLIT** — 12 SKUs (`{set}-mini-tin` + `{set}-mini-tin-display`) p/ 6 sets (Mega Evolution, Ascended Heroes, Black Bolt, Prismatic Evolutions, Shrouded Fable, 151). Descoberta: esses sets não têm "Tin premium" no TCGPlayer — a linha é Mini Tin avulsa + Mini Tin Display (caixa) + Display Case. Avulsa usa o preço da lata mais barata do set (conservador); display exige "display" e exclui "booster". Gerador: `scripts/readd_tins_split.py` (âncoras YAML, diff aditivo). Zero colisões, 22/22 testes. Registry 92→104.
+- [x] (2026-06-02) **Comandos + entrega preparados** — `RUNBOOK.md` (refresh US → scan → `build_delivery_xlsx.py` → Drive). Caminho de entrega smoke-testado (GREEN+YELLOW + Resumo).
 
 - [x] (2026-05-30) **P0 qty_avail no output** — `("qty_avail", "Qtd disponível")` em `CSV_COLUMNS` (sealed_arbitrage_scanner.py). O campo já existia no `ScanRow` e era populado, mas não saía no CSV/XLSX. Verificado no scan mock. PR [#2](https://github.com/matheuscllm-lgtm/tcg-arbitrage-scanners/pull/2) (`f8ccd48`).
 - [x] (2026-05-30) **P0 UnicodeEncodeError cp1252** — novo `sealed/lib/console.py::harden_stdout()` (UTF-8 `errors='replace'`, idempotente), wired em `run_all_sources`, `sealed_arbitrage_scanner`, `liga_adapter.__main__`; `run_liga_local` refatorado pro helper. Repro confirmada (sem fix exit 1 / com fix exit 0). PR #2 (`f8ccd48`).
@@ -42,8 +48,8 @@
 
 ## Notas / contexto
 
-- **Branch atual**: `claude/tcg-sealed-arbitrage-agent-eNXVg`
-- **Stack**: pipeline Python (sealed/sealed_arbitrage_scanner.py), preços US via tcgcsv (TCGPlayer Market), 55 SKUs no registry.
+- **Repo dedicado**: `matheuscllm-lgtm/sealed-arbitrage-scanner` (módulos na raiz, não mais em `sealed/`). **Branch atual**: `claude/determined-curie-Q1Ur8`.
+- **Stack**: pipeline Python (`sealed_arbitrage_scanner.py`), preços US via tcgcsv (TCGPlayer Market), **104 SKUs** no registry. Classificação só por **margem bruta** desde 2026-06-02.
 - **Fontes BR operacionais**: OLX (`--source olx`), Amazon BR (`--source amazon`), Liga (`--source liga`).
 - **Cuidado de credits**: modo `scraperapi` do Liga adapter consome ~25-50 credits por render JS (Liga é "protected domain"). Free tier 1000/mês NÃO cobre 1 scan completo. Preferir `mode=local`.
 - **Custo zero**: rodando da máquina do usuário em casa (Windows 11, Chrome instalado), IP residencial passa o Cloudflare da Liga.
