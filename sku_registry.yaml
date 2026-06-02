@@ -4099,3 +4099,58 @@ skus:
     type_terms: *tin_type
     requires_terms: *tin_req
     exclude_terms: *tin_excl_display
+- id: ssp-bundle-en
+  name: Surging Sparks Booster Bundle (English)
+  product_type: Booster Bundle
+  set: Surging Sparks
+  set_code: SSP
+  language: EN
+  pack_count: 6
+  tcgplayer_group_id: 23651
+  tcgplayer_product_id: 679564
+  match:
+    set_terms:
+    - surging sparks
+    type_terms:
+    - booster bundle
+    - bundle
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+    - booster box
+    - elite trainer
+    - etb
+    - blister
