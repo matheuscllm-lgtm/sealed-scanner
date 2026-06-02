@@ -25,11 +25,11 @@
 - [ ] **P2** Expandir registry pra sets antigos quando inventário de sets recentes virar commodity: Crown Zenith, Silver Tempest, Lost Origin, Astral Radiance, Brilliant Stars.
 - [ ] **P3** Modelar comissões TCGPlayer Direct vs eBay separadamente (hoje usa 13% genérico).
 - [ ] **P3** Filtrar Liga local por sets do registry antes de baixar página de produto, pra não desperdiçar tempo em produtos fora do scope (PT-BR, JAP, etc).
-- [ ] **P1** Gap de cobertura: **Surging Sparks não tem SKU de Booster Bundle** (único set de 20 sem). Um anúncio "Booster Bundle Surging Sparks" cai em NONE (descartado), não em REVIEW. Achado em 2026-06-02; deferido a pedido (escopo). Adicionar `ssp-bundle-en` + preço US.
-- [ ] **P3** Limpeza pós-mudança de critério: `config.yaml::deal_criteria` ainda descreve o guardrail de margem líquida como ativo, mas o scanner classifica só por margem bruta desde `d48d025`. `min_net_margin_pct` (linha ~362) virou código morto. Alinhar comentário + remover o dead code.
 
 ## Feito recente
 
+- [x] (2026-06-02) **Gap SSP Booster Bundle fechado** — Surging Sparks era o único set (de 20) sem SKU de bundle; "Booster Bundle Surging Sparks" caía em NONE. Adicionado `ssp-bundle-en` (TCGPlayer Retail 679564, US$59.18) espelhando `jtg-bundle-en`. Agora casa HIGH; todos os 20 sets têm bundle. Registry 104→105.
+- [x] (2026-06-02) **Limpeza dead-code margem líquida** — guarda-chuva já inerte desde `d48d025` (classificação só margem bruta): removido `min_net_margin_pct` do `config.yaml` + o read morto e os locais `net_profit`/`net_m` não usados no `classify`; comentários alinhados. A líquida segue calculada/exibida só como alerta.
 - [x] (2026-06-02) **Tins re-adicionados com SPLIT** — 12 SKUs (`{set}-mini-tin` + `{set}-mini-tin-display`) p/ 6 sets (Mega Evolution, Ascended Heroes, Black Bolt, Prismatic Evolutions, Shrouded Fable, 151). Descoberta: esses sets não têm "Tin premium" no TCGPlayer — a linha é Mini Tin avulsa + Mini Tin Display (caixa) + Display Case. Avulsa usa o preço da lata mais barata do set (conservador); display exige "display" e exclui "booster". Gerador: `scripts/readd_tins_split.py` (âncoras YAML, diff aditivo). Zero colisões, 22/22 testes. Registry 92→104.
 - [x] (2026-06-02) **Comandos + entrega preparados** — `RUNBOOK.md` (refresh US → scan → `build_delivery_xlsx.py` → Drive). Caminho de entrega smoke-testado (GREEN+YELLOW + Resumo).
 
