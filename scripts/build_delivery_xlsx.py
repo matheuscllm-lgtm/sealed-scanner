@@ -27,6 +27,7 @@ COLS = [
     ("Produto (canônico)", "Produto"),
     ("Tipo", "Tipo"),
     ("Preço BR (R$)", "BR R$"),
+    ("Qtd disponível", "Qtd"),     # estoque do vendedor — importamos em LOTE, nunca 1 unid
     ("Preço US (R$)", "US R$"),
     ("Margem total %", "Margem %"),
     ("Margem líquida est. %", "Líq %"),
