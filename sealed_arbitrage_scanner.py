@@ -440,37 +440,21 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
     net_m = fin["net_margin_pct"]
 
     # Filtro principal: margem total (lucro sobre a compra) + guarda-chuva de
-    # ROI líquido. Um deal pode bater os 40% totais mas amargar ROI líquido de
-    # <5% por causa de taxas fixas (frete intl, 3PL) que viram percentual
-    # mínimo em produtos caros — esses caem em YELLOW com alerta.
-    if total_m >= min_total and net_profit >= 0 and net_m >= min_net:
+    # Classificação por MARGEM BRUTA apenas (operador 2026-06-02): sem saber o
+    # frete real e o tamanho do lote por remessa, a margem líquida é fabricada;
+    # GREEN/YELLOW/RED é puro margem total (bruta).
+    if total_m >= min_total:
         row.deal_confidence = "GREEN"
         row.bucket = "real_opportunities"
-        row.main_risk = "Premissas de custo são conservadoras mas estimadas"
-        row.recommended_action = "Oportunidade real — validar estoque e cotar"
+        row.main_risk = "Margem bruta — custo de frete/lote a cotar fora do scanner"
+        row.recommended_action = "Validar estoque e cotar frete/lote"
     elif total_m >= review_floor:
         row.deal_confidence = "YELLOW"
         row.bucket = "review_required"
-        if total_m >= min_total and net_profit < 0:
-            row.main_risk = (
-                f"Margem total {total_m:.1%} no alvo, mas taxas + frete "
-                f"consomem o lucro (líquido R$ {net_profit:.2f})"
-            )
-            row.recommended_action = "Revisar custos reais — só comprar se o líquido fechar"
-        elif total_m >= min_total and net_m < min_net:
-            row.main_risk = (
-                f"Margem total {total_m:.1%} ok, mas ROI líquido só "
-                f"{net_m:.1%} (R$ {net_profit:.2f} de retorno em "
-                f"R$ {row.price_brl:.2f}) — capital trabalha pouco"
-            )
-            row.recommended_action = (
-                "Revisar — só compensa se girar rápido ou comprar muitas unidades"
-            )
-        else:
-            row.main_risk = (
-                f"Margem total {total_m:.1%} abaixo do alvo de {min_total:.0%}"
-            )
-            row.recommended_action = "Revisar — margem total perto do alvo, mas ainda não bate"
+        row.main_risk = (
+            f"Margem total {total_m:.1%} entre o piso {review_floor:.0%} e o alvo {min_total:.0%}"
+        )
+        row.recommended_action = "Revisar — margem perto do alvo"
     else:
         row.deal_confidence = "RED"
         row.bucket = "rejected"

@@ -3232,7 +3232,7 @@ skus:
     - megaevolução 1
     - megaevolucao 1
     - mega evolution
-    type_terms: &id017
+    type_terms: &id015
     - caixa de booster
     - booster box
     - booster display
@@ -3282,7 +3282,7 @@ skus:
   tcgplayer_product_id: 644352
   match:
     set_terms: *id001
-    type_terms: &id007
+    type_terms: &id005
     - booster avulso
     - booster pack
     - blister unitário
@@ -3299,24 +3299,9 @@ skus:
   tcgplayer_product_id: 644362
   match:
     set_terms: *id001
-    type_terms: &id006
+    type_terms: &id004
     - combo de pacotes
     - booster bundle
-    exclude_terms: *id002
-- id: meg-tin
-  name: Mega Evolution Tin (English)
-  product_type: Tin
-  set: Mega Evolution
-  set_code: MEG
-  language: EN
-  pack_count: 1
-  tcgplayer_group_id: 24380
-  tcgplayer_product_id: 649394
-  match:
-    set_terms: *id001
-    type_terms: &id004
-    - mini lata
-    - mini tin
     exclude_terms: *id002
 - id: asc-tech-sticker
   name: Ascended Heroes Tech Sticker (English)
@@ -3328,28 +3313,15 @@ skus:
   tcgplayer_group_id: 24541
   tcgplayer_product_id: 666908
   match:
-    set_terms: &id003
+    set_terms:
     - heróis excelsos
     - herois excelsos
     - ascended heroes
     - megaevolução 2.5
     - megaevolucao 2.5
-    type_terms: &id008
+    type_terms: &id006
     - blister triplo tech sticker
     - tech sticker
-    exclude_terms: *id002
-- id: asc-tin
-  name: Ascended Heroes Tin (English)
-  product_type: Tin
-  set: Ascended Heroes
-  set_code: ASC
-  language: EN
-  pack_count: 1
-  tcgplayer_group_id: 24541
-  tcgplayer_product_id: 668530
-  match:
-    set_terms: *id003
-    type_terms: *id004
     exclude_terms: *id002
 - id: blk-collection-box
   name: Black Bolt Collection Box (English)
@@ -3361,10 +3333,10 @@ skus:
   tcgplayer_group_id: 24325
   tcgplayer_product_id: 630430
   match:
-    set_terms: &id005
+    set_terms: &id003
     - raio preto
     - black bolt
-    type_terms: &id011
+    type_terms: &id009
     - binder collection
     - kit colecionável
     exclude_terms: *id002
@@ -3378,8 +3350,8 @@ skus:
   tcgplayer_group_id: 24325
   tcgplayer_product_id: 630431
   match:
-    set_terms: *id005
-    type_terms: *id006
+    set_terms: *id003
+    type_terms: *id004
     exclude_terms: *id002
 - id: blk-sleeved-booster
   name: Black Bolt Sleeved Booster (English)
@@ -3391,21 +3363,8 @@ skus:
   tcgplayer_group_id: 24325
   tcgplayer_product_id: 630434
   match:
-    set_terms: *id005
-    type_terms: *id007
-    exclude_terms: *id002
-- id: blk-tin
-  name: Black Bolt Tin (English)
-  product_type: Tin
-  set: Black Bolt
-  set_code: BLK
-  language: EN
-  pack_count: 1
-  tcgplayer_group_id: 24325
-  tcgplayer_product_id: 630438
-  match:
-    set_terms: *id005
-    type_terms: *id004
+    set_terms: *id003
+    type_terms: *id005
     exclude_terms: *id002
 - id: blk-tech-sticker
   name: Black Bolt Tech Sticker (English)
@@ -3417,8 +3376,8 @@ skus:
   tcgplayer_group_id: 24325
   tcgplayer_product_id: 630614
   match:
-    set_terms: *id005
-    type_terms: *id008
+    set_terms: *id003
+    type_terms: *id006
     exclude_terms: *id002
 - id: blk-elite-trainer-box
   name: Black Bolt Elite Trainer Box (English)
@@ -3430,8 +3389,8 @@ skus:
   tcgplayer_group_id: 24325
   tcgplayer_product_id: 630686
   match:
-    set_terms: *id005
-    type_terms: &id009
+    set_terms: *id003
+    type_terms: &id007
     - coleção treinador avançado
     - colecao treinador avancado
     - elite trainer box
@@ -3446,8 +3405,8 @@ skus:
   tcgplayer_group_id: 24325
   tcgplayer_product_id: 668632
   match:
-    set_terms: *id005
-    type_terms: &id013
+    set_terms: *id003
+    type_terms: &id011
     - box coleção premium
     - premium collection
     exclude_terms: *id002
@@ -3461,10 +3420,10 @@ skus:
   tcgplayer_group_id: 24326
   tcgplayer_product_id: 630689
   match:
-    set_terms: &id010
+    set_terms: &id008
     - fogo branco
     - white flare
-    type_terms: *id009
+    type_terms: *id007
     exclude_terms: *id002
 - id: wht-collection-box
   name: White Flare Collection Box (English)
@@ -3476,8 +3435,8 @@ skus:
   tcgplayer_group_id: 24326
   tcgplayer_product_id: 630695
   match:
-    set_terms: *id010
-    type_terms: *id011
+    set_terms: *id008
+    type_terms: *id009
     exclude_terms: *id002
 - id: wht-booster-bundle
   name: White Flare Booster Bundle (English)
@@ -3489,8 +3448,8 @@ skus:
   tcgplayer_group_id: 24326
   tcgplayer_product_id: 630696
   match:
-    set_terms: *id010
-    type_terms: *id006
+    set_terms: *id008
+    type_terms: *id004
     exclude_terms: *id002
 - id: wht-sleeved-booster
   name: White Flare Sleeved Booster (English)
@@ -3502,8 +3461,8 @@ skus:
   tcgplayer_group_id: 24326
   tcgplayer_product_id: 630699
   match:
-    set_terms: *id010
-    type_terms: *id007
+    set_terms: *id008
+    type_terms: *id005
     exclude_terms: *id002
 - id: wht-tech-sticker
   name: White Flare Tech Sticker (English)
@@ -3515,23 +3474,8 @@ skus:
   tcgplayer_group_id: 24326
   tcgplayer_product_id: 630700
   match:
-    set_terms: *id010
-    type_terms: *id008
-    exclude_terms: *id002
-- id: jtg-sleeved-booster
-  name: Journey Together Sleeved Booster (English)
-  product_type: Sleeved Booster
-  set: Journey Together
-  set_code: JTG
-  language: EN
-  pack_count: 1
-  tcgplayer_group_id: 24073
-  tcgplayer_product_id: 610934
-  match:
-    set_terms:
-    - amigos de jornada
-    - journey together
-    type_terms: *id007
+    set_terms: *id008
+    type_terms: *id006
     exclude_terms: *id002
 - id: pre-collection-box
   name: Prismatic Evolutions Collection Box (English)
@@ -3543,11 +3487,11 @@ skus:
   tcgplayer_group_id: 23821
   tcgplayer_product_id: 593356
   match:
-    set_terms: &id012
+    set_terms: &id010
     - evoluções prismáticas
     - evolucoes prismaticas
     - prismatic evolutions
-    type_terms: *id011
+    type_terms: *id009
     exclude_terms: *id002
 - id: pre-tech-sticker
   name: Prismatic Evolutions Tech Sticker (English)
@@ -3559,21 +3503,8 @@ skus:
   tcgplayer_group_id: 23821
   tcgplayer_product_id: 593450
   match:
-    set_terms: *id012
-    type_terms: *id008
-    exclude_terms: *id002
-- id: pre-tin
-  name: Prismatic Evolutions Tin (English)
-  product_type: Tin
-  set: Prismatic Evolutions
-  set_code: PRE
-  language: EN
-  pack_count: 1
-  tcgplayer_group_id: 23821
-  tcgplayer_product_id: 593455
-  match:
-    set_terms: *id012
-    type_terms: *id004
+    set_terms: *id010
+    type_terms: *id006
     exclude_terms: *id002
 - id: pre-premium-collection
   name: Prismatic Evolutions Premium Collection (English)
@@ -3585,23 +3516,8 @@ skus:
   tcgplayer_group_id: 23821
   tcgplayer_product_id: 622770
   match:
-    set_terms: *id012
-    type_terms: *id013
-    exclude_terms: *id002
-- id: ssp-sleeved-booster
-  name: Surging Sparks Sleeved Booster (English)
-  product_type: Sleeved Booster
-  set: Surging Sparks
-  set_code: SSP
-  language: EN
-  pack_count: 1
-  tcgplayer_group_id: 23651
-  tcgplayer_product_id: 565602
-  match:
-    set_terms:
-    - fagulhas impetuosas
-    - surging sparks
-    type_terms: *id007
+    set_terms: *id010
+    type_terms: *id011
     exclude_terms: *id002
 - id: scr-booster-bundle
   name: Stellar Crown Booster Bundle (English)
@@ -3613,10 +3529,10 @@ skus:
   tcgplayer_group_id: 23537
   tcgplayer_product_id: 557345
   match:
-    set_terms: &id014
+    set_terms: &id012
     - coroa estelar
     - stellar crown
-    type_terms: *id006
+    type_terms: *id004
     exclude_terms: *id002
 - id: scr-elite-trainer-box
   name: Stellar Crown Elite Trainer Box (English)
@@ -3628,8 +3544,8 @@ skus:
   tcgplayer_group_id: 23537
   tcgplayer_product_id: 557350
   match:
-    set_terms: *id014
-    type_terms: *id009
+    set_terms: *id012
+    type_terms: *id007
     exclude_terms: *id002
 - id: sfa-sleeved-booster
   name: Shrouded Fable Sleeved Booster (English)
@@ -3641,11 +3557,11 @@ skus:
   tcgplayer_group_id: 23529
   tcgplayer_product_id: 552997
   match:
-    set_terms: &id015
+    set_terms: &id013
     - fábulas nebulosas
     - fabulas nebulosas
     - shrouded fable
-    type_terms: *id007
+    type_terms: *id005
     exclude_terms: *id002
 - id: sfa-elite-trainer-box
   name: Shrouded Fable Elite Trainer Box (English)
@@ -3657,21 +3573,8 @@ skus:
   tcgplayer_group_id: 23529
   tcgplayer_product_id: 552999
   match:
-    set_terms: *id015
-    type_terms: *id009
-    exclude_terms: *id002
-- id: sfa-tin
-  name: Shrouded Fable Tin (English)
-  product_type: Tin
-  set: Shrouded Fable
-  set_code: SFA
-  language: EN
-  pack_count: 1
-  tcgplayer_group_id: 23529
-  tcgplayer_product_id: 553010
-  match:
-    set_terms: *id015
-    type_terms: *id004
+    set_terms: *id013
+    type_terms: *id007
     exclude_terms: *id002
 - id: sfa-booster-bundle
   name: Shrouded Fable Booster Bundle (English)
@@ -3683,8 +3586,8 @@ skus:
   tcgplayer_group_id: 23529
   tcgplayer_product_id: 553031
   match:
-    set_terms: *id015
-    type_terms: *id006
+    set_terms: *id013
+    type_terms: *id004
     exclude_terms: *id002
 - id: par-booster-bundle
   name: Paradox Rift Booster Bundle (English)
@@ -3696,10 +3599,10 @@ skus:
   tcgplayer_group_id: 23286
   tcgplayer_product_id: 512820
   match:
-    set_terms: &id016
+    set_terms: &id014
     - fenda paradoxal
     - paradox rift
-    type_terms: *id006
+    type_terms: *id004
     exclude_terms: *id002
 - id: par-booster-box
   name: Paradox Rift Booster Box (English)
@@ -3711,8 +3614,8 @@ skus:
   tcgplayer_group_id: 23286
   tcgplayer_product_id: 512821
   match:
-    set_terms: *id016
-    type_terms: *id017
+    set_terms: *id014
+    type_terms: *id015
     exclude_terms: *id002
 - id: par-sleeved-booster
   name: Paradox Rift Sleeved Booster (English)
@@ -3724,8 +3627,8 @@ skus:
   tcgplayer_group_id: 23286
   tcgplayer_product_id: 512822
   match:
-    set_terms: *id016
-    type_terms: *id007
+    set_terms: *id014
+    type_terms: *id005
     exclude_terms: *id002
 - id: mew-collection-box
   name: Scarlet & Violet 151 Collection Box (English)
@@ -3737,11 +3640,11 @@ skus:
   tcgplayer_group_id: 23237
   tcgplayer_product_id: 502004
   match:
-    set_terms: &id018
+    set_terms: &id016
     - escarlate e violeta - 151
     - '151'
     - scarlet & violet 151
-    type_terms: *id011
+    type_terms: *id009
     exclude_terms: *id002
 - id: mew-premium-collection
   name: Scarlet & Violet 151 Premium Collection (English)
@@ -3753,8 +3656,8 @@ skus:
   tcgplayer_group_id: 23237
   tcgplayer_product_id: 502005
   match:
-    set_terms: *id018
-    type_terms: *id013
+    set_terms: *id016
+    type_terms: *id011
     exclude_terms: *id002
 - id: mew-elite-trainer-box
   name: Scarlet & Violet 151 Elite Trainer Box (English)
@@ -3766,21 +3669,8 @@ skus:
   tcgplayer_group_id: 23237
   tcgplayer_product_id: 503313
   match:
-    set_terms: *id018
-    type_terms: *id009
-    exclude_terms: *id002
-- id: mew-tin
-  name: Scarlet & Violet 151 Tin (English)
-  product_type: Tin
-  set: Scarlet & Violet 151
-  set_code: MEW
-  language: EN
-  pack_count: 1
-  tcgplayer_group_id: 23237
-  tcgplayer_product_id: 522699
-  match:
-    set_terms: *id018
-    type_terms: *id004
+    set_terms: *id016
+    type_terms: *id007
     exclude_terms: *id002
 - id: obf-sleeved-booster
   name: Obsidian Flames Sleeved Booster (English)
@@ -3792,10 +3682,10 @@ skus:
   tcgplayer_group_id: 23228
   tcgplayer_product_id: 501256
   match:
-    set_terms: &id019
+    set_terms: &id017
     - obsidiana em chamas
     - obsidian flames
-    type_terms: *id007
+    type_terms: *id005
     exclude_terms: *id002
 - id: obf-booster-box
   name: Obsidian Flames Booster Box (English)
@@ -3807,8 +3697,8 @@ skus:
   tcgplayer_group_id: 23228
   tcgplayer_product_id: 501257
   match:
-    set_terms: *id019
-    type_terms: *id017
+    set_terms: *id017
+    type_terms: *id015
     exclude_terms: *id002
 - id: obf-booster-bundle
   name: Obsidian Flames Booster Bundle (English)
@@ -3820,8 +3710,8 @@ skus:
   tcgplayer_group_id: 23228
   tcgplayer_product_id: 501263
   match:
-    set_terms: *id019
-    type_terms: *id006
+    set_terms: *id017
+    type_terms: *id004
     exclude_terms: *id002
 - id: obf-elite-trainer-box
   name: Obsidian Flames Elite Trainer Box (English)
@@ -3833,8 +3723,8 @@ skus:
   tcgplayer_group_id: 23228
   tcgplayer_product_id: 501264
   match:
-    set_terms: *id019
-    type_terms: *id009
+    set_terms: *id017
+    type_terms: *id007
     exclude_terms: *id002
 - id: pal-elite-trainer-box
   name: Paldea Evolved Elite Trainer Box (English)
@@ -3846,11 +3736,11 @@ skus:
   tcgplayer_group_id: 23120
   tcgplayer_product_id: 493974
   match:
-    set_terms: &id020
+    set_terms: &id018
     - evoluções em paldea
     - evolucoes em paldea
     - paldea evolved
-    type_terms: *id009
+    type_terms: *id007
     exclude_terms: *id002
 - id: pal-booster-box
   name: Paldea Evolved Booster Box (English)
@@ -3862,8 +3752,8 @@ skus:
   tcgplayer_group_id: 23120
   tcgplayer_product_id: 493975
   match:
-    set_terms: *id020
-    type_terms: *id017
+    set_terms: *id018
+    type_terms: *id015
     exclude_terms: *id002
 - id: pal-sleeved-booster
   name: Paldea Evolved Sleeved Booster (English)
@@ -3875,8 +3765,8 @@ skus:
   tcgplayer_group_id: 23120
   tcgplayer_product_id: 493976
   match:
-    set_terms: *id020
-    type_terms: *id007
+    set_terms: *id018
+    type_terms: *id005
     exclude_terms: *id002
 - id: pal-booster-bundle
   name: Paldea Evolved Booster Bundle (English)
@@ -3888,6 +3778,6 @@ skus:
   tcgplayer_group_id: 23120
   tcgplayer_product_id: 496914
   match:
-    set_terms: *id020
-    type_terms: *id006
+    set_terms: *id018
+    type_terms: *id004
     exclude_terms: *id002
