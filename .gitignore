@@ -25,3 +25,6 @@ results/
 
 # Watchdog runtime lock (PID + heartbeat — nunca commitar)
 .watchdog.lock
+
+# Draft intermediário do gerador de registry
+scripts/registry_additions.yaml
