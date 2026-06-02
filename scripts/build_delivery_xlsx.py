@@ -30,7 +30,8 @@ COLS = [
     ("Qtd disponível", "Qtd"),     # estoque do vendedor — importamos em LOTE, nunca 1 unid
     ("Preço US (R$)", "US R$"),
     ("Margem total %", "Margem %"),
-    ("Margem líquida est. %", "Líq %"),
+    # Margem líquida REMOVIDA (operador 2026-06-02): sem saber frete real +
+    # tamanho do lote por remessa, o líquido é um número fabricado. Não exibir.
     ("Confiança do match", "Match"),
     ("URL", "URL"),
 ]
