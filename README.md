@@ -163,6 +163,7 @@ powershell -ExecutionPolicy Bypass -File .\register_task.ps1
 | **[RUNBOOK.md](RUNBOOK.md)** | Passo-a-passo operacional de scan + entrega | ✅ Sim |
 | **[AGENT.md](AGENT.md)** | Especificação do agente (missão, classificação, regras invioláveis) | ✅ Sim |
 | **[GOALS.md](GOALS.md)** | Lista viva de objetivos (lida pelo `/goal`) | ✅ Sim |
+| **[SETUP-WINDOWS.md](SETUP-WINDOWS.md)** | Setup de ambiente no Windows (Python + Chrome p/ Liga headful) — referência de 1ª vez, não diretiva operacional | ✅ Sim (setup) |
 | `docs/archive/*` | Planos/handoffs antigos (repo/branch/workflow obsoletos) | 🔴 **Não** — histórico |
 
 ---
@@ -174,6 +175,7 @@ powershell -ExecutionPolicy Bypass -File .\register_task.ps1
 ├── README.md                   # ⭐ FONTE ÚNICA — comece aqui
 ├── RUNBOOK.md                  # passo-a-passo de scan + entrega
 ├── AGENT.md / GOALS.md         # spec do agente / objetivos vivos
+├── SETUP-WINDOWS.md            # setup de ambiente no Windows (1ª vez)
 ├── run_all_sources.py          # ENTRADA padrão — orquestrador 3 fontes → tabela unificada
 ├── sealed_arbitrage_scanner.py # pipeline (1 fonte por vez): match → margem → classificação
 ├── build_us_reference.py       # gera data/us_reference.json a partir de tcgcsv
