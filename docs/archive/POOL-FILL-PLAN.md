@@ -1,3 +1,14 @@
+# 🔴 HISTÓRICO — NÃO SEGUIR
+
+> **Arquivado 2026-06-03.** O "Status: ATIVO (P0)" abaixo é **obsoleto** —
+> refs branch antiga `claude/tcg-sealed-arbitrage-agent-eNXVg` e workflow
+> `/goal execute` + agente `sealed-reviewer` que não é o fluxo atual. A fonte
+> única de verdade é o **[README.md](../../README.md)** na raiz. O conceito de
+> pool-fill segue implementado (`pool_fill.py`, flag `--pool-budget`); este
+> documento de planejamento é só registro histórico.
+
+---
+
 # Pool Fill — Realistic Avg Price + Volume Sourcing
 
 **Status:** ATIVO (P0) — definido 2026-05-27
