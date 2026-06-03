@@ -3220,6 +3220,7 @@ skus:
     - display
 - id: meg-booster-box
   name: Mega Evolution Booster Box (English)
+  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
   product_type: Booster Box
   set: Mega Evolution
   set_code: MEG
@@ -3271,14 +3272,9 @@ skus:
     - capa para
     - protector
     - protetor
-    # Sub-sets da era "Mega Evolution" (Perfect Order, Chaos Rising) levam "Mega
-    # Evolution" como prefixo de era no titulo da Liga -> os meg-* (set_term "mega
-    # evolution") casavam esses sub-sets (REVIEW meg-bundle x po/cr). Nomes de set
-    # sao globalmente unicos, entao excluir aqui e inocuo p/ os outros SKUs em *id002.
-    - perfect order
-    - chaos rising
 - id: meg-sleeved-booster
   name: Mega Evolution Sleeved Booster (English)
+  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
   product_type: Sleeved Booster
   set: Mega Evolution
   set_code: MEG
@@ -3296,6 +3292,7 @@ skus:
     exclude_terms: *id002
 - id: meg-booster-bundle
   name: Mega Evolution Booster Bundle (English)
+  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
   product_type: Booster Bundle
   set: Mega Evolution
   set_code: MEG
@@ -3789,6 +3786,7 @@ skus:
     exclude_terms: *id002
 - id: meg-mini-tin
   name: Mega Evolution Mini Tin (English)
+  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
   product_type: Mini Tin
   set: Mega Evolution
   set_code: MEG
@@ -3808,8 +3806,6 @@ skus:
     - mini latas
     - minilata
     exclude_terms: &tin_excl_single
-    - perfect order
-    - chaos rising
     - display
     - case
     - caixa
@@ -3874,6 +3870,7 @@ skus:
     - capa para
 - id: meg-mini-tin-display
   name: Mega Evolution Mini Tin Display (English)
+  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
   product_type: Mini Tin Display
   set: Mega Evolution
   set_code: MEG
@@ -3891,8 +3888,6 @@ skus:
     requires_terms: &tin_req
     - display
     exclude_terms: &tin_excl_display
-    - perfect order
-    - chaos rising
     - vazia
     - vazio
     - lote

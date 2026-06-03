@@ -201,6 +201,13 @@ class Sku:
     # Quantidade comprada em lote para amortizar custos fixos (frete intl + 3PL).
     # Packs costumam ser comprados em ≥24 unidades; boxes/ETBs = 1.
     bulk_qty: int = 1
+    # SKU "guarda-chuva de era": o set é o nome de uma ERA que prefixa títulos
+    # dos sub-sets (ex.: "Mega Evolution" prefixa Perfect Order, Chaos Rising,
+    # Ascended Heroes, Phantasmal Flames...). Quando um anúncio casa este SKU E
+    # um SKU de sub-set (não-umbrella), o umbrella perde — o sub-set é mais
+    # específico. Resolve o over-match da era genericamente, sem enumerar
+    # sub-sets em exclude_terms (que vira whack-a-mole a cada set novo).
+    era_umbrella: bool = False
 
 
 @dataclass
@@ -287,6 +294,7 @@ def build_registry(registry_data: dict) -> list[Sku]:
             exclude_terms=match.get("exclude_terms", []),
             requires_terms=match.get("requires_terms", []),
             bulk_qty=int(entry.get("bulk_qty", 1)),
+            era_umbrella=bool(entry.get("era_umbrella", False)),
         ))
     if not skus:
         print("ERRO: sku_registry.yaml não tem nenhum SKU.")
@@ -308,6 +316,17 @@ def match_listing(title: str, registry: list[Sku]) -> list[Sku]:
         if any(contains_term(norm, t) for t in sku.exclude_terms):
             continue
         candidates.append(sku)
+
+    # Regra do guarda-chuva de era: se um SKU umbrella (set = nome de era, ex.:
+    # "Mega Evolution") casou junto com um SKU de sub-set mais específico
+    # (ex.: Perfect Order), o umbrella perde. Título "Mega Evolution - Perfect
+    # Order Booster Bundle" → po-bundle, não meg-bundle. Genérico: cobre qualquer
+    # sub-set da era sem enumerá-los em exclude_terms. Só age quando há mistura;
+    # um anúncio do set-base puro ("Mega Evolution Booster Bundle") casa só o
+    # umbrella e é preservado.
+    specific = [c for c in candidates if not c.era_umbrella]
+    if specific and len(specific) < len(candidates):
+        candidates = specific
     return candidates
 
 
