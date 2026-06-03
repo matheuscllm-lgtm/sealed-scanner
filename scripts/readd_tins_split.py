@@ -51,6 +51,9 @@ TIN_TYPE = ["mini tin", "mini lata", "mini latas", "minilata"]
 # mencionando "2 boosters + carta promo" e às vezes "premium". Excluir derrubaria
 # a lata real. "vazia"/"vazio" (lata sem cartas) e "lote" (multi-unidade) sim.
 SINGLE_XTYPE = [
+    # Sub-sets da era Mega Evolution (prefixo de era no titulo da Liga -> evita
+    # que meg-mini-tin case "Mega Evolution Perfect Order ... Mini Lata"):
+    "perfect order", "chaos rising",
     "display", "case", "caixa", "5 pack", "5-pack", "5pack", "set of",
     "vazia", "vazio", "lote",
     "booster box", "box", "elite trainer", "elite trainer box", "etb", "bundle",
@@ -61,6 +64,7 @@ SINGLE_XTYPE = [
 # Display exige "display"; exclui "booster box"/"display de booster" p/ não colidir
 # com a caixa de booster.
 DISPLAY_XTYPE = [
+    "perfect order", "chaos rising",
     "vazia", "vazio", "lote",
     "booster box", "caixa de booster", "display de booster",
     "booster display", "box", "case", "display case", "elite trainer",

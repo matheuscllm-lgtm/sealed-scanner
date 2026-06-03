@@ -3271,6 +3271,12 @@ skus:
     - capa para
     - protector
     - protetor
+    # Sub-sets da era "Mega Evolution" (Perfect Order, Chaos Rising) levam "Mega
+    # Evolution" como prefixo de era no titulo da Liga -> os meg-* (set_term "mega
+    # evolution") casavam esses sub-sets (REVIEW meg-bundle x po/cr). Nomes de set
+    # sao globalmente unicos, entao excluir aqui e inocuo p/ os outros SKUs em *id002.
+    - perfect order
+    - chaos rising
 - id: meg-sleeved-booster
   name: Mega Evolution Sleeved Booster (English)
   product_type: Sleeved Booster
@@ -3802,6 +3808,8 @@ skus:
     - mini latas
     - minilata
     exclude_terms: &tin_excl_single
+    - perfect order
+    - chaos rising
     - display
     - case
     - caixa
@@ -3883,6 +3891,8 @@ skus:
     requires_terms: &tin_req
     - display
     exclude_terms: &tin_excl_display
+    - perfect order
+    - chaos rising
     - vazia
     - vazio
     - lote
