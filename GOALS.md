@@ -6,6 +6,7 @@
 
 ## Em andamento agora
 
+- [ ] **P1** (operador) Rodar no PC o re-scan com o registry novo (105 SKUs, latas re-adicionadas) e entregar o XLSX condensado no Drive. Comandos em `RUNBOOK.md` (refresh US → `run_all_sources.py` → `build_delivery_xlsx.py`). Não roda na nuvem (CF da Liga bloqueia IP de datacenter).
 - [ ] **P1** Pós-Pool-Fill: validar manualmente os Top 5 GREEN do `Pool Analysis` num scan Liga real (confirmar qty + frete real antes de mover capital). Rodar: `python sealed\sealed_arbitrage_scanner.py --source liga --pool-budget 5000`.
 - [ ] **P2** OLX block CF WAF é por IP (não Turnstile) — patchright NÃO resolve (validado). Pra firmar: proxy residencial (ScraperAPI/Firecrawl). Decisão de capital — fora de escopo de código.
 
@@ -27,6 +28,12 @@
 
 ## Feito recente
 
+- [x] (2026-06-02) **Review pós-tins: matching das latas endurecido** — revisão multi-agente achou que os termos largos das latas (`lata`/`tin` soltos + set_term genérico `151`) casavam carta avulsa ("Carta 151/165 na lata"), lata vazia e lote como GREEN falso (bypassa o guard `nao_e_selado`), e que excluir `booster`/`premium` derrubava lata legítima ("2 boosters + carta promo"). Fix: type_terms exigem "mini" (mini tin/mini lata); excludes trocam `booster`/`premium` por `vazia`/`vazio`/`lote`; `+mega heroes` no set Mega (latas são marca "Mega Heroes Mini Tin"). Script e registry batem (provenance), zero colisões, 22/22 testes.
+- [x] (2026-06-02) **Gap SSP Booster Bundle fechado** — Surging Sparks era o único set (de 20) sem SKU de bundle; "Booster Bundle Surging Sparks" caía em NONE. Adicionado `ssp-bundle-en` (TCGPlayer Retail 679564, US$59.18) espelhando `jtg-bundle-en`. Agora casa HIGH; todos os 20 sets têm bundle. Registry 104→105.
+- [x] (2026-06-02) **Limpeza dead-code margem líquida** — guarda-chuva já inerte desde `d48d025` (classificação só margem bruta): removido `min_net_margin_pct` do `config.yaml` + o read morto e os locais `net_profit`/`net_m` não usados no `classify`; comentários alinhados. A líquida segue calculada/exibida só como alerta.
+- [x] (2026-06-02) **Tins re-adicionados com SPLIT** — 12 SKUs (`{set}-mini-tin` + `{set}-mini-tin-display`) p/ 6 sets (Mega Evolution, Ascended Heroes, Black Bolt, Prismatic Evolutions, Shrouded Fable, 151). Descoberta: esses sets não têm "Tin premium" no TCGPlayer — a linha é Mini Tin avulsa + Mini Tin Display (caixa) + Display Case. Avulsa usa o preço da lata mais barata do set (conservador); display exige "display" e exclui "booster". Gerador: `scripts/readd_tins_split.py` (âncoras YAML, diff aditivo). Zero colisões, 22/22 testes. Registry 92→104.
+- [x] (2026-06-02) **Comandos + entrega preparados** — `RUNBOOK.md` (refresh US → scan → `build_delivery_xlsx.py` → Drive). Caminho de entrega smoke-testado (GREEN+YELLOW + Resumo).
+
 - [x] (2026-05-30) **P0 qty_avail no output** — `("qty_avail", "Qtd disponível")` em `CSV_COLUMNS` (sealed_arbitrage_scanner.py). O campo já existia no `ScanRow` e era populado, mas não saía no CSV/XLSX. Verificado no scan mock. PR [#2](https://github.com/matheuscllm-lgtm/tcg-arbitrage-scanners/pull/2) (`f8ccd48`).
 - [x] (2026-05-30) **P0 UnicodeEncodeError cp1252** — novo `sealed/lib/console.py::harden_stdout()` (UTF-8 `errors='replace'`, idempotente), wired em `run_all_sources`, `sealed_arbitrage_scanner`, `liga_adapter.__main__`; `run_liga_local` refatorado pro helper. Repro confirmada (sem fix exit 1 / com fix exit 0). PR #2 (`f8ccd48`).
 - [x] (2026-05-30) **P1 trabalho pendente da árvore** — `merge_myp_ct.py` passa a ler sheet `Deals` do CT postprocess v2 (fallback legado `Oportunidades`). Nota: `run_all_sources.py`+`watchdog.py` do P1 original já estavam commitados via PR #1 (`7567369`); o único pendente real era o merge. PR #2 (`783addd`). 22/22 tests OK.
@@ -42,8 +49,8 @@
 
 ## Notas / contexto
 
-- **Branch atual**: `claude/tcg-sealed-arbitrage-agent-eNXVg`
-- **Stack**: pipeline Python (sealed/sealed_arbitrage_scanner.py), preços US via tcgcsv (TCGPlayer Market), 55 SKUs no registry.
+- **Repo dedicado**: `matheuscllm-lgtm/sealed-arbitrage-scanner` (módulos na raiz, não mais em `sealed/`). **Branch atual**: `claude/determined-curie-Q1Ur8`.
+- **Stack**: pipeline Python (`sealed_arbitrage_scanner.py`), preços US via tcgcsv (TCGPlayer Market), **105 SKUs** no registry. Classificação só por **margem bruta** desde 2026-06-02.
 - **Fontes BR operacionais**: OLX (`--source olx`), Amazon BR (`--source amazon`), Liga (`--source liga`).
 - **Cuidado de credits**: modo `scraperapi` do Liga adapter consome ~25-50 credits por render JS (Liga é "protected domain"). Free tier 1000/mês NÃO cobre 1 scan completo. Preferir `mode=local`.
 - **Custo zero**: rodando da máquina do usuário em casa (Windows 11, Chrome instalado), IP residencial passa o Cloudflare da Liga.

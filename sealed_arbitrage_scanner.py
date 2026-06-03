@@ -357,9 +357,6 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
     criteria = config["deal_criteria"]
     min_total = criteria["min_total_margin_pct"]
     review_floor = criteria["review_floor_pct"]
-    # ROI líquido mínimo (guarda-chuva): default 0 mantém comportamento antigo
-    # pra configs legados que não tenham o campo.
-    min_net = criteria.get("min_net_margin_pct", 0.0)
     min_price = config["filters"]["min_brazil_price_brl"]
 
     candidates = match_listing(row.title_br, registry)
@@ -436,13 +433,11 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
     row.net_margin_pct = fin["net_margin_pct"]
 
     total_m = fin["total_margin_pct"]
-    net_profit = fin["net_profit_brl"]
-    net_m = fin["net_margin_pct"]
 
-    # Filtro principal: margem total (lucro sobre a compra) + guarda-chuva de
     # Classificação por MARGEM BRUTA apenas (operador 2026-06-02): sem saber o
     # frete real e o tamanho do lote por remessa, a margem líquida é fabricada;
-    # GREEN/YELLOW/RED é puro margem total (bruta).
+    # GREEN/YELLOW/RED é puro margem total (bruta). A líquida segue calculada e
+    # exibida (row.net_*), mas só como alerta informativo, nunca como filtro.
     if total_m >= min_total:
         row.deal_confidence = "GREEN"
         row.bucket = "real_opportunities"

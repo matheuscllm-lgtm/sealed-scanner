@@ -3271,6 +3271,12 @@ skus:
     - capa para
     - protector
     - protetor
+    # Sub-sets da era "Mega Evolution" (Perfect Order, Chaos Rising) levam "Mega
+    # Evolution" como prefixo de era no titulo da Liga -> os meg-* (set_term "mega
+    # evolution") casavam esses sub-sets (REVIEW meg-bundle x po/cr). Nomes de set
+    # sao globalmente unicos, entao excluir aqui e inocuo p/ os outros SKUs em *id002.
+    - perfect order
+    - chaos rising
 - id: meg-sleeved-booster
   name: Mega Evolution Sleeved Booster (English)
   product_type: Sleeved Booster
@@ -3781,3 +3787,381 @@ skus:
     set_terms: *id018
     type_terms: *id004
     exclude_terms: *id002
+- id: meg-mini-tin
+  name: Mega Evolution Mini Tin (English)
+  product_type: Mini Tin
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 649395
+  match:
+    set_terms:
+    - megaevolução 1
+    - megaevolucao 1
+    - mega evolution
+    - mega heroes
+    type_terms: &tin_type
+    - mini tin
+    - mini lata
+    - mini latas
+    - minilata
+    exclude_terms: &tin_excl_single
+    - perfect order
+    - chaos rising
+    - display
+    - case
+    - caixa
+    - 5 pack
+    - 5-pack
+    - 5pack
+    - set of
+    - vazia
+    - vazio
+    - lote
+    - booster box
+    - box
+    - elite trainer
+    - elite trainer box
+    - etb
+    - bundle
+    - booster bundle
+    - blister
+    - collection
+    - collection box
+    - premium collection
+    - tech sticker
+    - build
+    - battle
+    - sleeved
+    - sleeve
+    - pokemon center
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+- id: meg-mini-tin-display
+  name: Mega Evolution Mini Tin Display (English)
+  product_type: Mini Tin Display
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  pack_count: 10
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 649392
+  match:
+    set_terms:
+    - megaevolução 1
+    - megaevolucao 1
+    - mega evolution
+    - mega heroes
+    type_terms: *tin_type
+    requires_terms: &tin_req
+    - display
+    exclude_terms: &tin_excl_display
+    - perfect order
+    - chaos rising
+    - vazia
+    - vazio
+    - lote
+    - booster box
+    - caixa de booster
+    - display de booster
+    - booster display
+    - box
+    - case
+    - display case
+    - elite trainer
+    - elite trainer box
+    - etb
+    - bundle
+    - booster bundle
+    - blister
+    - collection
+    - collection box
+    - premium collection
+    - tech sticker
+    - build
+    - battle
+    - sleeved
+    - sleeve
+    - pokemon center
+    - 5 pack
+    - 5-pack
+    - 5pack
+    - set of
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+- id: asc-mini-tin
+  name: Ascended Heroes Mini Tin (English)
+  product_type: Mini Tin
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 668534
+  match:
+    set_terms:
+    - ascended heroes
+    type_terms: *tin_type
+    exclude_terms: *tin_excl_single
+- id: asc-mini-tin-display
+  name: Ascended Heroes Mini Tin Display (English)
+  product_type: Mini Tin Display
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  pack_count: 10
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 679556
+  match:
+    set_terms:
+    - ascended heroes
+    type_terms: *tin_type
+    requires_terms: *tin_req
+    exclude_terms: *tin_excl_display
+- id: blk-mini-tin
+  name: Black Bolt Mini Tin (English)
+  product_type: Mini Tin
+  set: Black Bolt
+  set_code: BLK
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 24325
+  tcgplayer_product_id: 630441
+  match:
+    set_terms:
+    - raio preto
+    - black bolt
+    - unova
+    type_terms: *tin_type
+    exclude_terms: *tin_excl_single
+- id: blk-mini-tin-display
+  name: Black Bolt Mini Tin Display (English)
+  product_type: Mini Tin Display
+  set: Black Bolt
+  set_code: BLK
+  language: EN
+  pack_count: 10
+  tcgplayer_group_id: 24325
+  tcgplayer_product_id: 630446
+  match:
+    set_terms:
+    - raio preto
+    - black bolt
+    - unova
+    type_terms: *tin_type
+    requires_terms: *tin_req
+    exclude_terms: *tin_excl_display
+- id: pre-mini-tin
+  name: Prismatic Evolutions Mini Tin (English)
+  product_type: Mini Tin
+  set: Prismatic Evolutions
+  set_code: PRE
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 23821
+  tcgplayer_product_id: 593457
+  match:
+    set_terms:
+    - prismatic evolutions
+    type_terms: *tin_type
+    exclude_terms: *tin_excl_single
+- id: pre-mini-tin-display
+  name: Prismatic Evolutions Mini Tin Display (English)
+  product_type: Mini Tin Display
+  set: Prismatic Evolutions
+  set_code: PRE
+  language: EN
+  pack_count: 10
+  tcgplayer_group_id: 23821
+  tcgplayer_product_id: 593463
+  match:
+    set_terms:
+    - prismatic evolutions
+    type_terms: *tin_type
+    requires_terms: *tin_req
+    exclude_terms: *tin_excl_display
+- id: sfa-mini-tin
+  name: Shrouded Fable Mini Tin (English)
+  product_type: Mini Tin
+  set: Shrouded Fable
+  set_code: SFA
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 23529
+  tcgplayer_product_id: 553011
+  match:
+    set_terms:
+    - fábulas nebulosas
+    - fabulas nebulosas
+    - shrouded fable
+    type_terms: *tin_type
+    exclude_terms: *tin_excl_single
+- id: sfa-mini-tin-display
+  name: Shrouded Fable Mini Tin Display (English)
+  product_type: Mini Tin Display
+  set: Shrouded Fable
+  set_code: SFA
+  language: EN
+  pack_count: 10
+  tcgplayer_group_id: 23529
+  tcgplayer_product_id: 553008
+  match:
+    set_terms:
+    - fábulas nebulosas
+    - fabulas nebulosas
+    - shrouded fable
+    type_terms: *tin_type
+    requires_terms: *tin_req
+    exclude_terms: *tin_excl_display
+- id: mew-mini-tin
+  name: Scarlet & Violet 151 Mini Tin (English)
+  product_type: Mini Tin
+  set: Scarlet & Violet 151
+  set_code: MEW
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 23237
+  tcgplayer_product_id: 522703
+  match:
+    set_terms:
+    - 151
+    type_terms: *tin_type
+    exclude_terms: *tin_excl_single
+- id: mew-mini-tin-display
+  name: Scarlet & Violet 151 Mini Tin Display (English)
+  product_type: Mini Tin Display
+  set: Scarlet & Violet 151
+  set_code: MEW
+  language: EN
+  pack_count: 10
+  tcgplayer_group_id: 23237
+  tcgplayer_product_id: 502008
+  match:
+    set_terms:
+    - 151
+    type_terms: *tin_type
+    requires_terms: *tin_req
+    exclude_terms: *tin_excl_display
+- id: ssp-bundle-en
+  name: Surging Sparks Booster Bundle (English)
+  product_type: Booster Bundle
+  set: Surging Sparks
+  set_code: SSP
+  language: EN
+  pack_count: 6
+  tcgplayer_group_id: 23651
+  tcgplayer_product_id: 679564
+  match:
+    set_terms:
+    - surging sparks
+    type_terms:
+    - booster bundle
+    - bundle
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+    - booster box
+    - elite trainer
+    - etb
+    - blister
