@@ -66,14 +66,15 @@ Filtro principal: **margem total** — lucro sobre o preço de compra, antes das
 taxas. Alvo: 30–35% mais barato que os EUA, o que equivale a ≥40% de margem
 total.
 
-- `GREEN`  — match HIGH, margem total ≥ 40% **e** lucro líquido ≥ 0.
-- `YELLOW` — margem total entre 30% e 40%; ou margem total no alvo mas
-  líquido negativo (taxas consomem o lucro); ou match ambíguo (REVIEW).
+- `GREEN`  — match HIGH e margem total ≥ 40%.
+- `YELLOW` — margem total entre 30% e 40%; ou match ambíguo (REVIEW).
 - `RED`    — margem total < 30%, sem match, sem referência US, ou abaixo do
   preço mínimo de operação.
 
-A margem líquida após taxas é alerta, não filtro: não esconde um deal, mas
-rebaixa de GREEN para YELLOW quando o lucro real fica negativo.
+Classificação é SÓ por margem bruta (operador 2026-06-02): sem saber o frete
+real e o tamanho do lote por remessa, a margem líquida é um número fabricado.
+A margem líquida após taxas segue calculada e exibida apenas como alerta
+informativo — NUNCA define GREEN/YELLOW/RED.
 
 Saída separada em três baldes: `real_opportunities`, `review_required`,
 `rejected`.
