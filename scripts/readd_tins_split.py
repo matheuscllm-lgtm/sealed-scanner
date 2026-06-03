@@ -51,9 +51,8 @@ TIN_TYPE = ["mini tin", "mini lata", "mini latas", "minilata"]
 # mencionando "2 boosters + carta promo" e às vezes "premium". Excluir derrubaria
 # a lata real. "vazia"/"vazio" (lata sem cartas) e "lote" (multi-unidade) sim.
 SINGLE_XTYPE = [
-    # Sub-sets da era Mega Evolution (prefixo de era no titulo da Liga -> evita
-    # que meg-mini-tin case "Mega Evolution Perfect Order ... Mini Lata"):
-    "perfect order", "chaos rising",
+    # NB: o over-match da era Mega (Perfect Order/Chaos Rising/etc.) é resolvido
+    # genericamente pela regra `era_umbrella` no matcher, não por exclude aqui.
     "display", "case", "caixa", "5 pack", "5-pack", "5pack", "set of",
     "vazia", "vazio", "lote",
     "booster box", "box", "elite trainer", "elite trainer box", "etb", "bundle",
@@ -64,7 +63,6 @@ SINGLE_XTYPE = [
 # Display exige "display"; exclui "booster box"/"display de booster" p/ não colidir
 # com a caixa de booster.
 DISPLAY_XTYPE = [
-    "perfect order", "chaos rising",
     "vazia", "vazio", "lote",
     "booster box", "caixa de booster", "display de booster",
     "booster display", "box", "case", "display case", "elite trainer",
@@ -79,6 +77,7 @@ DISPLAY_XTYPE = [
 SETS = [
     {
         "pref": "meg", "set": "Mega Evolution", "group_id": 24380,
+        "era_umbrella": True,  # set-base da era; sub-sets (PO/CR/AH/PHF...) ganham
         "set_terms_extra": ["mega heroes"],  # latas são marca "Mega Heroes Mini Tin"
         "single": (649395, "Mega Heroes Mini Tin [Mega Kangaskhan]", 17.22),
         "display": (649392, "Mega Heroes Mini Tin Display", 255.86),
@@ -130,10 +129,14 @@ def render_terms(key: str, terms: list, anchor: str | None, defined: set[str]) -
 def render_sku(*, sku_id, name, product_type, set_name, set_code, pack_count,
                group_id, product_id, set_terms, type_terms, exclude_terms,
                requires_terms=None, type_anchor=None, excl_anchor=None,
-               req_anchor=None, defined: set[str]) -> str:
+               req_anchor=None, era_umbrella=False, defined: set[str]) -> str:
     lines = [
         f"- id: {sku_id}",
         f"  name: {name}",
+    ]
+    if era_umbrella:
+        lines.append("  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico")
+    lines += [
         f"  product_type: {product_type}",
         f"  set: {set_name}",
         f"  set_code: {set_code}",
@@ -190,7 +193,8 @@ def main() -> int:
             pack_count=2, group_id=spec["group_id"], product_id=s_pid,
             set_terms=set_terms, type_terms=TIN_TYPE,
             exclude_terms=SINGLE_XTYPE + BASE_EXCLUDE,
-            type_anchor="tin_type", excl_anchor="tin_excl_single", defined=defined,
+            type_anchor="tin_type", excl_anchor="tin_excl_single",
+            era_umbrella=spec.get("era_umbrella", False), defined=defined,
         ))
         prices[f"{spec['pref']}-mini-tin"] = s_mkt
 
@@ -202,7 +206,8 @@ def main() -> int:
             set_terms=set_terms, type_terms=TIN_TYPE, requires_terms=["display"],
             exclude_terms=DISPLAY_XTYPE + BASE_EXCLUDE,
             type_anchor="tin_type", excl_anchor="tin_excl_display",
-            req_anchor="tin_req", defined=defined,
+            req_anchor="tin_req", era_umbrella=spec.get("era_umbrella", False),
+            defined=defined,
         ))
         prices[f"{spec['pref']}-mini-tin-display"] = d_mkt
 
