@@ -42,21 +42,30 @@ BASE_EXCLUDE = [
     "italian", "acrylic", "acrilico", "magnetic", "protector", "protetor",
     "storage", "case for", "capa para",
 ]
-TIN_TYPE = ["mini tin", "mini lata", "mini latas", "minilata", "lata", "latas", "tin"]
+# Exige "mini" (são "Mini Tins"): NÃO usar "lata"/"tin" soltos — pegariam carta
+# avulsa ("Carta 151/165 na lata"), lata vazia e lote. O preço bruto de uma carta
+# avulsa do 151 viraria GREEN falso (o set_term "151" é genérico).
+TIN_TYPE = ["mini tin", "mini lata", "mini latas", "minilata"]
 # Tudo que NÃO é uma lata avulsa -> a avulsa nunca casa com caixa/display/box.
+# NÃO excluir "booster"/"premium"/"carta" soltos: a mini lata legítima é vendida
+# mencionando "2 boosters + carta promo" e às vezes "premium". Excluir derrubaria
+# a lata real. "vazia"/"vazio" (lata sem cartas) e "lote" (multi-unidade) sim.
 SINGLE_XTYPE = [
-    "display", "case", "caixa", "5 pack", "5-pack", "5pack", "set of", "booster",
+    "display", "case", "caixa", "5 pack", "5-pack", "5pack", "set of",
+    "vazia", "vazio", "lote",
     "booster box", "box", "elite trainer", "elite trainer box", "etb", "bundle",
-    "booster bundle", "blister", "collection", "collection box", "premium",
+    "booster bundle", "blister", "collection", "collection box",
     "premium collection", "tech sticker", "build", "battle", "sleeved", "sleeve",
     "pokemon center",
 ]
-# Display exige "display"; exclui "booster" p/ não colidir com "Display de Booster".
+# Display exige "display"; exclui "booster box"/"display de booster" p/ não colidir
+# com a caixa de booster.
 DISPLAY_XTYPE = [
-    "booster", "booster box", "caixa de booster", "display de booster",
+    "vazia", "vazio", "lote",
+    "booster box", "caixa de booster", "display de booster",
     "booster display", "box", "case", "display case", "elite trainer",
     "elite trainer box", "etb", "bundle", "booster bundle", "blister",
-    "collection", "collection box", "premium", "premium collection",
+    "collection", "collection box", "premium collection",
     "tech sticker", "build", "battle", "sleeved", "sleeve", "pokemon center",
     "5 pack", "5-pack", "5pack", "set of",
 ]
@@ -66,7 +75,7 @@ DISPLAY_XTYPE = [
 SETS = [
     {
         "pref": "meg", "set": "Mega Evolution", "group_id": 24380,
-        "set_terms_extra": [],
+        "set_terms_extra": ["mega heroes"],  # latas são marca "Mega Heroes Mini Tin"
         "single": (649395, "Mega Heroes Mini Tin [Mega Kangaskhan]", 17.22),
         "display": (649392, "Mega Heroes Mini Tin Display", 255.86),
     },

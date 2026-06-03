@@ -3795,14 +3795,12 @@ skus:
     - megaevolução 1
     - megaevolucao 1
     - mega evolution
+    - mega heroes
     type_terms: &tin_type
     - mini tin
     - mini lata
     - mini latas
     - minilata
-    - lata
-    - latas
-    - tin
     exclude_terms: &tin_excl_single
     - display
     - case
@@ -3811,7 +3809,9 @@ skus:
     - 5-pack
     - 5pack
     - set of
-    - booster
+    - vazia
+    - vazio
+    - lote
     - booster box
     - box
     - elite trainer
@@ -3822,7 +3822,6 @@ skus:
     - blister
     - collection
     - collection box
-    - premium
     - premium collection
     - tech sticker
     - build
@@ -3879,11 +3878,14 @@ skus:
     - megaevolução 1
     - megaevolucao 1
     - mega evolution
+    - mega heroes
     type_terms: *tin_type
     requires_terms: &tin_req
     - display
     exclude_terms: &tin_excl_display
-    - booster
+    - vazia
+    - vazio
+    - lote
     - booster box
     - caixa de booster
     - display de booster
@@ -3899,7 +3901,6 @@ skus:
     - blister
     - collection
     - collection box
-    - premium
     - premium collection
     - tech sticker
     - build
