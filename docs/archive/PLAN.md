@@ -1,3 +1,12 @@
+# 🔴 HISTÓRICO — NÃO SEGUIR
+
+> **Arquivado 2026-06-03.** Plano antigo — refs repo `tcg-arbitrage-scanners`,
+> branch `claude/tcg-sealed-arbitrage-agent-eNXVg` e PR #1 draft, todos
+> obsoletos. A fonte única de verdade é o **[README.md](../../README.md)** na
+> raiz. Mantido só como registro histórico.
+
+---
+
 # Plan — TCG Sealed Arbitrage Scanner
 
 **Data:** 2026-05-25

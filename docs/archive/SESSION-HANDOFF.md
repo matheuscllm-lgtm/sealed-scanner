@@ -1,3 +1,13 @@
+# 🔴 HISTÓRICO — NÃO SEGUIR
+
+> **Arquivado 2026-06-03.** Este documento aponta pra repo/branch/workflow
+> **antigos** (ex.: repo `tcg-arbitrage-scanners`, que voltou a ser só-avulsas).
+> A fonte única de verdade é o **[README.md](../../README.md)** na raiz; o
+> passo-a-passo operacional é o **[RUNBOOK.md](../../RUNBOOK.md)**. Mantido só
+> como registro histórico.
+
+---
+
 # Session Handoff — TCG Sealed Arbitrage Scanner
 
 **Atualizado:** 2026-05-30
