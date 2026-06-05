@@ -29,7 +29,7 @@ import statistics
 from dataclasses import dataclass, field
 from typing import Iterable
 
-__all__ = ["BreakdownItem", "PoolResult", "fill_pool"]
+__all__ = ["BreakdownItem", "PoolResult", "SkuAverage", "fill_pool", "avg_price_for_sku"]
 
 
 @dataclass
@@ -64,6 +64,28 @@ def _frete_for_qty(frete_unit: float, qty: int) -> float:
     if qty <= 0:
         return float("inf")
     return frete_unit / qty
+
+
+def _filter_outliers(listings: Iterable[dict], outlier_factor: float = 2.0) -> tuple[list[dict], list[tuple[str, str]]]:
+    """Descarta listings com price > mediana × factor (typos/scams).
+
+    Mediana precisa de >=3 pontos pra ser estável; com menos, devolve tudo.
+    Devolve (kept, skipped[(seller, motivo)]). Reusado por fill_pool e
+    avg_price_for_sku pra que ambos rejeitem os mesmos typos.
+    """
+    listings = list(listings)
+    prices = sorted(l["price_brl"] for l in listings)
+    if len(prices) < 3:
+        return listings, []
+    threshold = statistics.median(prices) * outlier_factor
+    kept: list[dict] = []
+    skipped: list[tuple[str, str]] = []
+    for l in listings:
+        if l["price_brl"] > threshold:
+            skipped.append((l.get("seller", "?"), f"outlier price > {threshold:.2f} (median × {outlier_factor})"))
+        else:
+            kept.append(l)
+    return kept, skipped
 
 
 def fill_pool(
@@ -125,16 +147,8 @@ def fill_pool(
 
     # Step 1: filter outliers (mediana precisa de >=3 pontos pra ser estável)
     prices = sorted(l["price_brl"] for l in listings)
-    if len(prices) >= 3:
-        med = statistics.median(prices)
-        threshold = med * outlier_factor
-        kept = []
-        for l in listings:
-            if l["price_brl"] > threshold:
-                skipped.append((l.get("seller", "?"), f"outlier price > {threshold:.2f} (median × {outlier_factor})"))
-            else:
-                kept.append(l)
-        listings = kept
+    listings, _outliers = _filter_outliers(listings, outlier_factor)
+    skipped.extend(_outliers)
 
     # Step 2: filter qty conditions
     cand = []
@@ -264,4 +278,73 @@ def fill_pool(
         n_sellers_used=len(breakdown),
         breakdown=breakdown,
         skipped_sellers=skipped,
+    )
+
+
+@dataclass
+class SkuAverage:
+    """Preço médio ponderado por quantidade de um SKU, SEM frete."""
+    sku: str
+    n_sellers: int
+    total_qty: int                 # soma das qty (desconhecida conta como 1)
+    qty_unknown_sellers: int       # quantos vendedores tinham qty desconhecida
+    best_price: float              # menor preço (pós-outlier)
+    weighted_avg_price: float      # média ponderada por qty, sem frete
+    us_price_brl: float
+    avg_margin_pct: float          # margem total (vs US) no preço médio
+    n_outliers_dropped: int
+
+
+def avg_price_for_sku(
+    listings: Iterable[dict],
+    *,
+    us_price_brl: float,
+    sku: str = "",
+    outlier_factor: float = 2.0,
+) -> SkuAverage:
+    """Preço médio ponderado por quantidade (SEM frete) de um SKU.
+
+    Caso de uso (operador 2026-06-05): o estoque por vendedor costuma ser
+    pequeno, então comprar volume = varrer vários logistas a preços
+    diferentes. A média ponderada pela qty disponível é o custo real por
+    unidade ao montar o lote. O frete fica FORA de propósito — depende do
+    tamanho da remessa/lote, decidido fora do scanner (foi por isso que a
+    "margem líquida" saiu). A margem aqui é a TOTAL (bruta) no preço médio.
+
+    - Filtra outliers (typos) com o mesmo critério do fill_pool.
+    - Pondera por qty_avail; vendedor com qty desconhecida entra com peso 1.
+    """
+    listings = list(listings)
+    kept, _ = _filter_outliers(listings, outlier_factor)
+    n_outliers = len(listings) - len(kept)
+    if not kept:
+        return SkuAverage(sku, 0, 0, 0, 0.0, 0.0, us_price_brl, 0.0, n_outliers)
+
+    total_w = 0
+    weighted_sum = 0.0
+    qty_unknown = 0
+    min_price = float("inf")
+    for l in kept:
+        price = float(l["price_brl"])
+        qty = l.get("qty_avail")
+        if qty is None:
+            qty = 1
+            qty_unknown += 1
+        w = max(1, int(qty))
+        total_w += w
+        weighted_sum += price * w
+        min_price = min(min_price, price)
+
+    avg = weighted_sum / total_w if total_w else 0.0
+    margin = ((us_price_brl - avg) / avg * 100.0) if avg > 0 else 0.0
+    return SkuAverage(
+        sku=sku,
+        n_sellers=len(kept),
+        total_qty=total_w,
+        qty_unknown_sellers=qty_unknown,
+        best_price=min_price,
+        weighted_avg_price=avg,
+        us_price_brl=us_price_brl,
+        avg_margin_pct=margin,
+        n_outliers_dropped=n_outliers,
     )

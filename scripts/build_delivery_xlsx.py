@@ -41,6 +41,12 @@ FILLS = {
 }
 ORDER = {"GREEN": 0, "YELLOW": 1}
 
+sys.path.insert(0, str(ROOT))
+try:
+    from pool_fill import avg_price_for_sku
+except Exception:
+    avg_price_for_sku = None
+
 
 def latest_scan_dir() -> Path:
     dirs = sorted((ROOT / "results").glob("unified_*"), key=lambda d: d.stat().st_mtime, reverse=True)
@@ -54,6 +60,13 @@ def _margin(row: dict) -> float:
         return float(row.get("Margem total %") or -999)
     except ValueError:
         return -999.0
+
+
+def _int_or_none(v: str | None) -> int | None:
+    try:
+        return int(float(v)) if v not in (None, "") else None
+    except (TypeError, ValueError):
+        return None
 
 
 def main() -> None:
@@ -94,6 +107,52 @@ def main() -> None:
         ws2.append([k, v])
     for i in range(1, len(summary) + 1):
         ws2[f"A{i}"].font = Font(bold=True)
+
+    # aba Preço médio por SKU — custo real ao varrer vários logistas (sem frete)
+    if avg_price_for_sku is not None:
+        by_sku: dict[str, list[dict]] = {}
+        for r in sel:
+            sku = (r.get("SKU") or "").strip()
+            if not sku or r.get("Confiança do match") != "HIGH":
+                continue
+            by_sku.setdefault(sku, []).append(r)
+        avg_rows = []
+        for sku, rs in by_sku.items():
+            listings = []
+            for r in rs:
+                try:
+                    price = float(r.get("Preço BR (R$)") or "")
+                except ValueError:
+                    continue
+                listings.append({"seller": r.get("Vendedor", ""), "price_brl": price,
+                                 "qty_avail": _int_or_none(r.get("Qtd disponível"))})
+            if not listings:
+                continue
+            try:
+                us_brl = float(rs[0].get("Preço US (R$)") or 0)
+            except ValueError:
+                us_brl = 0.0
+            avg_rows.append((rs[0], avg_price_for_sku(listings, us_price_brl=us_brl, sku=sku)))
+        if avg_rows:
+            avg_rows.sort(key=lambda t: -t[1].avg_margin_pct)
+            ws3 = wb.create_sheet("Preço médio")
+            ws3.append(["Produto", "Tipo", "Tier", "# Vend.", "Qtd total",
+                        "Melhor R$", "Médio R$", "US R$", "Margem média %"])
+            for c in ws3[1]:
+                c.font = Font(bold=True)
+            for first, a in avg_rows:
+                tier = first.get("Confiança do deal", "")
+                ws3.append([first.get("Produto (canônico)", ""), first.get("Tipo", ""), tier,
+                            a.n_sellers, a.total_qty, round(a.best_price, 2),
+                            round(a.weighted_avg_price, 2), round(a.us_price_brl, 2),
+                            round(a.avg_margin_pct, 1)])
+                fill = FILLS.get(tier)
+                if fill:
+                    for c in ws3[ws3.max_row]:
+                        c.fill = fill
+            for i, w in enumerate([40, 16, 8, 8, 10, 12, 12, 12, 14], 1):
+                ws3.column_dimensions[get_column_letter(i)].width = w
+            ws3.freeze_panes = "A2"
 
     out.parent.mkdir(parents=True, exist_ok=True)
     wb.save(out)

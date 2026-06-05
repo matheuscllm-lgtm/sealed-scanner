@@ -95,10 +95,15 @@ margem_total = (preço_US − preço_BR) / preço_BR
 ```
 
 Lucro sobre o capital de compra, antes das taxas. **GREEN** exige margem total
-**≥ 40% E margem líquida ≥ 5%** (`config.yaml → deal_criteria`); entre 30-40%
-ou líquida fina vai para **YELLOW**; abaixo, **RED**. A margem líquida (após
-~18% de taxas + frete + 3PL) mata "GREENs ilusórios" em produto caro onde os
-custos fixos comem o lucro.
+**≥ 40%**; entre 30-40% vai para **YELLOW**; abaixo, **RED** (`config.yaml →
+deal_criteria`). A classificação é **só por margem total**: sem saber frete real
+e tamanho do lote por remessa, a margem líquida seria um número fabricado — por
+isso não é calculada nem exibida (operador 2026-06-05).
+
+Cada anúncio traz a **`Qtd disponível`** ao lado do preço, e o relatório inclui
+a aba **Preço médio por SKU** — preço médio ponderado pela quantidade, somando o
+estoque de vários logistas (estoque pequeno por vendedor → comprar volume =
+varrer várias lojas). Frete fica fora; a margem ali é a total no preço médio.
 
 A diferença também é exibida como **"mais barato que US"**
 `(preço_US − preço_BR) / preço_US`.

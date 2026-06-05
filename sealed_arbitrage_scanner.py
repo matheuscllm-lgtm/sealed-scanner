@@ -480,8 +480,6 @@ CSV_COLUMNS = [
     ("gross_profit_brl", "Lucro bruto (R$)"),
     ("total_margin_pct", "Margem total %"),
     ("us_discount_pct", "Mais barato que US %"),
-    ("net_profit_brl", "Lucro líquido est. (R$)"),
-    ("net_margin_pct", "Margem líquida est. %"),
     ("match_confidence", "Confiança do match"),
     ("deal_confidence", "Confiança do deal"),
     ("main_risk", "Risco principal"),
@@ -494,7 +492,7 @@ def cell_value(row: ScanRow, key: str):
     val = getattr(row, key)
     if val is None:
         return ""
-    if key in ("total_margin_pct", "us_discount_pct", "net_margin_pct"):
+    if key in ("total_margin_pct", "us_discount_pct"):
         return f"{val * 100:.2f}"
     return val
 
@@ -505,6 +503,54 @@ def write_csv(rows: list[ScanRow], path: Path) -> None:
         writer.writerow([label for _, label in CSV_COLUMNS])
         for row in rows:
             writer.writerow([cell_value(row, key) for key, _ in CSV_COLUMNS])
+
+
+def compute_sku_averages(rows: list[ScanRow]) -> list[dict]:
+    """Preço médio ponderado por SKU, varrendo vários logistas (sem frete).
+
+    Caso de uso (operador 2026-06-05): estoque pequeno por vendedor → comprar
+    volume = somar o estoque de várias lojas. Agrupa as linhas GREEN/YELLOW de
+    match HIGH por SKU e devolve, por produto: nº de vendedores, qtd total,
+    melhor preço, preço médio ponderado pela qty e a margem TOTAL nesse médio.
+    Frete fica fora (decidido no lote, fora do scanner).
+    """
+    try:
+        from sealed.pool_fill import avg_price_for_sku
+    except ImportError:
+        from pool_fill import avg_price_for_sku  # type: ignore[no-redef]
+
+    by_sku: dict[str, list[ScanRow]] = {}
+    for r in rows:
+        if r.bucket not in ("real_opportunities", "review_required"):
+            continue
+        if r.match_confidence != "HIGH" or not r.sku_id:
+            continue
+        by_sku.setdefault(r.sku_id, []).append(r)
+
+    out: list[dict] = []
+    for sku_id, sku_rows in by_sku.items():
+        first = sku_rows[0]
+        listings = [
+            {"seller": r.seller, "price_brl": r.price_brl, "qty_avail": r.qty_avail}
+            for r in sku_rows
+        ]
+        avg = avg_price_for_sku(listings, us_price_brl=first.us_price_brl or 0.0, sku=sku_id)
+        out.append({
+            "sku_id": sku_id,
+            "sku_name": first.sku_name,
+            "product_type": first.product_type,
+            "bucket": first.bucket,
+            "n_sellers": avg.n_sellers,
+            "total_qty": avg.total_qty,
+            "qty_unknown_sellers": avg.qty_unknown_sellers,
+            "best_price": avg.best_price,
+            "weighted_avg_price": avg.weighted_avg_price,
+            "us_price_brl": avg.us_price_brl,
+            "avg_margin_pct": avg.avg_margin_pct,
+        })
+    order = {"real_opportunities": 0, "review_required": 1}
+    out.sort(key=lambda d: (order.get(d["bucket"], 2), -d["avg_margin_pct"]))
+    return out
 
 
 # --------------------------------------------------------------------------

@@ -110,6 +110,7 @@ def _write_unified(all_rows: list, summaries: list[dict], out_dir: Path, stamp: 
     try:
         from openpyxl import Workbook
         from openpyxl.styles import Font, PatternFill
+        from openpyxl.utils import get_column_letter
         wb = Workbook()
         ws = wb.active
         ws.title = "Todos os Deals"
@@ -144,6 +145,36 @@ def _write_unified(all_rows: list, summaries: list[dict], out_dir: Path, stamp: 
                 info["green"], info["yellow"], info["red"],
                 info["elapsed_s"], (info["desc"] or info["error"])[:80],
             ])
+
+        # aba Preço médio por SKU — custo real ao varrer vários logistas (sem frete)
+        try:
+            sku_avgs = s.compute_sku_averages(all_rows)
+        except Exception as exc:
+            print(f"  [orq] aviso: preço médio por SKU falhou ({exc})")
+            sku_avgs = []
+        if sku_avgs:
+            ws3 = wb.create_sheet("Preço médio por SKU")
+            ws3.append(["Produto", "Tipo", "Tier", "# Vendedores", "Qtd total",
+                        "Melhor preço (R$)", "Preço médio (R$)", "US ref (R$)",
+                        "Margem média %"])
+            for c in ws3[1]:
+                c.font = Font(bold=True)
+            tier = {"real_opportunities": "GREEN", "review_required": "YELLOW"}
+            for a in sku_avgs:
+                ws3.append([
+                    a["sku_name"], a["product_type"], tier.get(a["bucket"], a["bucket"]),
+                    a["n_sellers"], a["total_qty"], round(a["best_price"], 2),
+                    round(a["weighted_avg_price"], 2), round(a["us_price_brl"], 2),
+                    round(a["avg_margin_pct"], 1),
+                ])
+                fill = fills.get(a["bucket"])
+                if fill:
+                    for c in ws3[ws3.max_row]:
+                        c.fill = fill
+            for idx, w in enumerate([40, 18, 8, 13, 10, 16, 16, 13, 14], start=1):
+                ws3.column_dimensions[get_column_letter(idx)].width = w
+            ws3.freeze_panes = "A2"
+
         wb.save(xlsx_path)
         return xlsx_path
     except Exception as exc:

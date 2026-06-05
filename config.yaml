@@ -91,10 +91,10 @@ deal_criteria:
   # = lucro sobre o capital de compra, ANTES das taxas. É o ÚNICO filtro.
   min_total_margin_pct: 0.40   # alvo p/ GREEN: produto com >= 40% de margem total
   review_floor_pct: 0.30       # entre 30% e 40% -> YELLOW (revisar); abaixo -> rejeitado
-  # Classificação é SÓ por margem bruta (operador 2026-06-02): sem saber o frete
-  # real e o tamanho do lote por remessa, a margem líquida é um número fabricado.
-  # Por isso NÃO há guarda-chuva de ROI líquido — a líquida é calculada e exibida
-  # apenas como alerta informativo, nunca define GREEN/YELLOW/RED.
+  # Classificação é SÓ por margem bruta/total (operador 2026-06-02): sem saber o
+  # frete real e o tamanho do lote por remessa, a margem líquida é um número
+  # fabricado — por isso ela foi REMOVIDA da saída (operador 2026-06-05). NÃO há
+  # guarda-chuva de ROI líquido; só a margem total define GREEN/YELLOW/RED.
   # Equivalências (mesma margem, denominador diferente):
   #   40% de margem total    <=>  ~29% mais barato que os EUA
   #   30% mais barato que US <=>  ~43% de margem total

@@ -51,10 +51,8 @@ lucro_bruto   = us_price_brl − preço_compra_br
 margem_total       = lucro_bruto / preço_compra_br    <- filtro principal
 mais_barato_que_us = lucro_bruto / us_price_brl        <- métrica de leitura
 
-lucro_liquido  = lucro_bruto
-                 − taxas_percentuais(sobre a venda US)
-                 − frete_internacional − 3PL − buffer_imposto
-margem_liquida = lucro_liquido / preço_compra_br       <- alerta, não filtro
+# margem líquida REMOVIDA (operador 2026-06-05): depende de frete + tamanho do
+# lote por remessa, desconhecidos no scan → seria fabricada. Só a TOTAL conta.
 ```
 
 Todas as premissas vivem em `config.yaml` e são impressas no relatório —
@@ -66,14 +64,15 @@ Filtro principal: **margem total** — lucro sobre o preço de compra, antes das
 taxas. Alvo: 30–35% mais barato que os EUA, o que equivale a ≥40% de margem
 total.
 
-- `GREEN`  — match HIGH, margem total ≥ 40% **e** lucro líquido ≥ 0.
-- `YELLOW` — margem total entre 30% e 40%; ou margem total no alvo mas
-  líquido negativo (taxas consomem o lucro); ou match ambíguo (REVIEW).
+- `GREEN`  — match HIGH e margem total ≥ 40%.
+- `YELLOW` — margem total entre 30% e 40%; ou match ambíguo (REVIEW).
 - `RED`    — margem total < 30%, sem match, sem referência US, ou abaixo do
   preço mínimo de operação.
 
-A margem líquida após taxas é alerta, não filtro: não esconde um deal, mas
-rebaixa de GREEN para YELLOW quando o lucro real fica negativo.
+A classificação é só por margem total. Frete + tamanho do lote por remessa são
+desconhecidos no scan, então não há margem líquida — em vez disso, o relatório
+mostra o **preço médio ponderado por SKU** (varrendo vários logistas) e a margem
+total recomputada nesse preço médio.
 
 Saída separada em três baldes: `real_opportunities`, `review_required`,
 `rejected`.
