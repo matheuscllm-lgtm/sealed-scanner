@@ -224,8 +224,6 @@ class ScanRow:
     gross_profit_brl: float | None = None
     total_margin_pct: float | None = None      # (US - BR) / BR  -> filtro principal
     us_discount_pct: float | None = None        # (US - BR) / US  -> "mais barato que US"
-    net_profit_brl: float | None = None
-    net_margin_pct: float | None = None
     deal_confidence: str = ""         # GREEN / YELLOW / RED
     bucket: str = ""                  # real_opportunities / review_required / rejected
     main_risk: str = ""
@@ -314,9 +312,14 @@ def match_listing(title: str, registry: list[Sku]) -> list[Sku]:
 # --------------------------------------------------------------------------
 # Cálculo de margem (convenção ROI: lucro sobre o capital investido)
 # --------------------------------------------------------------------------
-def compute_margin(price_brl: float, us_usd: float, config: dict, bulk_qty: int = 1) -> dict:
+def compute_margin(price_brl: float, us_usd: float, config: dict) -> dict:
+    """Só margem BRUTA (operador 2026-06-05): a diferença bruta de preço vs US.
+
+    A margem líquida (taxas + frete intl + 3PL) foi removida — depende de frete
+    real e tamanho do lote por remessa, desconhecidos no scan, então seria um
+    número fabricado. A única coisa que importa é a diferença bruta de preço.
+    """
     fx = config["currency"]["usd_brl"]
-    fees = config["fees"]
 
     us_brl = us_usd * fx
     gross_profit = us_brl - price_brl
@@ -325,28 +328,11 @@ def compute_margin(price_brl: float, us_usd: float, config: dict, bulk_qty: int 
     # Quanto o BR está mais barato que a referência US (denominador = preço US).
     us_discount = gross_profit / us_brl if us_brl else 0.0
 
-    # Taxas percentuais incidem sobre o preço de VENDA nos EUA.
-    pct_fees = us_brl * (
-        fees["platform_fee_pct"] + fees["payment_fee_pct"] + fees["fx_spread_pct"]
-    )
-    # Custos fixos (frete intl + 3PL) são amortizados por bulk_qty: você embarca
-    # bulk_qty unidades no mesmo container para o 3PL. Para boxes/ETBs bulk=1
-    # (já é a unidade de embarque); para packs costuma ser ≥24.
-    flat_fees = (fees["international_shipping_brl"] + fees["three_pl_brl"]) / max(1, bulk_qty)
-    tax = us_brl * fees.get("tax_buffer_pct", 0.0)
-
-    net_profit = us_brl - price_brl - pct_fees - flat_fees - tax
-    net_margin = net_profit / price_brl if price_brl else 0.0
-
     return {
         "us_price_brl": round(us_brl, 2),
         "gross_profit_brl": round(gross_profit, 2),
         "total_margin_pct": round(total_margin, 4),
         "us_discount_pct": round(us_discount, 4),
-        "net_profit_brl": round(net_profit, 2),
-        "net_margin_pct": round(net_margin, 4),
-        "flat_fees_brl": round(flat_fees, 2),
-        "bulk_qty": bulk_qty,
     }
 
 
@@ -422,22 +408,20 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
         row.recommended_action = "Coletar referência TCGPlayer antes de avaliar"
         return row
 
-    fin = compute_margin(row.price_brl, us_usd, config, bulk_qty=sku.bulk_qty)
+    fin = compute_margin(row.price_brl, us_usd, config)
     row.us_price_usd = us_usd
     row.usd_brl = config["currency"]["usd_brl"]
     row.us_price_brl = fin["us_price_brl"]
     row.gross_profit_brl = fin["gross_profit_brl"]
     row.total_margin_pct = fin["total_margin_pct"]
     row.us_discount_pct = fin["us_discount_pct"]
-    row.net_profit_brl = fin["net_profit_brl"]
-    row.net_margin_pct = fin["net_margin_pct"]
 
     total_m = fin["total_margin_pct"]
 
     # Classificação por MARGEM BRUTA apenas (operador 2026-06-02): sem saber o
-    # frete real e o tamanho do lote por remessa, a margem líquida é fabricada;
-    # GREEN/YELLOW/RED é puro margem total (bruta). A líquida segue calculada e
-    # exibida (row.net_*), mas só como alerta informativo, nunca como filtro.
+    # frete real e o tamanho do lote por remessa, a margem líquida seria
+    # fabricada — por isso foi REMOVIDA (operador 2026-06-05). GREEN/YELLOW/RED
+    # é puro margem total (bruta): a diferença bruta de preço vs US.
     if total_m >= min_total:
         row.deal_confidence = "GREEN"
         row.bucket = "real_opportunities"
@@ -690,18 +674,11 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
     for cell in ws[1]:
         cell.font = header_font
         cell.fill = header_fill
-    fees = config["fees"]
     assumptions = [
         ("Fonte dos anúncios", source_desc),
         ("Referência US", ", ".join(config["sources"]["usa"])),
         ("Câmbio USD/BRL", config["currency"]["usd_brl"]),
         ("Modo de câmbio", config["currency"]["mode"]),
-        ("Taxa de marketplace (venda)", f"{fees['platform_fee_pct']:.0%}"),
-        ("Taxa de pagamento", f"{fees['payment_fee_pct']:.0%}"),
-        ("Spread cambial", f"{fees['fx_spread_pct']:.0%}"),
-        ("Frete internacional (R$/un)", fees["international_shipping_brl"]),
-        ("3PL / manuseio (R$/un)", fees["three_pl_brl"]),
-        ("Buffer de imposto", f"{fees.get('tax_buffer_pct', 0.0):.0%}"),
         ("Preço mínimo BR (R$)", config["filters"]["min_brazil_price_brl"]),
         ("Margem total alvo (GREEN)", f"{config['deal_criteria']['min_total_margin_pct']:.0%}"),
         ("Piso p/ revisão (YELLOW)", f"{config['deal_criteria']['review_floor_pct']:.0%}"),

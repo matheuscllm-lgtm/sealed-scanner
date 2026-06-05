@@ -14,17 +14,9 @@ currency:
   mode: fetch
   usd_brl: 5.05
 
-fees:
-  # Taxas aplicadas sobre o PREÇO DE VENDA nos EUA (onde o produto é revendido).
-  platform_fee_pct: 0.13      # marketplace de revenda (eBay/TCGPlayer)
-  payment_fee_pct: 0.03       # processamento de pagamento
-  fx_spread_pct: 0.02         # spread cambial na repatriação
-  # Custos fixos por unidade, em BRL. Selado é volumoso/pesado — frete maior
-  # que singles. Valores conservadores; ajuste conforme o 3PL real.
-  international_shipping_brl: 90
-  three_pl_brl: 25
-  tax_buffer_pct: 0.00        # buffer de imposto/importação (0 = desligado)
-
+# Bloco `fees:` REMOVIDO (operador 2026-06-05): só alimentava a margem líquida,
+# que saiu do scanner. Classificação e saída são só margem BRUTA (diferença
+# bruta de preço vs US). O `frete:` abaixo é OUTRO modelo, do pool_fill.
 frete:
   # Modelo de frete usado pelo pool_fill.
   #   flat       (operador 2026-05-28) — frete FIXO do lote inteiro, via

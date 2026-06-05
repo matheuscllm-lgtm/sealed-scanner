@@ -175,8 +175,8 @@ def main() -> None:
     lines.append("")
     lines.append("## Ranking completo (do mais vantajoso pro menos)")
     lines.append("")
-    lines.append("| # | Status | Produto (EN) | TCG (R$, média) | Liga (R$) | Margem % | Δ R$/unid | Lucro líq R$ |")
-    lines.append("|---|---|---|---:|---:|---:|---:|---:|")
+    lines.append("| # | Status | Produto (EN) | TCG (R$, média) | Liga (R$) | Margem % | Δ R$/unid |")
+    lines.append("|---|---|---|---:|---:|---:|---:|")
     for i, r in enumerate(rows, start=1):
         prod = r.get("Produto (canônico)") or "(ambíguo)"
         liga_brl = r.get("Preço BR (R$)") or ""
@@ -191,8 +191,7 @@ def main() -> None:
             f"| {i} | {status_label(r)} | {prod[:60]} | "
             f"{tcg_cell} | {liga_cell} | "
             f"{fmt_pct(r.get('Margem total %'))} | "
-            f"{delta_unit(tcg_brl, liga_brl)} | "
-            f"{fmt_brl(r.get('Lucro líquido est. (R$)'))} |"
+            f"{delta_unit(tcg_brl, liga_brl)} |"
         )
 
     lines.append("")
@@ -201,9 +200,8 @@ def main() -> None:
     lines.append("- **TCG (R$, média)** = TCGPlayer Market price (US$) convertido pra R$ pelo câmbio do scan; clique pra abrir a página canônica do produto pra conferência.")
     lines.append("- **Liga (R$)** = preço atual do anúncio na Liga Pokémon (em R$); clique pra abrir o anúncio.")
     lines.append("- **Margem %** = (TCG − Liga) / Liga × 100 — markup bruto, ANTES de taxas e frete.")
-    lines.append("- **Δ R$/unid** = TCG R$ − Liga R$, em reais por unidade do produto.")
-    lines.append("- **Lucro líq R$** = lucro após taxas TCGPlayer + frete internacional amortizado + 3PL (bulk_qty = 24 unid p/ packs).")
-    lines.append("- **GREEN** = margem ≥ 40% E lucro líquido ≥ 0 · **YELLOW** = 30-40% ou líquido neg ou match ambíguo · **RED** = < 30%.")
+    lines.append("- **Δ R$/unid** = TCG R$ − Liga R$, em reais por unidade do produto (diferença BRUTA de preço).")
+    lines.append("- **GREEN** = margem total ≥ 40% · **YELLOW** = 30-40% ou match ambíguo · **RED** = < 30%.")
     lines.append("- **Sources blocked daqui**: Mercado Livre (anti-bot/auth). Liga = OK via patchright headful (`--janela`).")
     lines.append("")
     lines.append(f"Gerado em {datetime.now(timezone.utc).isoformat(timespec='seconds')}")
