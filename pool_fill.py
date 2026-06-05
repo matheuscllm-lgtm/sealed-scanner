@@ -118,6 +118,11 @@ def fill_pool(
         budget de produtos). No modo flat o frete não influencia o ranking
         por vendedor, então a ordenação é por preço unitário puro.
 
+    freight_model='none' (operador 2026-06-05): SEM frete. O pool mostra só o
+        custo consolidado das mercadorias (o que cabe no budget, mais barato
+        primeiro), sem inventar frete — que depende do lote/remessa, decidido
+        fora do scanner. total_freight=0; outlay=produtos; margem é a bruta.
+
     Args:
         listings: dicts com price_brl, qty_avail (int|None), seller.
         sku: identificador (só guardado no result).
@@ -126,7 +131,7 @@ def fill_pool(
                     incluindo os fretes por loja.
         us_price_brl: preço de referência US em BRL.
         frete_unit: frete por loja (só usado em per_seller).
-        freight_model: 'per_seller' | 'flat'.
+        freight_model: 'per_seller' | 'flat' | 'none' (none = freight-free).
         flat_base_pct / flat_per_seller_brl: modelo flat final (operador
             2026-05-28). frete = base_pct × gasto_em_produtos
             + per_seller × (n_lojas − 1). base_pct = perna internacional +
@@ -139,9 +144,14 @@ def fill_pool(
         outlier_factor: descarta price > median × N (typos).
 
     Returns:
-        PoolResult com breakdown + skipped + métricas (margem JÁ inclui frete).
+        PoolResult com breakdown + skipped + métricas (margem inclui frete, salvo no modelo 'none').
     """
     is_flat = freight_model == "flat"
+    # 'none' (operador 2026-06-05): freight-free. Zera o frete e segue pelo
+    # caminho per_seller (que então ordena por preço puro) → o pool reporta só
+    # o custo de mercadoria, sem frete fabricado.
+    if freight_model == "none":
+        frete_unit = 0.0
     listings = list(listings)
     skipped: list[tuple[str, str]] = []
 

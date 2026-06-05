@@ -684,11 +684,16 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
         ("Piso p/ revisão (YELLOW)", f"{config['deal_criteria']['review_floor_pct']:.0%}"),
     ]
     frete_cfg = config.get("frete", {}) or {}
-    if frete_cfg.get("modelo") == "flat":
+    modelo_frete = frete_cfg.get("modelo", "none")
+    if modelo_frete == "none":
+        assumptions.append(
+            ("Frete no pool (volume)", "freight-free — só custo de mercadoria; frete cotado fora do scanner")
+        )
+    elif modelo_frete == "flat":
         base_pct = frete_cfg.get("flat_base_pct", 0.05)
         per_seller = frete_cfg.get("flat_per_seller_brl", 17)
         assumptions += [
-            ("Modelo de frete (pool)", "flat: base % + custo por loja"),
+            ("Modelo de frete (pool)", "flat: base % + custo por loja (ESTIMATIVA)"),
             ("Frete base (sobre gasto)", f"{base_pct:.0%}"),
             ("Frete por loja adicional (R$)", per_seller),
             ("Budget inclui frete", "sim (produtos + frete <= budget)"),
@@ -708,9 +713,8 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
         for b in pool_budgets:
             tag = f"R${int(b):,}".replace(",", ".")
             header.extend([
-                f"Unid @ {tag}", f"Preço efetivo @ {tag}",
-                f"Frete lote @ {tag}", f"Outlay @ {tag}",
-                f"Margem real @ {tag} (%)", f"# Lojas @ {tag}",
+                f"Unid @ {tag}", f"Preço médio @ {tag}",
+                f"Margem total @ {tag} (%)", f"# Lojas @ {tag}",
             ])
         ws.append(header)
         for cell in ws[1]:
@@ -732,13 +736,11 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
                     base.extend([
                         r.total_units,
                         round(r.avg_price_per_unit, 2),
-                        round(r.total_freight_brl, 2),
-                        round(r.total_outlay_brl, 2),
                         round(r.recomputed_margin_vs_us, 1),
                         r.n_sellers_used,
                     ])
                 else:
-                    base.extend(["—", "—", "—", "—", "—", "—"])
+                    base.extend(["—", "—", "—", "—"])
             ws.append(base)
             # Highlight: margem real do maior budget
             biggest = max(pool_budgets)
@@ -754,7 +756,7 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
                     cell.fill = fill
 
         # Larguras
-        widths = [16, 42, 18, 12, 14, 14] + [12, 18, 16, 16, 18, 12] * len(pool_budgets)
+        widths = [16, 42, 18, 12, 14, 14] + [12, 18, 18, 12] * len(pool_budgets)
         for idx, w in enumerate(widths, start=1):
             ws.column_dimensions[get_column_letter(idx)].width = w
         ws.freeze_panes = "C2"
@@ -777,11 +779,11 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
         biggest = max(pool_budgets)
         tag = f"R${int(biggest):,}".replace(",", ".")
         ws.append([])
-        ws.append([f"Top SKUs por margem realista (@ {tag})"])
+        ws.append([f"Top SKUs por margem total (@ {tag})"])
         for cell in ws[ws.max_row]:
             cell.font = header_font
             cell.fill = header_fill
-        ws.append(["SKU", "Unid", "Preço efetivo (R$)", "Margem real %"])
+        ws.append(["SKU", "Unid", "Preço médio (R$)", "Margem total %"])
         for cell in ws[ws.max_row]:
             cell.font = Font(bold=True)
         for item in pool_analysis[:5]:

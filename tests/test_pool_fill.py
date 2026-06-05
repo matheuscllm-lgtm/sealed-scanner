@@ -306,3 +306,29 @@ def test_flat_freight_empty_pool_zero_freight():
     assert result.total_units == 0
     assert result.total_freight_brl == 0.0
     assert result.total_outlay_brl == 0.0
+
+
+def test_none_model_is_freight_free(phf_pack_listings):
+    """freight_model='none' (operador 2026-06-05): pool sem frete fabricado.
+
+    O outlay = só produtos, o preço médio = goods/unid e a margem é a bruta.
+    """
+    result = fill_pool(
+        listings=phf_pack_listings,
+        sku="phf-pack-en",
+        budget_brl=5000.0,
+        us_price_brl=54.54,
+        freight_model="none",
+        skip_qty_unknown=True,
+    )
+    assert result.total_units > 0
+    # Sem frete: nada inventado.
+    assert result.total_freight_brl == 0.0
+    assert result.total_outlay_brl == pytest.approx(result.total_spent_brl)
+    # Preço médio = gasto em produtos / unidades (sem frete).
+    assert result.avg_price_per_unit == pytest.approx(
+        result.total_spent_brl / result.total_units, abs=0.01
+    )
+    # Margem = bruta no preço médio.
+    expected = (54.54 - result.avg_price_per_unit) / result.avg_price_per_unit * 100
+    assert result.recomputed_margin_vs_us == pytest.approx(expected, abs=0.1)

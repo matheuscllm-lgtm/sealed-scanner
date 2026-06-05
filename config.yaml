@@ -26,9 +26,11 @@ frete:
   #              budget de produtos (capital real = produtos + frete).
   #   per_seller (legado) — cada vendedor cobra frete por peso, amortizado
   #              sobre a qty. Usado se cada compra fosse enviada separada.
-  modelo: flat
+  modelo: none   # freight-free (operador 2026-06-05): pool mostra só o custo de
+                 # mercadoria. Frete depende do lote/remessa, cotado fora do
+                 # scanner. Trocar p/ 'flat'/'per_seller' reativa a estimativa.
   #
-  # Modelo FLAT final (operador 2026-05-28). Frete tem 2 pernas:
+  # Modelo FLAT (operador 2026-05-28) — só vale se 'modelo' acima != none. Frete tem 2 pernas:
   #   frete = flat_base_pct × gasto_em_produtos  +  flat_per_seller_brl × (n_lojas − 1)
   #
   #   flat_base_pct      = perna internacional + 1ª loja (escala com o valor
