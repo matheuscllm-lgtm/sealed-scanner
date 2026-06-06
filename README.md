@@ -164,6 +164,7 @@ powershell -ExecutionPolicy Bypass -File .\register_task.ps1
 | **[AGENT.md](AGENT.md)** | Especificação do agente (missão, classificação, regras invioláveis) | ✅ Sim |
 | **[GOALS.md](GOALS.md)** | Lista viva de objetivos (lida pelo `/goal`) | ✅ Sim |
 | **[SETUP-WINDOWS.md](SETUP-WINDOWS.md)** | Setup de ambiente no Windows (Python + Chrome p/ Liga headful) — referência de 1ª vez, não diretiva operacional | ✅ Sim (setup) |
+| `docs/SESSION-*.md` | Resumão datado da última sessão (o que rolou + onde retomar). Snapshot — defere ao README | ✅ Referência (mais recente) |
 | `docs/archive/*` | Planos/handoffs antigos (repo/branch/workflow obsoletos) | 🔴 **Não** — histórico |
 
 ---
