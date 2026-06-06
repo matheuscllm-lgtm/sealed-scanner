@@ -153,7 +153,28 @@ amazon:
 
 olx:
   # Usado por --source olx (olx_adapter.py). Lê __NEXT_DATA__ embutido na
-  # página de busca da OLX. Sem CF, sem auth.
+  # página de busca da OLX.
+  #
+  # ATENÇÃO: a OLX TEM Cloudflare WAF (managed-rule / IP-reputation block) —
+  # NÃO é "sem CF". Não é o Turnstile da Liga (sem captcha pra clicar); é
+  # escalação por reputação de IP: a 1ª request num IP frio às vezes passa,
+  # depois o WAF flaga o IP e mantém o block. Por isso há dois modos de
+  # transporte:
+  #
+  #   mode=urllib     (DEFAULT) GET direto + retry/backoff/jitter. Recupera a
+  #                   janela de IP frio e não aborta no 1º block, mas NÃO
+  #                   entrega OLX cheia de forma confiável quando o IP já está
+  #                   flagado. Sem custo.
+  #
+  #   mode=firecrawl  Roteia a busca via Firecrawl (render + proxy stealth),
+  #                   fura o WAF e retorna o HTML renderizado pro MESMO parser.
+  #                   É o que faz a OLX entregar inventário de forma repetível.
+  #                   Usa FIRECRAWL_API_KEY (env/.env, já setada no ambiente).
+  mode: urllib
+  # firecrawl_proxy: stealth      # proxy do Firecrawl (stealth fura o WAF da OLX)
+  # firecrawl_wait_ms: 6000       # ms de espera pós-render antes de capturar o HTML
+  # firecrawl_api_key: ""         # NÃO commitar; prefira FIRECRAWL_API_KEY / .env
+  #
   # Inventário OLX é esparso por SKU; buscamos por tipo de produto (booster
   # box / elite trainer box / booster bundle / ...) e deixamos o matcher
   # filtrar contra o registry.

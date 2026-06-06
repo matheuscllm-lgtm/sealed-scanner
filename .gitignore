@@ -17,6 +17,8 @@ credentials.json
 *.xlsx
 *.log
 *.html
+# fixtures de teste são versionadas (HTML estável p/ travar seletores)
+!tests/fixtures/*.html
 *_cache.json
 
 # Run artifacts (cada scan escreve um dir timestamped fresco)
