@@ -1,125 +1,171 @@
 # Session Handoff — TCG Sealed Arbitrage Scanner
 
-**Atualizado:** 2026-05-30
-**Repo:** `matheuscllm-lgtm/tcg-arbitrage-scanners`
-**Branch:** `main` (sealed mergeado via PR #1; correções recentes via PR #2)
-**Últimos commits:** `62ffee7` (refresh preços US) · watchdog auto-refresh US · `f8ccd48` (P0 qty + cp1252)
+**Atualizado:** 2026-06-06
+**Repo:** `matheuscllm-lgtm/sealed-arbitrage-scanner` (repo DEDICADO; arquivos na raiz, sem prefixo `sealed/`)
+**Branch de trabalho:** `claude/determined-curie-Q1Ur8` · **PR:** #7 (draft)
+**Commits desta sessão:** `47f43e2` (refresh preços US) · `7d0fdfc` (remove margem líquida + preço médio por SKU) · `6ee3645` (exclui ROI/líquido do core + snapshots) · `e917c18` (pool freight-free)
 
-> ⚠️ Versões antigas deste arquivo diziam "Liga bloqueada / OLX funcionando".
-> Isso se **inverteu** a partir de 2026-05-26. O estado abaixo é o atual.
+> ⚠️ Handoffs antigos apontavam pro monorepo `tcg-arbitrage-scanners` com tudo
+> dentro de `sealed/`, e falavam em "ROI líquido mínimo", "22 testes", "55 SKUs".
+> Tudo isso está **desatualizado**. O estado abaixo é o atual.
+
+---
+
+## ‼️ Como falar com o operador (dono do projeto)
+
+O operador **NÃO é programador**. Evite jargão ou **sempre explique em português
+simples** o que cada termo significa (ex.: "PR" = página no GitHub que junta as
+mudanças; "teste" = verificação automática que o programa faz nele mesmo). Ele é
+afiadíssimo na lógica de negócio (margem, frete, estoque), mas não na linguagem
+técnica. Quando ele corrige uma premissa, ele costuma estar certo.
 
 ## TL;DR
 
-O scanner roda **ponta-a-ponta no PC do operador** (Windows, em casa). O
-`watchdog.py` mantém um scan unificado fresco (<45min) de hora em hora via Task
-Scheduler, atualiza os preços US ~1x/dia, e entrega `unified_deals.csv` +
-`unified_sealed_*.xlsx` rankeado (GREEN→YELLOW→RED) com coluna de quantidade
-disponível por anúncio.
+Programa que acha **produtos selados de Pokémon** (booster box, ETB, bundle,
+lata/tin, pack) mais baratos no Brasil do que valem nos EUA — pra revenda.
 
-**Fontes BR:** Liga (✅ local headful, ~765 listings/scan) e Amazon BR (✅ ~25)
-funcionam. OLX está **bloqueada** (Cloudflare WAF por IP) — só destrava com
-proxy residencial (decisão de capital, fora de escopo de código). O orquestrador
-registra OLX como "bloqueada" e segue com as outras sem derrubar o run.
+- **O programa SÓ monta a lista. NUNCA compra nada.** Toda compra é decisão do
+  operador, conferida na mão. Nada é automatizado — isso é **por design**.
+- **A busca da Liga roda no PC do operador** (Windows, Chrome real, IP
+  residencial). A nuvem **não** consegue (Cloudflare da Liga bloqueia IP de
+  datacenter). A nuvem serve pra: manter código/preços/registry corretos e gerar
+  o XLSX de entrega quando há um `unified_deals.csv`.
 
-## Como retomar — comandos
+## A regra de ouro (decidido nesta sessão — não rediscutir)
+
+**A única métrica que importa é a DIFERENÇA BRUTA DE PREÇO** vs a referência US:
+
+- **Margem total %** = (preço US − preço BR) ÷ preço BR
+- **Δ R$/unid** = preço US − preço BR (a mesma diferença, em reais)
+- Classificação: **VERDE ≥ 40% · AMARELO 30–40% · VERMELHO < 30%**
+
+Tudo que dependia de suposição foi **removido**, porque não é sabido na hora da
+busca:
+
+- **Margem líquida / lucro líquido / ROI** (taxas de revenda, frete intl., 3PL):
+  removido do output **e do miolo** (`compute_margin` só calcula bruto; bloco
+  `fees:` saiu do `config.yaml`; campos `net_*` saíram do `ScanRow`).
+- **Frete**: depende do tamanho do lote/remessa, cotado pelo operador na mão. O
+  programa **não inventa frete em lugar nenhum** — inclusive a simulação de
+  volume (Pool) agora é **freight-free**.
+
+## O que mudou nesta sessão
+
+1. **Preços de referência US atualizados** (`build_us_reference.py`; 104/105 SKUs
+   têm preço via tcgcsv).
+2. **Margem líquida removida da saída** (CSV + XLSX) e criado o **"Preço médio
+   por SKU"**: média ponderada pela **quantidade** disponível, somando vários
+   vendedores, **sem frete**, com filtro de outlier (typo tipo R$925 num pack de
+   R$33 cai sozinho). Aparece no XLSX unificado e no de entrega. Função:
+   `pool_fill.avg_price_for_sku()` + `scanner.compute_sku_averages()`.
+3. **ROI/líquido excluído do core e dos snapshots** — `snapshot.py` e
+   `snapshot_friendly.py` reescritos gross-only (Margem total + Δ R$/unid).
+4. **Pool freight-free por default** — novo `freight_model="none"` no
+   `pool_fill`; `config.frete.modelo: none`. A aba *Pool Analysis* perdeu as
+   colunas Frete/Outlay; "Preço efetivo"→"Preço médio", "Margem real"→"Margem
+   total". A engine ainda suporta `flat`/`per_seller` via config (testado), mas
+   não é o default.
+
+**Testes: 27 passando** (`tests/test_pool_fill.py`, `test_avg_price.py`,
+`test_shipping.py`). Eu rodo na mão a cada mudança.
+
+> Decisão tomada: **NÃO adicionar CI** (verificações rodando sozinhas no GitHub)
+> por enquanto — como o operador confere toda compra, não compensa.
+
+## Como retomar — comandos (rodar no PC, na raiz do repo)
 
 ```bash
-# Estado do watchdog (o que está rodando / idade do último resultado)
-python sealed/watchdog.py --status
+# 0. Puxar a versão deste trabalho
+git pull origin claude/determined-curie-Q1Ur8
 
-# Forçar um scan unificado agora (amazon + liga + olx)
-python sealed/watchdog.py --force
+# 1. Atualiza os preços US (TCGPlayer via tcgcsv)
+python build_us_reference.py
 
-# Scan unificado direto (sem watchdog)
-python sealed/run_all_sources.py
-python sealed/run_all_sources.py --sources amazon,liga   # subset
+# 2. Scan unificado (Amazon + Liga + OLX) — abre Chrome real p/ a Liga
+python run_all_sources.py
+#    subset:    python run_all_sources.py --sources amazon,liga
+#    keep-alive: python watchdog.py --force   /   python watchdog.py --status
+# Saída: results/unified_<timestamp>/unified_deals.csv (+ .xlsx completo)
 
-# Fonte única (debug)
-python sealed/sealed_arbitrage_scanner.py --source liga    # Chrome headful abre
-python sealed/sealed_arbitrage_scanner.py --source amazon
+# 3. XLSX condensado p/ entrega (só VERDE+AMARELO + Resumo + Preço médio)
+python scripts/build_delivery_xlsx.py
+#    usa o results/unified_* mais recente; imprime PATH=...
 
-# Refresh manual dos preços US (o watchdog já faz ~1x/dia)
-python sealed/build_us_reference.py
+# Fonte única (debug):
+python sealed_arbitrage_scanner.py --source liga     # Chrome headful abre
+python sealed_arbitrage_scanner.py --source amazon
 ```
 
-O Liga em `mode=local` abre um **Chrome real visível** (necessário pro
-Cloudflare) usando o IP residencial da casa — é isso que o ambiente de nuvem
-não consegue replicar.
+Setup de primeira vez no Windows: ver `SETUP-WINDOWS.md`. O Liga em `mode=local`
+abre um **Chrome visível** (necessário pro Cloudflare) no IP residencial da casa.
 
 ## Estado das peças
 
 | Peça | Estado | Notas |
 |---|---|---|
-| Pipeline (match → margem → bucket → CSV/XLSX) | ✅ | `sealed_arbitrage_scanner.py`; 22 testes |
+| Pipeline (match → margem bruta → bucket → CSV/XLSX) | ✅ | `sealed_arbitrage_scanner.py` |
 | Orquestrador multi-fonte unificado | ✅ | `run_all_sources.py` → `unified_deals.csv` + xlsx |
-| Watchdog keep-alive (Task Scheduler 15min) | ✅ | `watchdog.py`; resultado sempre <45min |
-| Refresh de preços US automático (~1x/dia) | ✅ | dentro do watchdog, antes do scan, não-fatal |
+| Watchdog keep-alive + auto-refresh US | ✅ | `watchdog.py` (Task Scheduler) |
 | Coluna `Qtd disponível` por anúncio | ✅ | sprite `imgunid` da Liga → `CSV_COLUMNS` |
-| Console Windows cp1252 (UnicodeEncodeError) | ✅ | `lib/console.harden_stdout()` nos entrypoints |
-| Pool Fill (frete flat, aba `Pool Analysis`) | ✅ | `pool_fill.py` (20 tests); `POOL-FILL-PLAN.md` |
-| Critério margem total ≥40% GREEN / 30-40% YELLOW | ✅ | `config.yaml` → `deal_criteria` |
-| Critério ROI líquido mínimo (`min_net_margin_pct`) | ✅ | barra "GREEN ilusório" em produto caro |
-| Fonte US: TCGPlayer Market via tcgcsv.com | ✅ | sem auth, sem CF; 54/55 SKUs |
-| Fonte BR: **Liga Pokémon** (`--source liga`) | ✅ | `mode=local` (patchright + Chrome real) |
-| Fonte BR: **Amazon BR** (`--source amazon`) | ✅ | busca textual HTML, sem CF |
-| Fonte BR: **OLX** (`--source olx`) | ❌ | Cloudflare WAF por IP — precisa proxy residencial |
+| **Preço médio por SKU** (ponderado por qty, sem frete) | ✅ | `avg_price_for_sku`; abas nos 2 XLSX |
+| Pool Fill — simulação de volume **freight-free** | ✅ | `pool_fill.py`; aba `Pool Analysis` (sem colunas de frete) |
+| Classificação SÓ margem bruta (40/30) | ✅ | `config.yaml` → `deal_criteria` |
+| ~~ROI líquido / margem líquida~~ | ❌ REMOVIDO | não existe mais em lugar nenhum |
+| Fonte US: TCGPlayer Market via tcgcsv.com | ✅ | sem auth/CF; 104/105 SKUs com preço |
+| Fonte BR: **Liga Pokémon** (`--source liga`) | ✅ | só no PC (`mode=local`, Chrome real) |
+| Fonte BR: **Amazon BR** (`--source amazon`) | ✅ | HTML, sem CF — roda até na nuvem |
+| Fonte BR: **OLX** (`--source olx`) | ❌ | Cloudflare WAF por IP — só com proxy residencial |
 | Fonte BR: Mercado Livre | ❌ | API 403 + anti-bot; fora de escopo |
 
-## O que falta pra "inteiramente funcional"
+`sku_registry.yaml`: ~105 SKUs (boxes, ETBs, bundles, packs, mini tins).
 
-**Técnico (sem capital):**
-- Alerta automático (Telegram/email) quando aparecer GREEN novo — backlog P2.
-- `pb-pack-en` (Pitch Black booster pack) sem `marketPrice` na tcgcsv (54/55).
-- Expandir registry pra sets antigos (Crown Zenith, Silver Tempest, Lost Origin,
-  Astral Radiance, Brilliant Stars) quando os recentes virarem commodity.
-- Modelar comissão TCGPlayer Direct vs eBay separadamente (hoje 13% genérico).
-
-**Capital (decisão do operador):**
-- **Proxy residencial** (~US$20-50/mês: Bright Data/Smartproxy) — destrava OLX e,
-  mais importante, permite rodar o Liga **na nuvem 24/7** sem depender do PC de
-  casa ligado com Chrome aberto. É o único gargalo de "autonomia completa".
-- Validação manual de cada GREEN (vendedor, frete real, qty) antes de comprar —
-  isto é **por design**, não é bug.
-
-## File map
+## File map (raiz do repo)
 
 ```
-sealed/
-├── PLAN.md / POOL-FILL-PLAN.md / AGENT.md / README.md
-├── SESSION-HANDOFF.md                  # este arquivo
-├── config.yaml                         # câmbio, taxas, critérios, modos dos adapters
-├── sku_registry.yaml                   # 55 SKUs (boxes, ETBs, bundles, packs)
-├── sealed_arbitrage_scanner.py         # pipeline principal (--source ...)
-├── run_all_sources.py                  # orquestrador unificado (amazon+liga+olx)
-├── run_liga_local.py                   # runner Liga local + snapshot
-├── watchdog.py                         # keep-alive + auto-refresh US (Task Scheduler)
-├── build_us_reference.py               # refresh preços US (tcgcsv)
-├── pool_fill.py                        # engine de pool/frete flat
+.
+├── README.md / AGENT.md / RUNBOOK.md / GOALS.md / PLAN.md
+├── POOL-FILL-PLAN.md / SETUP-WINDOWS.md / SESSION-HANDOFF.md (este)
+├── config.yaml                      # câmbio, critérios (deal_criteria), frete (modelo: none)
+├── sku_registry.yaml                # ~105 SKUs
+├── sealed_arbitrage_scanner.py      # pipeline principal (--source ...)
+├── run_all_sources.py               # orquestrador unificado (amazon+liga+olx)
+├── run_liga_local.py                # runner Liga local + snapshot
+├── watchdog.py                      # keep-alive + auto-refresh US
+├── build_us_reference.py            # refresh preços US (tcgcsv)
+├── pool_fill.py                     # preço médio (avg_price_for_sku) + simulação de volume (fill_pool)
 ├── liga_adapter.py / amazon_adapter.py / olx_adapter.py
-├── lib/                                # console.py, errors.py, shipping.py
-├── data/us_reference.json              # snapshot preços US (auto-refresh ~1x/dia)
-├── mock_data/liga_listings.json        # listings offline pra teste
-├── scripts/snapshot.py + snapshot_friendly.py
-├── snapshots/                          # notas datadas pro vault Obsidian
-├── results/unified_<ts>/               # saídas dos scans + run.log
-└── tests/                              # 22 testes (pool_fill, shipping, ...)
+├── probe_liga_sealed.py / probe_olx_local.py   # sondas de debug
+├── lib/                             # console, errors, shipping, browser
+├── data/us_reference.json           # snapshot preços US
+├── mock_data/                       # listings offline pra teste
+├── scripts/                         # build_delivery_xlsx, snapshot[_friendly], registry tools
+├── snapshots/                       # notas datadas (Obsidian)
+├── results/unified_<ts>/            # saídas dos scans
+└── tests/                           # 27 testes (pool_fill, avg_price, shipping)
 ```
 
-## Fontes BR — diagnóstico do bloqueio (histórico)
+## O que falta
+
+- **Rodar a busca completa da Liga no PC** e validar na mão os melhores (conferir
+  estoque + cotar frete real antes de comprar). É o próximo passo natural.
+- (Capital, decisão do operador) Proxy residencial (~US$20-50/mês) destravaria a
+  OLX e permitiria rodar a Liga na nuvem 24/7 — único gargalo de autonomia total.
+- (Backlog) Alerta automático (Telegram/email) quando aparecer VERDE novo.
+
+## Diagnóstico do bloqueio das fontes (histórico)
 
 - **OLX**: Cloudflare WAF classifica o IP (datacenter/VPN) como bot. Não é o
-  desafio Turnstile auto-clearable — patchright headful **não** resolve
-  (validado). Só proxy residencial.
-- **Liga**: mesmo bloqueio de IP **resolvido** rodando local com Chrome real no
-  IP residencial da casa (default `mode=local`). `mode=scraperapi` existe como
-  fallback mas consome ~25-50 credits/render (free tier 1000/mês não cobre 1
-  scan completo).
-- **Mercado Livre**: API exige app credentials (403); front tem anti-bot pesado.
+  desafio Turnstile auto-clearable — patchright headful **não** resolve. Só proxy
+  residencial.
+- **Liga**: mesmo bloqueio de IP, **resolvido** rodando local com Chrome real no
+  IP residencial (`mode=local`). `mode=scraperapi` existe como fallback, mas
+  consome créditos e o free tier não cobre 1 scan completo.
+- **Mercado Livre**: API exige app credentials (403); front com anti-bot pesado.
 
-## Para retomar na próxima sessão
+## Pra retomar na próxima sessão
 
-1. Ler este arquivo + `GOALS.md` (lista viva de pendências priorizadas).
-2. `python sealed/watchdog.py --status` — confirmar que está vivo e fresco.
-3. Conferir o último `results/unified_<ts>/` e o snapshot mais recente.
-4. Se aparecer GREEN: validar manualmente (vendedor, frete, qty) antes de comprar.
-5. Pendências técnicas e de capital estão no `GOALS.md`.
+1. Ler este arquivo + `GOALS.md` (pendências priorizadas).
+2. Confirmar a branch: `git pull origin claude/determined-curie-Q1Ur8`.
+3. Rodar a busca no PC (passos acima) e conferir `results/unified_<ts>/`.
+4. Qualquer VERDE: validar na mão (vendedor, estoque, frete real) antes de comprar.
+5. Falar com o operador em português simples, explicando os termos.
