@@ -53,33 +53,39 @@ ordem (detalhe operacional completo em **[RUNBOOK.md](RUNBOOK.md)**):
 pip install -r requirements.txt          # 1ª vez
 
 python build_us_reference.py             # 1) refresca preços US (tcgcsv) — rápido
-python run_all_sources.py                # 2) scan Amazon + Liga(HEADFUL) + OLX — ~15-25 min, NO PC
+python run_all_sources.py                # 2) scan default: Liga(HEADFUL) + OLX + MercadoLivre — NO PC
+                                         #    (Amazon é opt-in: --sources amazon)
 python scripts/build_delivery_xlsx.py    # 3) XLSX condensado (GREEN+YELLOW) p/ entrega
 ```
 
-- `run_all_sources.py` orquestra as 3 fontes e escreve
+- `run_all_sources.py` orquestra as fontes e escreve
   `results/unified_<timestamp>/unified_deals.csv` + `.xlsx` (coluna `Fonte`,
   ordenado `GREEN → YELLOW → RED`, aba `Resumo`). Imprime o marcador
   `UNIFIED_OUT_DIR=`. Uma fonte bloqueada (ex.: OLX no CF WAF) **não derruba** o
   run (`SourceBlockedError`, degradação graciosa); só falha se NENHUMA entregar.
+  **Default = Liga + OLX + MercadoLivre.** A **Amazon é opt-in** (`--sources amazon`):
+  seu fallback Firecrawl é per-SKU (~51 créditos/run sob block pesado), caro p/ rodar
+  sempre — as outras 3 custam ~0 (Liga headful) ou ~8 créditos (OLX/ML per-tipo).
 - Entrega: mostrar **todas** as linhas GREEN/YELLOW no chat (não amostra curada),
   ordem por margem total desc, com `Qtd disponível`. Arquivo completo fica em
   `results/unified_<ts>/` (gitignorado).
 
 Estado das fontes:
 
-| Fonte | Estado | Observação |
-|---|---|---|
-| **Liga Pokémon** | ✅ operacional | `patchright` + Chrome **headful**. Passo mais longo (~15-25 min). |
-| **Amazon BR** | ✅ operacional | `urllib` puro; pode tomar 503 por SKU em pico (tratado por-query). |
-| **OLX** | ⚠️ intermitente | CF WAF por reputação de IP — oscila. Degradação graciosa quando bloqueado. |
+| Fonte | Estado | Default? | Observação |
+|---|---|---|---|
+| **Liga Pokémon** | ✅ operacional | ✅ sim | `patchright` + Chrome **headful**. Passo mais longo (~15-25 min). $0. |
+| **OLX** | ⚠️ intermitente | ✅ sim | CF WAF por reputação de IP. `urllib`-first + Tier 2 Firecrawl render/proxy. ~8 créditos quando bloqueado. |
+| **MercadoLivre** | ⚠️ intermitente | ✅ sim | anti-bot próprio (device-check). **firecrawl-first** (`waitFor ~14s`, stealth). ~8 créditos/run. |
+| **Amazon BR** | ✅ operacional | ❌ **opt-in** | `urllib`+retry → fallback Firecrawl per-SKU. **~51 créditos/run** sob block pesado → fora do default; rode com `--sources amazon`. |
 
 Rodar uma fonte só (debug):
 
 ```bash
 python sealed_arbitrage_scanner.py --source mock
-python sealed_arbitrage_scanner.py --source amazon
+python sealed_arbitrage_scanner.py --source amazon         # opt-in (gasta créditos Firecrawl)
 python sealed_arbitrage_scanner.py --source olx
+python sealed_arbitrage_scanner.py --source mercadolivre
 python run_liga_local.py --janela --snapshot     # Liga headful + snapshot
 ```
 
@@ -177,18 +183,19 @@ powershell -ExecutionPolicy Bypass -File .\register_task.ps1
 ├── RUNBOOK.md                  # passo-a-passo de scan + entrega
 ├── AGENT.md / GOALS.md         # spec do agente / objetivos vivos
 ├── SETUP-WINDOWS.md            # setup de ambiente no Windows (1ª vez)
-├── run_all_sources.py          # ENTRADA padrão — orquestrador 3 fontes → tabela unificada
+├── run_all_sources.py          # ENTRADA padrão — orquestrador (default 3 fontes + Amazon opt-in) → tabela unificada
 ├── sealed_arbitrage_scanner.py # pipeline (1 fonte por vez): match → margem → classificação
 ├── build_us_reference.py       # gera data/us_reference.json a partir de tcgcsv
 ├── scripts/build_delivery_xlsx.py  # XLSX condensado (GREEN+YELLOW) p/ entrega
 ├── watchdog.py / register_task.ps1 # keep-alive autônomo (DESATIVADO — modo manual)
 ├── liga_adapter.py             # Liga (patchright + Chrome headful)
-├── amazon_adapter.py           # Amazon BR (urllib)
-├── olx_adapter.py              # OLX (urllib + detecção de WAF block)
+├── amazon_adapter.py           # Amazon BR (urllib+retry → fallback Firecrawl; opt-in)
+├── olx_adapter.py              # OLX (urllib-first + Tier 2 Firecrawl render/proxy)
+├── mercadolivre_adapter.py     # MercadoLivre BR (firecrawl-first; device-check próprio)
 ├── pool_fill.py                # preço efetivo por unidade dado budget
 ├── config.yaml                 # câmbio, taxas, critérios, seções dos adapters
 ├── sku_registry.yaml           # catálogo curado de SKUs selados (= o matcher)
-├── lib/                        # errors, shipping, console, browser
+├── lib/                        # errors, shipping, console, browser, firecrawl (transporte /scrape)
 ├── data/us_reference.json      # preços REAIS TCGPlayer (gerado, commitado)
 └── docs/archive/               # 🔴 histórico — não seguir
 ```
@@ -199,5 +206,5 @@ Cada execução cria `results/<timestamp>/` (gitignorado — runs nunca se mistu
 
 | Arquivo | Conteúdo |
 |---|---|
-| `unified_deals.csv` / `unified_sealed_<ts>.xlsx` | tabela consolidada das 3 fontes (via `run_all_sources.py`) |
+| `unified_deals.csv` / `unified_sealed_<ts>.xlsx` | tabela consolidada das fontes (via `run_all_sources.py`) |
 | `real_opportunities.csv` / `review_required.csv` / `rejected.csv` | por bucket (via `sealed_arbitrage_scanner.py`) |
