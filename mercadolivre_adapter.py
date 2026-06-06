@@ -38,25 +38,21 @@ fabricamos: o que não dá pra ler com confiança, não inventamos.
 """
 from __future__ import annotations
 
-import http.client
-import json
 import os
 import random
 import re
 import time
-import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
 
 from lib.errors import SourceBlockedError
+from lib.firecrawl import FirecrawlFetcher  # transporte /scrape compartilhado (Issue #13)
 
 # Busca por TIPO de produto (queries amplas); o matcher do scanner filtra
 # contra o registry. O path /games-brinquedos ancora a categoria certa e
 # corta parte do ruído de fora de games.
 BASE = "https://lista.mercadolivre.com.br/games-brinquedos/"
-
-FIRECRAWL_ENDPOINT = "https://api.firecrawl.dev/v2/scrape"
 
 # waitFor default ALTO (≠ OLX 6s): o device-check do ML precisa de ~12-15s pra
 # resolver o challenge JS. 6s cai no account-verification (medido).
@@ -237,74 +233,22 @@ class _UrllibFetcher(_Fetcher):
         return body
 
 
-class _FirecrawlFetcher(_Fetcher):
-    """GET via Firecrawl (render + proxy stealth + waitFor alto) — fura o device-check
-    do ML (Tier 1, o caminho pronto). Manda a URL pro /v2/scrape com
-    formats=['rawHtml'], location BR e waitFor≈14s (validado 2026-06-06: volta a
-    busca server-side com os cards). Passa o rawHtml pro MESMO parser. Se mesmo
-    via proxy a resposta vier como account-verification, levanta SourceBlockedError."""
+class _FirecrawlFetcher(FirecrawlFetcher):
+    """ML é firecrawl-first: o device-check próprio precisa de waitFor ~14s
+    (≠ 6s da OLX) e o anti-bot é o `account-verification` dele, não o CF.
 
-    def __init__(self, api_key: str, *, proxy: str = "stealth",
-                 wait_ms: int = _DEFAULT_WAIT_MS, timeout: int = 220, retries: int = 2):
-        self.api_key = api_key
-        self.proxy = proxy
-        self.wait_ms = wait_ms
-        self.timeout = timeout
-        self.retries = retries
+    Transporte (POST /v2/scrape + retry + extração do rawHtml) vem de
+    `lib.firecrawl.FirecrawlFetcher`; aqui só os parâmetros por-fonte + o
+    detector de block. Se a resposta vier como account-verification mesmo via
+    proxy, a base levanta SourceBlockedError — não fabrica dado."""
+    SOURCE = "mercadolivre"
+    DEFAULT_WAIT_MS = _DEFAULT_WAIT_MS  # 14000 — device-check do ML
+    DEFAULT_TIMEOUT = 220
+    BLOCK_MSG = "anti-bot do ML mesmo via Firecrawl"
+    BLOCK_HINT = _BLOCK_HINT
 
-    def _call(self, url: str) -> dict:
-        payload = {
-            "url": url,
-            "formats": ["rawHtml"],
-            "location": {"country": "BR", "languages": ["pt-BR"]},
-            "proxy": self.proxy,
-            "waitFor": self.wait_ms,
-            "onlyMainContent": False,
-        }
-        req = urllib.request.Request(
-            FIRECRAWL_ENDPOINT,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={
-                "Authorization": "Bearer " + self.api_key,
-                "Content-Type": "application/json",
-            },
-        )
-        last_exc: Exception | None = None
-        for attempt in range(self.retries + 1):
-            try:
-                with urllib.request.urlopen(req, timeout=self.timeout) as r:
-                    return json.loads(r.read().decode("utf-8", errors="replace"))
-            except urllib.error.HTTPError as exc:
-                last_exc = exc
-                # 402 = sem créditos (não retenta). 408/429/5xx = transitório.
-                if exc.code in (408, 429, 500, 502, 503, 504) and attempt < self.retries:
-                    time.sleep(2 * (attempt + 1))
-                    continue
-                raise
-            except (urllib.error.URLError, http.client.RemoteDisconnected,
-                    ConnectionError, TimeoutError) as exc:
-                last_exc = exc
-                if attempt < self.retries:
-                    time.sleep(2 * (attempt + 1))
-                    continue
-                raise
-        assert last_exc is not None
-        raise last_exc
-
-    def get_html(self, url: str) -> str:
-        j = self._call(url)
-        if not j.get("success", True):
-            raise RuntimeError(f"Firecrawl falhou: {j.get('error') or j}")
-        data = j.get("data", j)
-        html = data.get("rawHtml") or data.get("html") or ""
-        if not html:
-            raise RuntimeError("Firecrawl retornou HTML vazio (sem rawHtml).")
-        # Mesmo via render/proxy o device-check pode vencer — honesto, não fabrica.
-        if _is_block_page(html):
-            raise SourceBlockedError(
-                "mercadolivre", "anti-bot do ML mesmo via Firecrawl", _BLOCK_HINT
-            )
-        return html
+    def _is_block(self, html: str) -> bool:
+        return _is_block_page(html)
 
 
 def _make_fetcher(ml_cfg: dict) -> _Fetcher:
