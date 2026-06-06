@@ -1,0 +1,26 @@
+<!-- Fixture mínima da SERP da Amazon BR p/ travar os seletores do parser.
+     Estrutura espelha amazon.com.br/s?k=... em 2026-06-05:
+     - resultado 1: válido (título EN, preço BR, ASIN via /dp/)
+     - resultado 2: sem preço (deve ser descartado pelo parser)
+     - resultado 3: válido, com milhar no preço (R$ 1.412,58) -->
+<html><body>
+<div class="s-main-slot">
+
+  <div data-component-type="s-search-result" data-asin="B0ABCDE123">
+    <h2><a class="a-link-normal" href="/Destined-Rivals-Booster/dp/B0ABCDE123/ref=sr_1_1">
+      Pokemon TCG Destined Rivals Booster Box Ingles</a></h2>
+    <span class="a-price"><span class="a-offscreen">R$ 489,90</span></span>
+  </div>
+
+  <div data-component-type="s-search-result" data-asin="B0NOPRICE0">
+    <h2><a class="a-link-normal" href="/Sem-Preco/dp/B0NOPRICE0/">Item sem preco visivel</a></h2>
+  </div>
+
+  <div data-component-type="s-search-result" data-asin="B0FGHIJ456">
+    <h2><a class="a-link-normal" href="/Elite-Trainer-Box/dp/B0FGHIJ456/ref=sr_1_3">
+      Pokemon Elite Trainer Box Mega Evolution</a></h2>
+    <span class="a-price"><span class="a-offscreen">R$ 1.412,58</span></span>
+  </div>
+
+</div>
+</body></html>
