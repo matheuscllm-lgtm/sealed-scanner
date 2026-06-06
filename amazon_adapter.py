@@ -187,35 +187,45 @@ def fetch_listings(config: dict, registry: list[dict]) -> list[dict]:
         query = sku.get("amazon_query") or _derive_query(sku)
         url = BASE + urllib.parse.quote_plus(query)
         html: str | None = None
+        via = "urllib"
         try:
             html = _fetch_retry(url)
         except Exception as exc:
             # urllib esgotou (provável 503 anti-bot persistente). Tenta Firecrawl.
             if fc_available:
+                via = "firecrawl"
                 fc_used += 1
                 try:
                     html = _fetch_firecrawl(url, proxy=firecrawl_proxy)
                     fc_recovered += 1
                 except Exception as fc_exc:
-                    print(f"  [aviso] Amazon urllib+Firecrawl falharam p/ {sku.get('id')}: {exc} / {fc_exc}")
+                    via = "FALHOU"
+                    print(f"  [aviso] Amazon urllib+Firecrawl falharam p/ {sku.get('id')}: {exc} / {fc_exc}", flush=True)
             else:
-                print(f"  [aviso] busca Amazon falhou p/ {sku.get('id')}: {exc}")
+                via = "FALHOU"
+                print(f"  [aviso] busca Amazon falhou p/ {sku.get('id')}: {exc}", flush=True)
+        kept = 0
         if html is None:
             fails += 1
-            continue
-        results = parse_search_results(html)
-        kept = 0
-        for r in results[:limit_per_sku]:
-            asin = r.get("asin") or ""
-            if asin and asin in seen_asins:
-                continue
-            if asin:
-                seen_asins.add(asin)
-            entry = dict(r)
-            entry["id"] = f"AMZ-{sku['id']}-{kept + 1}"
-            entry["source"] = "amazon"
-            all_listings.append(entry)
-            kept += 1
+        else:
+            results = parse_search_results(html)
+            for r in results[:limit_per_sku]:
+                asin = r.get("asin") or ""
+                if asin and asin in seen_asins:
+                    continue
+                if asin:
+                    seen_asins.add(asin)
+                entry = dict(r)
+                entry["id"] = f"AMZ-{sku['id']}-{kept + 1}"
+                entry["source"] = "amazon"
+                all_listings.append(entry)
+                kept += 1
+        # progresso AO VIVO por SKU (flush): o fetch antes era silencioso no
+        # sucesso, sem visibilidade de quantos SKUs caíram no Firecrawl durante
+        # um run longo. via = urllib | firecrawl | FALHOU.
+        print(f"  [amazon] {i + 1:3}/{len(registry)} {str(sku.get('id'))[:22]:22} "
+              f"via={via:9} +{kept} anuncios={len(all_listings):3} "
+              f"fc={fc_used}(recup={fc_recovered}) fails={fails}", flush=True)
         if i < len(registry) - 1:
             # jitter no delay pra não martelar a Amazon em cadência fixa.
             time.sleep(delay + random.uniform(0, 0.75))
