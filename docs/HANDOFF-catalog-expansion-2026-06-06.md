@@ -81,7 +81,14 @@ fontes de uma vez.
 
 `TYPE_RULES` casa **regex no nome do produto no TCGPlayer (em inglês)**. Os
 `type_terms` são em PT+EN (pra casar o título cru das fontes BR). Status: ✅ já
-existe · ➕ adicionar · ⭐ decisão do operador (nicho/ambíguo — ver §3).
+existe · ➕ adicionar · ⭐ decisão do operador (nicho/ambíguo).
+
+> ⚠️ **Os ⭐ desta tabela foram RESOLVIDOS na §3 (2026-06-06).** Em caso de
+> divergência, a §3 manda. Resumo: ETB Pokémon Center **NÃO** entra; "Booster
+> Pack/Sleeved/Blister Unitário" = **um tipo só** (`Sleeved Booster`), blister
+> 2+/triplo = `Blister` à parte; Binder/Poster/Illustration/`ex Box` **separados**;
+> nicho (Pin/Figure/Pouch/Chest) **cadastrar sem query dedicada**; variantes =
+> **preço mediano** por set+tipo.
 
 | Produto (PT operador) | `product_type` canônico (EN) | regex no nome TCGPlayer | type_terms (PT/EN) | Status |
 |---|---|---|---|---|
@@ -151,30 +158,31 @@ reconhecido), as queries precisam mirá-lo:
 
 ---
 
-## 3. Decisões do operador (⭐ marcados na tabela)
+## 3. Decisões do operador — TOMADAS (2026-06-06) ✅
 
-1. **§3.1 "Booster Pack" (solto) vs "Sleeved Booster":** no TCGPlayer existem os
-   dois — `Booster Pack` (avulso solto) e `Sleeved Booster Pack` (avulso com
-   blister). Hoje só temos "Sleeved Booster". **Decidir:** tratar como UM tipo
-   ("Sleeved Booster", englobando os dois) ou DOIS tipos distintos? Recomendação:
-   UM só (o BR raramente distingue), evitando inflar o catálogo.
-2. **Pokémon Center ETB:** hoje é PULADO (`SKIP_NAME` corta "pokemon center").
-   É produto legítimo e caro (exclusivo). **Decidir:** incluir como tipo próprio?
-   Recomendação: incluir (você listou) — preço bem diferente do ETB normal, então
-   precisa ser SKU separado, não colapsar com ETB.
-3. **§3.3 Binder/Collection Box:** hoje "Binder Collection" vira `Collection Box`.
-   Sua lista trata Binder como tipo próprio. **Decidir:** manter colapsado em
-   Collection Box, ou separar Binder/Poster/Illustration/ex Box como tipos
-   distintos? Recomendação: separar (preços e liquidez bem diferentes).
-4. **Nicho (Pin/Figure/Accessory Pouch/Collector Chest):** selados, mas de baixa
-   liquidez e volume no BR. **Decidir:** cadastrar (cobertura total) ou deixar de
-   fora da v1 (foco no que gira)? Recomendação: cadastrar no registry (custo zero,
-   o gerador já pega), mas SEM query dedicada nos adapters.
-5. **Variantes por Pokémon:** o gerador hoje colapsa variantes (8 Mini Tins de
-   Eevee → 1 SKU "Mini Tin", pega o 1º preço). OK pro matching (o tipo importa),
-   mas o preço US é de UMA variante. **Decidir:** aceitar (simples) ou usar preço
-   médio/mediano das variantes? Recomendação: mediana das variantes do mesmo tipo
-   (mais justo) — pequeno ajuste no gerador.
+Resolvidas. Implementar exatamente assim:
+
+1. **ETB Pokémon Center → NÃO incluir.** Manter o corte de `pokemon center` no
+   `SKIP_NAME`. Não cadastrar como tipo. (Linha ⭐ "ETB Pokémon Center" da §2.1 sai.)
+2. **Booster avulso = UM tipo só.** "Booster Pack" (solto), "Sleeved Booster" e
+   "Blister Unitário/Avulso" são **sinônimos** → tudo cai em **`Sleeved Booster`**
+   (type_terms: booster avulso, booster pack, blister unitário, blister avulso,
+   sleeved booster). **Exceção:** blister com MAIS de 1 pacote (duplo/triplo) é
+   tipo **separado** `Blister` (type_terms: blister duplo, blister triplo, 2-pack
+   blister, 3-pack blister; regex `\d-pack blister`). Ou seja: 1 pacote = Sleeved
+   Booster; 2+ pacotes = Blister.
+3. **Separar** Binder Collection, Poster Collection, Illustration Collection (e
+   `ex Box`) como **tipos próprios** — NÃO colapsar em Collection Box. Cada um
+   vira seu `product_type`.
+4. **Cadastrar o nicho** (Deluxe Pin, Figure Collection, Accessory Pouch,
+   Collector Chest) no registry — cobertura total. **Sem query dedicada** nos
+   adapters (entram só se caírem numa busca ampla; poupa custo de Firecrawl).
+5. **Variantes → preço MEDIANO da coleção por tipo.** Quando um (set × tipo) tem
+   N variantes (ex.: as latinhas Mini Tin do Ascended Heroes), o `tcgplayer_product_id`
+   do SKU pode ser de uma variante, mas o **preço US usado = MEDIANA dos
+   `marketPrice` de todas as variantes daquele set+tipo**. Ajustar o gerador
+   (`expand_registry_modern.py`) e/ou o `build_us_reference.py` pra calcular a
+   mediana por grupo (set) + tipo, em vez de pegar o 1º preço.
 
 ---
 
