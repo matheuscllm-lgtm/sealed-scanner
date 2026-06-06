@@ -88,17 +88,22 @@ filters:
 
 deal_criteria:
   # "Margem total" do negócio = (preço_US − preço_BR) / preço_BR
-  # = lucro sobre o capital de compra, ANTES das taxas. É o ÚNICO filtro.
-  min_total_margin_pct: 0.40   # alvo p/ GREEN: produto com >= 40% de margem total
-  review_floor_pct: 0.30       # entre 30% e 40% -> YELLOW (revisar); abaixo -> rejeitado
-  # Classificação é SÓ por margem bruta (operador 2026-06-02): sem saber o frete
-  # real e o tamanho do lote por remessa, a margem líquida é um número fabricado.
-  # Por isso NÃO há guarda-chuva de ROI líquido — a líquida é calculada e exibida
-  # apenas como alerta informativo, nunca define GREEN/YELLOW/RED.
+  # = só a diferença de preço entre os dois produtos, SEM nenhuma taxa embutida.
+  # É o ÚNICO filtro.
+  #
+  # Regra única do operador (2026-06-06, vale pra TODOS os scanners de TCG dele):
+  # margem bruta de 30%. Frete, cartão, IOF e qualquer outra taxa são calculados
+  # POR FORA, na mão. O scanner só compara preço com preço.
+  min_total_margin_pct: 0.30   # >= 30% de margem bruta -> GREEN (é deal)
+  review_floor_pct: 0.30       # abaixo de 30% -> RED (rejeitado). YELLOW fica só
+                               # para match ambíguo (1 anúncio casa com 2+ SKUs).
+  # Classificação é SÓ por margem bruta: sem saber o frete real e o tamanho do
+  # lote por remessa, a margem líquida é um número fabricado. Por isso NÃO há
+  # guarda-chuva de ROI líquido — a líquida é calculada e exibida apenas como
+  # alerta informativo, nunca define GREEN/YELLOW/RED.
   # Equivalências (mesma margem, denominador diferente):
-  #   40% de margem total    <=>  ~29% mais barato que os EUA
-  #   30% mais barato que US <=>  ~43% de margem total
-  #   35% mais barato que US <=>  ~54% de margem total
+  #   30% de margem bruta    <=>  ~23% mais barato que os EUA
+  #   30% mais barato que US <=>  ~43% de margem bruta
 
 sources:
   brazil:
