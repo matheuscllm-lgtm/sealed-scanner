@@ -343,7 +343,11 @@ def fetch_listings(config: dict, registry: list[dict]) -> list[dict]:
                 print(f"  [aviso] busca ML falhou para '{query}': {exc}")
                 continue
             results = parse_search_results(html)
-            slug = query.split("-")[1] if "-" in query else query
+            # slug descritivo e ÚNICO por query: usa o termo completo (sem o
+            # prefixo/sufixo fixos), NÃO query.split("-")[1] — esse pegava só
+            # "booster" tanto p/ booster-box quanto booster-bundle e, como `kept`
+            # reseta por query, dois anúncios distintos colidiam em "ML-booster-1".
+            slug = query.removeprefix("pokemon-").removesuffix("-ingles") or query
             kept = 0
             for r in results[:limit_per_query]:
                 mid = str(r.get("ml_id", ""))

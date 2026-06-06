@@ -232,7 +232,7 @@ def main() -> None:
     harden_stdout()  # console Windows cp1252 quebra em títulos Liga/PT-BR
     p = argparse.ArgumentParser(description="Scan unificado multi-fonte (sealed BR -> US)")
     p.add_argument("--sources", default=",".join(DEFAULT_SOURCES),
-                   help="fontes separadas por vírgula (default: amazon,liga,olx,mercadolivre)")
+                   help=f"fontes separadas por vírgula (default: {','.join(DEFAULT_SOURCES)})")
     p.add_argument("--config", default=str(SCRIPT_DIR / "config.yaml"))
     p.add_argument("--registry", default=str(SCRIPT_DIR / "sku_registry.yaml"))
     p.add_argument("--mock", default=str(SCRIPT_DIR / "mock_data" / "liga_listings.json"))
