@@ -1,4 +1,4 @@
-# HANDOFF — Novo scanner de fonte: **Mercado Livre** (selados Pokémon BR)
+# HANDOFF — Novo scanner de fonte: **Mercado Livre** (Pokémon BR, **EXCLUSIVAMENTE SELADO**)
 
 > **Tarefa isolada pra rodar em outro terminal.** Cria uma 4ª fonte BR
 > (`mercadolivre`) ao lado de Amazon, Liga e OLX. Não bloqueia as outras.
@@ -55,9 +55,24 @@ Rota alternativa de longo prazo (mais robusta e grátis, mas exige setup):
   retorna `mercadolivre OK anúncios>0` de forma **repetível** (não só na 1ª
   request), as linhas casam contra o registry e classificam GREEN/YELLOW/RED
   pelas MESMAS regras de margem das outras fontes, e `pytest` fica verde.
-- **Escopo:** só **selado** (booster box, ETB, bundle, collection box, tin,
-  blister, sleeved booster) e só **inglês** (o matcher filtra o resto). O ML é
-  dominado por **PT-BR/COPAG** — isso é esperado e filtrado, não é bug.
+- **Escopo — INVARIANTE DURO: exclusivamente PRODUTO SELADO** (booster box,
+  ETB, bundle, collection box, tin, blister, sleeved booster), e só **inglês**.
+  **NUNCA** carta avulsa/single, lote de cartas soltas, deck montado/aberto,
+  graded/PSA, acessório (sleeve, deck box, playmat), proxy ou produto danificado.
+  O matcher só casa contra os `product_type` selados do registry e já rejeita
+  carta avulsa (`CARD_NUMBER_RE`/"carta") e idioma não-inglês — mas no ML esse
+  filtro é **mais exigido** que nas outras fontes (ver abaixo). O ML é dominado
+  por **PT-BR/COPAG** — esperado e filtrado, não é bug.
+  > ⚠️ **O ML é o marketplace mais RUIDOSO de não-selado.** Buscas amplas trazem
+  > muito "lote de cartas", "coleção", "deck", single raro caro, carta gradada,
+  > acessório — itens que NÃO são selado e que, se vazarem, contaminam o scan
+  > (ex.: uma carta secreta de R$2000 casando errado com um SKU de box). Defesas:
+  > (a) queries mirando explicitamente o tipo selado (§9); (b) confiar no
+  > `match_listing` (set_terms **E** type_terms — single não tem type_term de
+  > box); (c) o filtro novo-vs-usado (§8.2) corta caixa aberta/danificada;
+  > (d) se surgir uma classe de não-selado que vaza, tratar como bug de escopo,
+  > não relaxar o filtro. **Selado entra; qualquer coisa que não seja selado é
+  > rejeito — sem exceção.**
 
 ---
 
