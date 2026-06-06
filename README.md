@@ -43,8 +43,13 @@ Decisões fixas. Qualquer sessão que rode/entregue o scanner segue **todas**:
    vivo **não roda na nuvem**.
 6. **Modo MANUAL** (desde 2026-06-01). O watchdog/Task Scheduler está
    **DESATIVADO** — só roda quando o operador pede. Ver [Modo autônomo](#modo-autônomo-desativado).
-7. **Entrega no chat + arquivo em disco.** Upload pro Drive é opcional e hoje
-   **pulado** (base64 inline corrompe; rclone recusado pelo operador).
+7. **Entrega = tabela no chat, NUNCA arquivo.** O resultado vai pro operador
+   como **tabela markdown no chat do Claude Code** (terminal ou app), não como
+   arquivo `.xlsx`/`.csv` pra download. O scanner ainda **escreve** a planilha
+   local (gitignored) como subproduto de trabalho, mas a **ENTREGA** é a tabela.
+   Arquivo **só se o operador pedir explicitamente** (ex.: importar em lote).
+   A tabela traz **todos** os deals + `Qtd disponível`. Upload pro Drive
+   permanece pulado (base64 inline corrompe; rclone recusado). (operador 2026-06-06)
 8. **Escopo = SELADO-only.** Este repo busca **só produto selado**. Amazon, OLX e
    ML fazem queries de selado (nunca de cards); a Liga navega as **categorias de
    selado** aqui. A Liga é **dual-repo**: no repo de *cards* ela busca singles;
