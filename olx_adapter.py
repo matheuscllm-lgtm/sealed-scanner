@@ -60,11 +60,10 @@ import urllib.request
 from pathlib import Path
 
 from lib.errors import SourceBlockedError
+from lib.firecrawl import FirecrawlFetcher  # transporte /scrape compartilhado (Issue #13)
 
 BASE = "https://www.olx.com.br/brasil?q="
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0 Safari/537.36"
-
-FIRECRAWL_ENDPOINT = "https://api.firecrawl.dev/v2/scrape"
 
 # Retry/backoff do mode=urllib. O block escala por reputação de IP, então o
 # backoff é mais largo que o de um anti-bot coin-flip — a 1ª request pode
@@ -239,76 +238,22 @@ class _UrllibFetcher(_Fetcher):
         raise last_exc
 
 
-class _FirecrawlFetcher(_Fetcher):
-    """GET via Firecrawl (render + proxy stealth) — fura o WAF da OLX (Tier 2).
+class _FirecrawlFetcher(FirecrawlFetcher):
+    """Firecrawl (render + proxy stealth) — fura o Cloudflare WAF da OLX (Tier 2).
 
-    Manda a URL de busca pro endpoint /v2/scrape com formats=['rawHtml'],
-    location BR e proxy=stealth (validado 2026-06-05: retorna o __NEXT_DATA__
-    renderizado com props.pageProps.ads). Devolve o rawHtml pro MESMO parser.
-    Se mesmo via proxy a resposta vier como página de block, levanta
-    SourceBlockedError — não fabrica dado."""
+    Transporte (POST /v2/scrape + retry + extração do rawHtml) vem de
+    `lib.firecrawl.FirecrawlFetcher`; aqui só os parâmetros por-fonte + o
+    detector de block. O rawHtml renderizado (com `__NEXT_DATA__`) vai pro MESMO
+    parser. Se mesmo via proxy a resposta vier como página de block, a base
+    levanta SourceBlockedError — não fabrica dado."""
+    SOURCE = "olx"
+    DEFAULT_WAIT_MS = 6000  # WAF da OLX clareia em 6s (≠ device-check do ML, 14s)
+    DEFAULT_TIMEOUT = 180
+    BLOCK_MSG = "Cloudflare WAF block mesmo via Firecrawl"
+    BLOCK_HINT = _BLOCK_HINT
 
-    def __init__(self, api_key: str, *, proxy: str = "stealth",
-                 wait_ms: int = 6000, timeout: int = 180, retries: int = 2):
-        self.api_key = api_key
-        self.proxy = proxy
-        self.wait_ms = wait_ms
-        self.timeout = timeout
-        self.retries = retries
-
-    def _call(self, url: str) -> dict:
-        payload = {
-            "url": url,
-            "formats": ["rawHtml"],
-            "location": {"country": "BR", "languages": ["pt-BR"]},
-            "proxy": self.proxy,
-            "waitFor": self.wait_ms,
-            "onlyMainContent": False,
-        }
-        req = urllib.request.Request(
-            FIRECRAWL_ENDPOINT,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={
-                "Authorization": "Bearer " + self.api_key,
-                "Content-Type": "application/json",
-            },
-        )
-        last_exc: Exception | None = None
-        for attempt in range(self.retries + 1):
-            try:
-                with urllib.request.urlopen(req, timeout=self.timeout) as r:
-                    return json.loads(r.read().decode("utf-8", errors="replace"))
-            except urllib.error.HTTPError as exc:
-                last_exc = exc
-                # 402 = sem créditos (não retenta). 408/429/5xx = transitório.
-                if exc.code in (408, 429, 500, 502, 503, 504) and attempt < self.retries:
-                    time.sleep(2 * (attempt + 1))
-                    continue
-                raise
-            except (urllib.error.URLError, http.client.RemoteDisconnected,
-                    ConnectionError, TimeoutError) as exc:
-                last_exc = exc
-                if attempt < self.retries:
-                    time.sleep(2 * (attempt + 1))
-                    continue
-                raise
-        assert last_exc is not None
-        raise last_exc
-
-    def get_html(self, url: str) -> str:
-        j = self._call(url)
-        if not j.get("success", True):
-            raise RuntimeError(f"Firecrawl falhou: {j.get('error') or j}")
-        data = j.get("data", j)
-        html = data.get("rawHtml") or data.get("html") or ""
-        if not html:
-            raise RuntimeError("Firecrawl retornou HTML vazio (sem rawHtml).")
-        # Mesmo via render/proxy o WAF pode bloquear — reporta honesto, não fabrica.
-        if _is_block_page(html):
-            raise SourceBlockedError(
-                "olx", "Cloudflare WAF block mesmo via Firecrawl", _BLOCK_HINT
-            )
-        return html
+    def _is_block(self, html: str) -> bool:
+        return _is_block_page(html)
 
 
 def _make_fetcher(olx_cfg: dict) -> _Fetcher:

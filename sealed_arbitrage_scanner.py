@@ -89,6 +89,68 @@ def contains_term(haystack_norm: str, term: str) -> bool:
     return f" {normalize(term)} " in f" {haystack_norm} "
 
 
+# Sinais FORTES de carta avulsa (single) — fora do escopo de selado. Um single
+# cujo título cita o set + o tipo do box de origem (ex.: "Eevee SVP 173 –
+# Prismatic Evolutions – Elite Trainer Box Promo - Single Card") casava com o
+# SKU do box e gerava MARGEM FANTASMA (preço da carta vs preço do box → +272%).
+# Estes sinais são impossíveis em produto selado legítimo, então um título que
+# os exibe NÃO deve casar com nenhum SKU (rejeitado antes do match).
+# NB: "single" sozinho é proibido aqui — existe "Sealed Single Booster Pack".
+_SINGLE_CARD_TOKENS = (
+    "single card",          # EN explícito (caso Eevee)
+    "carta avulsa", "cartas avulsas", "carta unica", "cartas unicas",  # PT
+)
+# "SVP <n>" = Scarlet & Violet Promo: numeração de carta promo avulsa, nunca selado.
+_PROMO_SINGLE_RE = re.compile(r"\bsvp\s*\d+\b")
+
+
+def looks_like_single_card(title: str) -> bool:
+    """True se o título tem sinal forte de carta avulsa (single), fora do escopo.
+
+    Cobre: 'single card' (EN), 'carta avulsa/única' (PT), código de promo
+    'SVP 173', e numeração de carta 'NNN/NNN' (CARD_NUMBER_RE). Viés conservador
+    de scanner de COMPRA: na dúvida, rejeitar (falso-negativo = perde 1 deal;
+    falso-positivo = deal fantasma que custa tempo/risco ao operador)."""
+    norm = normalize(title)
+    if any(tok in norm for tok in _SINGLE_CARD_TOKENS):
+        return True
+    if _PROMO_SINGLE_RE.search(norm):
+        return True
+    if CARD_NUMBER_RE.search(title):  # 'NNN/NNN' — a barra some na normalização
+        return True
+    return False
+
+
+# Sinais de ACESSÓRIO puro (porta-cartas, playmat, toploader...) — fora do escopo
+# de selado. Caso real (scan 2026-06-06, MercadoLivre): "Elite Trainer Box -
+# Ascended Heroes - Acessórios" (R$95) casava ah-etb-en → +885% fantasma.
+#
+# ⚠️ TOKENS PROIBIDOS aqui (colidem com SKU selado curado — checado nos
+# match-terms do registry 2026-06-06, NÃO só nos nomes):
+#   - 'binder'/'fichario'/'album' → os 4 "Collection Box" (blk/wht/pre/mew) têm
+#     type_term 'binder collection'; suas listagens BR usam "fichário"/"álbum".
+#     Rejeitá-los barraria produto selado real.
+#   - 'sleeve' → 'Sleeved Booster' = 20 SKUs selados.
+#   - 'collection'/'box' → caixas seladas reais.
+# (O "Fichário Binder" +440% do scan NÃO é acessório: é o Collection Box com
+#  preço US do registry inflado — bug de dado, tratado fora deste guard.)
+_ACCESSORY_TOKENS = (
+    "acessorio", "acessorios",   # acessório vendido à parte (viés conservador)
+    "porta carta", "porta cartas", "porta card", "porta deck",
+    "toploader", "top loader", "playmat", "tapete", "deck shield",
+)
+
+
+def looks_like_accessory(title: str) -> bool:
+    """True se o título tem sinal forte de ACESSÓRIO puro (não-selado), fora do escopo.
+
+    Mesmo viés conservador de scanner de COMPRA do `looks_like_single_card`.
+    NÃO usa 'sleeve'/'binder'/'fichario'/'album'/'collection'/'box' — todos são
+    (parte de) produtos selados reais neste registry."""
+    norm = normalize(title)
+    return any(tok in norm for tok in _ACCESSORY_TOKENS)
+
+
 # --------------------------------------------------------------------------
 # Config e registry
 # --------------------------------------------------------------------------
@@ -272,7 +334,15 @@ def load_listings(source: str, mock_path: Path, config: dict,
         listings = olx_adapter.fetch_listings(config, registry_raw or [])
         return listings, f"olx (olx.com.br/brasil — busca ao vivo, {len(listings)} listagens)"
 
-    print(f"ERRO: fonte desconhecida '{source}'. Use 'mock', 'amazon', 'olx' ou 'liga'.")
+    if source == "mercadolivre":
+        # Mercado Livre BR: parser DOM/CSS (sem __NEXT_DATA__). Anti-bot próprio
+        # do ML → firecrawl-first (proxy stealth + waitFor ~14s). Predomina
+        # PT-BR/COPAG; o matcher filtra via exclude_terms.
+        import mercadolivre_adapter
+        listings = mercadolivre_adapter.fetch_listings(config, registry_raw or [])
+        return listings, f"mercadolivre (mercadolivre.com.br — busca ao vivo, {len(listings)} listagens)"
+
+    print(f"ERRO: fonte desconhecida '{source}'. Use 'mock', 'amazon', 'olx', 'mercadolivre' ou 'liga'.")
     sys.exit(2)
 
 
@@ -304,6 +374,13 @@ def build_registry(registry_data: dict) -> list[Sku]:
 
 def match_listing(title: str, registry: list[Sku]) -> list[Sku]:
     """SKUs candidatos: set_term casa E type_term casa E todos requires_term casam E nenhum exclude_term casa."""
+    # Guards de fora-de-escopo ANTES do match: este repo é SELADO-only (Amazon/
+    # OLX/ML buscam só selado; Liga navega categorias de selado). Logo um single
+    # ("Eevee SVP 173 ... ETB ... Single Card") ou um acessório ("ETB ...
+    # Acessórios", "Fichário ... Binder") que vem como ruído do marketplace casaria
+    # o SKU do box e geraria margem fantasma. Fora do escopo → 0 candidatos.
+    if looks_like_single_card(title) or looks_like_accessory(title):
+        return []
     norm = normalize(title)
     candidates: list[Sku] = []
     for sku in registry:
@@ -390,9 +467,12 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
         if any(tok in norm.split() for tok in NON_EN_LANGUAGE_TOKENS):
             row.reject_reason = "idioma_nao_ingles"
             row.main_risk = "Produto não-inglês — sem liquidez no TCGPlayer"
-        elif CARD_NUMBER_RE.search(row.title_br) or contains_term(norm, "carta"):
+        elif looks_like_single_card(row.title_br) or contains_term(norm, "carta"):
             row.reject_reason = "nao_e_selado"
             row.main_risk = "Parece carta avulsa, fora do escopo de selados"
+        elif looks_like_accessory(row.title_br):
+            row.reject_reason = "nao_e_selado"
+            row.main_risk = "Parece acessório (binder/fichário/álbum/etc.), fora do escopo de selados"
         else:
             row.reject_reason = "sem_match_no_registry"
             row.main_risk = "Produto não está no registry curado de SKUs"
@@ -945,7 +1025,8 @@ def main() -> None:
     from lib.console import harden_stdout
     harden_stdout()  # console Windows cp1252 quebra em títulos Liga/PT-BR
     parser = argparse.ArgumentParser(description="TCG Sealed Arbitrage Scanner (Brasil -> EUA)")
-    parser.add_argument("--source", default="mock", choices=["mock", "amazon", "olx", "liga"],
+    parser.add_argument("--source", default="mock",
+                        choices=["mock", "amazon", "olx", "mercadolivre", "liga"],
                         help="fonte dos anúncios (default: mock)")
     parser.add_argument("--config", default=str(SCRIPT_DIR / "config.yaml"),
                         help="caminho do config.yaml")

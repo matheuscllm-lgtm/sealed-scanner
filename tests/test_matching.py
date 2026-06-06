@@ -63,3 +63,70 @@ def test_legit_ambiguity_still_review(registry):
     # Anúncio nomeia os dois sets (White Flare / Black Bolt) — sem umbrella envolvido.
     dual = "Booster Avulso Fogo Branco / Raio Preto Pokémon TCG"
     assert len(S.match_listing(dual, registry)) == 2
+
+
+# --- guard de carta avulsa: single NÃO casa box SKU (margem fantasma) ------
+def test_single_card_nao_casa_box(registry):
+    # Caso real (scan Amazon 2026-06-06): single promo cujo título cita o set E
+    # "Elite Trainer Box" casava pre-etb-en → +272% fantasma. Agora: 0 candidatos.
+    fantasma = "Pokemon - Eevee SVP 173 – Prismatic Evolutions – Elite Trainer Box Promo - Single Card"
+    assert S.match_listing(fantasma, registry) == []
+
+
+def test_selado_real_ainda_casa(registry):
+    # O ETB selado de verdade do mesmo set NÃO pode ser barrado pelo guard.
+    real = "Pokémon TCG Prismatic Evolutions Elite Trainer Box (English)"
+    assert ids(real, registry) == ["pre-etb-en"]
+
+
+def test_sealed_single_booster_pack_nao_e_barrado():
+    # "single" sozinho é legítimo em selado (Sealed Single Booster Pack) — só
+    # 'single card' (e afins) é single de verdade. Não pode disparar o guard.
+    assert S.looks_like_single_card("Pokemon 151 - Sealed Single Booster Pack - English") is False
+
+
+@pytest.mark.parametrize("title,expected", [
+    ("Eevee SVP 173 Prismatic Evolutions Single Card", True),   # EN explícito
+    ("Charizard SVP 044 Promo", True),                          # código SVP
+    ("Pikachu 238/191 Surging Sparks", True),                   # numeração de carta
+    ("Carta Avulsa Pikachu Prismatic", True),                   # PT
+    ("Prismatic Evolutions Elite Trainer Box", False),          # selado
+    ("Mega Evolution Booster Box", False),                      # selado
+    ("Sealed Single Booster Pack 151", False),                  # 'single' ok em selado
+])
+def test_looks_like_single_card(title, expected):
+    assert S.looks_like_single_card(title) is expected
+
+
+# --- guard de acessório PURO: 'Acessórios' não casa box SKU -----------------
+def test_acessorio_puro_nao_casa_box(registry):
+    # Caso real (scan default 2026-06-06, ML): acessório vendido à parte casava
+    # ah-etb-en (ETB real ~R$400) com R$95 → +885% fantasma.
+    aces = "Elite Trainer Box - Ascended Heroes - Acessórios Inglês"
+    assert S.match_listing(aces, registry) == []
+
+
+def test_binder_collection_NAO_e_barrado(registry):
+    # CRÍTICO: 'binder collection' é o type_term dos 4 Collection Box selados —
+    # o guard de acessório NÃO pode barrá-lo (seria falso-negativo de SKU curado).
+    # O "Fichário Binder +440%" do scan é bug de PREÇO do registry (mew-collection-box
+    # US ref de produto caro vs type_term do binder barato), tratado fora do matcher.
+    assert S.looks_like_accessory("Scarlet & Violet 151 Binder Collection") is False
+    assert "mew-collection-box" in ids("Scarlet & Violet 151 Binder Collection English", registry)
+
+
+def test_etb_real_nao_e_barrado_por_acessorio(registry):
+    assert "ah-etb-en" in ids("Pokémon Ascended Heroes Elite Trainer Box Inglês", registry)
+
+
+@pytest.mark.parametrize("title,expected", [
+    ("Elite Trainer Box Acessórios", True),
+    ("Porta Cartas Pokémon Toploader", True),
+    ("Playmat Charizard", True),
+    ("Sleeved Booster Pack Surging Sparks", False),   # 'sleeve' é selado — NÃO barrar
+    ("Scarlet & Violet 151 Binder Collection", False),  # binder collection = selado real
+    ("Prismatic Evolutions Collection Box", False),   # 'collection box' é selado
+    ("Mega Evolution Booster Bundle", False),         # selado
+])
+def test_looks_like_accessory(title, expected):
+    assert S.looks_like_accessory(title) is expected

@@ -22,11 +22,15 @@ isolado.
 
 Decisões fixas. Qualquer sessão que rode/entregue o scanner segue **todas**:
 
-1. **Classificação = SÓ margem bruta.** `GREEN` = margem total ≥ 40%; `YELLOW`
-   = 30–40% ou match ambíguo (REVIEW); `RED` = resto. **Sem guarda-chuva de
-   margem líquida** — sem saber frete real + tamanho de lote, o líquido é
-   fabricado. A líquida é calculada/exibida só como alerta, **nunca** define o
-   bucket. (operador 2026-06-02)
+1. **Classificação = SÓ margem bruta, piso de 30%.** `GREEN` = margem bruta
+   ≥ 30% (é deal); `YELLOW` = match ambíguo (1 anúncio casa com 2+ SKUs, precisa
+   revisão manual); `RED` = margem < 30%, sem match, ou sem referência. Margem
+   bruta = só a diferença de preço entre BR e US, **SEM nenhuma taxa embutida**
+   (frete, cartão, IOF etc. o operador calcula por fora, na mão). **Sem
+   guarda-chuva de margem líquida** — sem saber frete real + tamanho de lote, o
+   líquido é fabricado. A líquida é calculada/exibida só como alerta, **nunca**
+   define o bucket. (regra única do operador 2026-06-06; classificação só-bruta
+   desde 2026-06-02)
 2. **Tabelas mostram `Qtd disponível`** (estoque do vendedor) junto do preço —
    o operador importa em **lote**, nunca 1 unidade.
 3. **Sem recomendação de compra.** Claude é técnico (código/dados/auditoria),
@@ -39,8 +43,21 @@ Decisões fixas. Qualquer sessão que rode/entregue o scanner segue **todas**:
    vivo **não roda na nuvem**.
 6. **Modo MANUAL** (desde 2026-06-01). O watchdog/Task Scheduler está
    **DESATIVADO** — só roda quando o operador pede. Ver [Modo autônomo](#modo-autônomo-desativado).
-7. **Entrega no chat + arquivo em disco.** Upload pro Drive é opcional e hoje
-   **pulado** (base64 inline corrompe; rclone recusado pelo operador).
+7. **Entrega = tabela no chat, NUNCA arquivo.** O resultado vai pro operador
+   como **tabela markdown no chat do Claude Code** (terminal ou app), não como
+   arquivo `.xlsx`/`.csv` pra download. O scanner ainda **escreve** a planilha
+   local (gitignored) como subproduto de trabalho, mas a **ENTREGA** é a tabela.
+   Arquivo **só se o operador pedir explicitamente** (ex.: importar em lote).
+   A tabela traz **todos** os deals + `Qtd disponível`. Upload pro Drive
+   permanece pulado (base64 inline corrompe; rclone recusado). (operador 2026-06-06)
+8. **Escopo = SELADO-only.** Este repo busca **só produto selado**. Amazon, OLX e
+   ML fazem queries de selado (nunca de cards); a Liga navega as **categorias de
+   selado** aqui. A Liga é **dual-repo**: no repo de *cards* ela busca singles;
+   **neste repo** ela busca selado. Consequência p/ o matcher: qualquer single
+   (carta avulsa) ou acessório (porta-cartas, playmat...) que apareça é **ruído do
+   marketplace** → rejeitado nos guards `looks_like_single_card` /
+   `looks_like_accessory` (NUNCA casa SKU). ⚠️ binder/fichário/álbum **não** são
+   acessório aqui — são o produto "Binder Collection" selado (4 SKUs Collection Box).
 
 ---
 
@@ -53,33 +70,39 @@ ordem (detalhe operacional completo em **[RUNBOOK.md](RUNBOOK.md)**):
 pip install -r requirements.txt          # 1ª vez
 
 python build_us_reference.py             # 1) refresca preços US (tcgcsv) — rápido
-python run_all_sources.py                # 2) scan Amazon + Liga(HEADFUL) + OLX — ~15-25 min, NO PC
+python run_all_sources.py                # 2) scan default: Liga(HEADFUL) + OLX + MercadoLivre — NO PC
+                                         #    (Amazon é opt-in: --sources amazon)
 python scripts/build_delivery_xlsx.py    # 3) XLSX condensado (GREEN+YELLOW) p/ entrega
 ```
 
-- `run_all_sources.py` orquestra as 3 fontes e escreve
+- `run_all_sources.py` orquestra as fontes e escreve
   `results/unified_<timestamp>/unified_deals.csv` + `.xlsx` (coluna `Fonte`,
   ordenado `GREEN → YELLOW → RED`, aba `Resumo`). Imprime o marcador
   `UNIFIED_OUT_DIR=`. Uma fonte bloqueada (ex.: OLX no CF WAF) **não derruba** o
   run (`SourceBlockedError`, degradação graciosa); só falha se NENHUMA entregar.
+  **Default = Liga + OLX + MercadoLivre.** A **Amazon é opt-in** (`--sources amazon`):
+  seu fallback Firecrawl é per-SKU (~51 créditos/run sob block pesado), caro p/ rodar
+  sempre — as outras 3 custam ~0 (Liga headful) ou ~8 créditos (OLX/ML per-tipo).
 - Entrega: mostrar **todas** as linhas GREEN/YELLOW no chat (não amostra curada),
   ordem por margem total desc, com `Qtd disponível`. Arquivo completo fica em
   `results/unified_<ts>/` (gitignorado).
 
 Estado das fontes:
 
-| Fonte | Estado | Observação |
-|---|---|---|
-| **Liga Pokémon** | ✅ operacional | `patchright` + Chrome **headful**. Passo mais longo (~15-25 min). |
-| **Amazon BR** | ✅ operacional | `urllib` puro; pode tomar 503 por SKU em pico (tratado por-query). |
-| **OLX** | ⚠️ intermitente | CF WAF por reputação de IP — oscila. Degradação graciosa quando bloqueado. |
+| Fonte | Estado | Default? | Observação |
+|---|---|---|---|
+| **Liga Pokémon** | ✅ operacional | ✅ sim | `patchright` + Chrome **headful**. Passo mais longo (~15-25 min). $0. |
+| **OLX** | ⚠️ intermitente | ✅ sim | CF WAF por reputação de IP. `urllib`-first + Tier 2 Firecrawl render/proxy. ~8 créditos quando bloqueado. |
+| **MercadoLivre** | ⚠️ intermitente | ✅ sim | anti-bot próprio (device-check). **firecrawl-first** (`waitFor ~14s`, stealth). ~8 créditos/run. |
+| **Amazon BR** | ✅ operacional | ❌ **opt-in** | `urllib`+retry → fallback Firecrawl per-SKU. **~51 créditos/run** sob block pesado → fora do default; rode com `--sources amazon`. |
 
 Rodar uma fonte só (debug):
 
 ```bash
 python sealed_arbitrage_scanner.py --source mock
-python sealed_arbitrage_scanner.py --source amazon
+python sealed_arbitrage_scanner.py --source amazon         # opt-in (gasta créditos Firecrawl)
 python sealed_arbitrage_scanner.py --source olx
+python sealed_arbitrage_scanner.py --source mercadolivre
 python run_liga_local.py --janela --snapshot     # Liga headful + snapshot
 ```
 
@@ -108,13 +131,14 @@ compartilhado). Ao adicionar SKUs de uma era nova, repetir o padrão.
 ## Modelo de margem
 
 ```
-margem_total = (preço_US − preço_BR) / preço_BR        # ÚNICO filtro
+margem_bruta = (preço_US − preço_BR) / preço_BR        # ÚNICO filtro
 ```
 
-Lucro sobre o capital de compra, antes das taxas. Classificação **só por margem
-bruta** (ver [Invariantes](#-invariantes-do-operador-não-violar) #1):
-**GREEN** ≥ 40% · **YELLOW** 30–40% ou REVIEW · **RED** < 30% / sem match / sem
-ref US / abaixo do preço mínimo.
+Só a diferença de preço entre os dois produtos, **SEM nenhuma taxa embutida**.
+Classificação **só por margem bruta**, piso de **30%** (regra única do operador
+2026-06-06; ver [Invariantes](#-invariantes-do-operador-não-violar) #1):
+**GREEN** ≥ 30% · **YELLOW** = match ambíguo (REVIEW) · **RED** < 30% / sem match
+/ sem ref US / abaixo do preço mínimo.
 
 A margem líquida (após ~18% de taxas + frete + 3PL) é **calculada e exibida como
 alerta informativo**, mas **NÃO** define o bucket. A diferença também é exibida
@@ -177,18 +201,19 @@ powershell -ExecutionPolicy Bypass -File .\register_task.ps1
 ├── RUNBOOK.md                  # passo-a-passo de scan + entrega
 ├── AGENT.md / GOALS.md         # spec do agente / objetivos vivos
 ├── SETUP-WINDOWS.md            # setup de ambiente no Windows (1ª vez)
-├── run_all_sources.py          # ENTRADA padrão — orquestrador 3 fontes → tabela unificada
+├── run_all_sources.py          # ENTRADA padrão — orquestrador (default 3 fontes + Amazon opt-in) → tabela unificada
 ├── sealed_arbitrage_scanner.py # pipeline (1 fonte por vez): match → margem → classificação
 ├── build_us_reference.py       # gera data/us_reference.json a partir de tcgcsv
 ├── scripts/build_delivery_xlsx.py  # XLSX condensado (GREEN+YELLOW) p/ entrega
 ├── watchdog.py / register_task.ps1 # keep-alive autônomo (DESATIVADO — modo manual)
 ├── liga_adapter.py             # Liga (patchright + Chrome headful)
-├── amazon_adapter.py           # Amazon BR (urllib)
-├── olx_adapter.py              # OLX (urllib + detecção de WAF block)
+├── amazon_adapter.py           # Amazon BR (urllib+retry → fallback Firecrawl; opt-in)
+├── olx_adapter.py              # OLX (urllib-first + Tier 2 Firecrawl render/proxy)
+├── mercadolivre_adapter.py     # MercadoLivre BR (firecrawl-first; device-check próprio)
 ├── pool_fill.py                # preço efetivo por unidade dado budget
 ├── config.yaml                 # câmbio, taxas, critérios, seções dos adapters
 ├── sku_registry.yaml           # catálogo curado de SKUs selados (= o matcher)
-├── lib/                        # errors, shipping, console, browser
+├── lib/                        # errors, shipping, console, browser, firecrawl (transporte /scrape)
 ├── data/us_reference.json      # preços REAIS TCGPlayer (gerado, commitado)
 └── docs/archive/               # 🔴 histórico — não seguir
 ```
@@ -199,5 +224,5 @@ Cada execução cria `results/<timestamp>/` (gitignorado — runs nunca se mistu
 
 | Arquivo | Conteúdo |
 |---|---|
-| `unified_deals.csv` / `unified_sealed_<ts>.xlsx` | tabela consolidada das 3 fontes (via `run_all_sources.py`) |
+| `unified_deals.csv` / `unified_sealed_<ts>.xlsx` | tabela consolidada das fontes (via `run_all_sources.py`) |
 | `real_opportunities.csv` / `review_required.csv` / `rejected.csv` | por bucket (via `sealed_arbitrage_scanner.py`) |
