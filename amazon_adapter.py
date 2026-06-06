@@ -19,7 +19,6 @@ agressiva em preço.
 """
 from __future__ import annotations
 
-import json
 import os
 import random
 import re
@@ -29,12 +28,14 @@ import urllib.parse
 import urllib.request
 
 from lib.errors import SourceBlockedError
+from lib.firecrawl import FIRECRAWL_V1, extract_raw_html, post_scrape  # transporte /scrape compartilhado (Issue #13)
 
 BASE = "https://www.amazon.com.br/s?k="
 # Rota de fallback: Firecrawl (render + proxy residencial) atravessa o 503
-# anti-bot que o urllib direto leva. Chamada via REST pura (sem dependência
-# nova). Só dispara quando o urllib+retry esgota — economiza créditos.
-FIRECRAWL_ENDPOINT = "https://api.firecrawl.dev/v1/scrape"
+# anti-bot que o urllib direto leva. Só dispara quando o urllib+retry esgota
+# — economiza créditos. Usa a rota /v1 (papel de FALLBACK), não a classe
+# primária do lib.firecrawl (que OLX/ML usam como transporte principal).
+FIRECRAWL_ENDPOINT = FIRECRAWL_V1
 # Pool de User-Agents pra não bater na Amazon sempre com a mesma assinatura
 # (reduz a chance de anti-bot disparar por padrão de request).
 UAS = (
@@ -103,25 +104,14 @@ def _fetch_firecrawl(url: str, proxy: str = "stealth", country: str = "BR",
     key = _firecrawl_key()
     if not key:
         raise RuntimeError("FIRECRAWL_API_KEY ausente — fallback Firecrawl indisponível.")
-    body = json.dumps({
-        "url": url,
-        "formats": ["rawHtml"],
-        "proxy": proxy,
-        "location": {"country": country, "languages": ["pt-BR"]},
-        "onlyMainContent": False,
-    }).encode("utf-8")
-    req = urllib.request.Request(FIRECRAWL_ENDPOINT, data=body, headers={
-        "Authorization": f"Bearer {key}",
-        "Content-Type": "application/json",
-    })
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        payload = json.loads(r.read().decode("utf-8", errors="replace"))
-    if not payload.get("success"):
-        raise RuntimeError(f"Firecrawl não retornou success=True: {str(payload)[:200]}")
-    html = (payload.get("data") or {}).get("rawHtml") or ""
-    if not html:
-        raise RuntimeError("Firecrawl retornou rawHtml vazio.")
-    return html
+    # Transporte compartilhado (lib.firecrawl): /v1, single-shot (retries=0 — o
+    # retry da Amazon vive na camada urllib, antes do fallback), sem waitFor.
+    # default_success=False = exige `success` truthy explícito (semântica /v1).
+    envelope = post_scrape(
+        url, api_key=key, endpoint=FIRECRAWL_ENDPOINT, proxy=proxy,
+        country=country, wait_ms=None, timeout=timeout, retries=0,
+    )
+    return extract_raw_html(envelope, default_success=False)
 
 
 def _price_to_float(text: str) -> float | None:

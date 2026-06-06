@@ -33,7 +33,7 @@ if str(SCRIPT_DIR) not in sys.path:
 import sealed_arbitrage_scanner as s
 from lib.errors import SourceBlockedError
 
-DEFAULT_SOURCES = ["amazon", "liga", "olx"]  # liga é o longo; olx falha rápido
+DEFAULT_SOURCES = ["amazon", "liga", "olx", "mercadolivre"]  # liga é o longo; olx/ml via firecrawl
 BUCKET_ORDER = {"real_opportunities": 0, "review_required": 1, "rejected": 2}
 
 
@@ -227,7 +227,7 @@ def main() -> None:
     harden_stdout()  # console Windows cp1252 quebra em títulos Liga/PT-BR
     p = argparse.ArgumentParser(description="Scan unificado multi-fonte (sealed BR -> US)")
     p.add_argument("--sources", default=",".join(DEFAULT_SOURCES),
-                   help="fontes separadas por vírgula (default: amazon,liga,olx)")
+                   help="fontes separadas por vírgula (default: amazon,liga,olx,mercadolivre)")
     p.add_argument("--config", default=str(SCRIPT_DIR / "config.yaml"))
     p.add_argument("--registry", default=str(SCRIPT_DIR / "sku_registry.yaml"))
     p.add_argument("--mock", default=str(SCRIPT_DIR / "mock_data" / "liga_listings.json"))
