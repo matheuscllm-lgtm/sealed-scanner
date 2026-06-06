@@ -89,6 +89,38 @@ def contains_term(haystack_norm: str, term: str) -> bool:
     return f" {normalize(term)} " in f" {haystack_norm} "
 
 
+# Sinais FORTES de carta avulsa (single) — fora do escopo de selado. Um single
+# cujo título cita o set + o tipo do box de origem (ex.: "Eevee SVP 173 –
+# Prismatic Evolutions – Elite Trainer Box Promo - Single Card") casava com o
+# SKU do box e gerava MARGEM FANTASMA (preço da carta vs preço do box → +272%).
+# Estes sinais são impossíveis em produto selado legítimo, então um título que
+# os exibe NÃO deve casar com nenhum SKU (rejeitado antes do match).
+# NB: "single" sozinho é proibido aqui — existe "Sealed Single Booster Pack".
+_SINGLE_CARD_TOKENS = (
+    "single card",          # EN explícito (caso Eevee)
+    "carta avulsa", "cartas avulsas", "carta unica", "cartas unicas",  # PT
+)
+# "SVP <n>" = Scarlet & Violet Promo: numeração de carta promo avulsa, nunca selado.
+_PROMO_SINGLE_RE = re.compile(r"\bsvp\s*\d+\b")
+
+
+def looks_like_single_card(title: str) -> bool:
+    """True se o título tem sinal forte de carta avulsa (single), fora do escopo.
+
+    Cobre: 'single card' (EN), 'carta avulsa/única' (PT), código de promo
+    'SVP 173', e numeração de carta 'NNN/NNN' (CARD_NUMBER_RE). Viés conservador
+    de scanner de COMPRA: na dúvida, rejeitar (falso-negativo = perde 1 deal;
+    falso-positivo = deal fantasma que custa tempo/risco ao operador)."""
+    norm = normalize(title)
+    if any(tok in norm for tok in _SINGLE_CARD_TOKENS):
+        return True
+    if _PROMO_SINGLE_RE.search(norm):
+        return True
+    if CARD_NUMBER_RE.search(title):  # 'NNN/NNN' — a barra some na normalização
+        return True
+    return False
+
+
 # --------------------------------------------------------------------------
 # Config e registry
 # --------------------------------------------------------------------------
@@ -304,6 +336,11 @@ def build_registry(registry_data: dict) -> list[Sku]:
 
 def match_listing(title: str, registry: list[Sku]) -> list[Sku]:
     """SKUs candidatos: set_term casa E type_term casa E todos requires_term casam E nenhum exclude_term casa."""
+    # Guard de carta avulsa ANTES do match: um single que cita o set + o tipo do
+    # box (ex.: "Eevee SVP 173 ... Elite Trainer Box ... Single Card") casaria o
+    # SKU do box e geraria margem fantasma. Fora do escopo de selado → 0 candidatos.
+    if looks_like_single_card(title):
+        return []
     norm = normalize(title)
     candidates: list[Sku] = []
     for sku in registry:
@@ -390,7 +427,7 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
         if any(tok in norm.split() for tok in NON_EN_LANGUAGE_TOKENS):
             row.reject_reason = "idioma_nao_ingles"
             row.main_risk = "Produto não-inglês — sem liquidez no TCGPlayer"
-        elif CARD_NUMBER_RE.search(row.title_br) or contains_term(norm, "carta"):
+        elif looks_like_single_card(row.title_br) or contains_term(norm, "carta"):
             row.reject_reason = "nao_e_selado"
             row.main_risk = "Parece carta avulsa, fora do escopo de selados"
         else:

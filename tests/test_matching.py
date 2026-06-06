@@ -63,3 +63,36 @@ def test_legit_ambiguity_still_review(registry):
     # Anúncio nomeia os dois sets (White Flare / Black Bolt) — sem umbrella envolvido.
     dual = "Booster Avulso Fogo Branco / Raio Preto Pokémon TCG"
     assert len(S.match_listing(dual, registry)) == 2
+
+
+# --- guard de carta avulsa: single NÃO casa box SKU (margem fantasma) ------
+def test_single_card_nao_casa_box(registry):
+    # Caso real (scan Amazon 2026-06-06): single promo cujo título cita o set E
+    # "Elite Trainer Box" casava pre-etb-en → +272% fantasma. Agora: 0 candidatos.
+    fantasma = "Pokemon - Eevee SVP 173 – Prismatic Evolutions – Elite Trainer Box Promo - Single Card"
+    assert S.match_listing(fantasma, registry) == []
+
+
+def test_selado_real_ainda_casa(registry):
+    # O ETB selado de verdade do mesmo set NÃO pode ser barrado pelo guard.
+    real = "Pokémon TCG Prismatic Evolutions Elite Trainer Box (English)"
+    assert ids(real, registry) == ["pre-etb-en"]
+
+
+def test_sealed_single_booster_pack_nao_e_barrado():
+    # "single" sozinho é legítimo em selado (Sealed Single Booster Pack) — só
+    # 'single card' (e afins) é single de verdade. Não pode disparar o guard.
+    assert S.looks_like_single_card("Pokemon 151 - Sealed Single Booster Pack - English") is False
+
+
+@pytest.mark.parametrize("title,expected", [
+    ("Eevee SVP 173 Prismatic Evolutions Single Card", True),   # EN explícito
+    ("Charizard SVP 044 Promo", True),                          # código SVP
+    ("Pikachu 238/191 Surging Sparks", True),                   # numeração de carta
+    ("Carta Avulsa Pikachu Prismatic", True),                   # PT
+    ("Prismatic Evolutions Elite Trainer Box", False),          # selado
+    ("Mega Evolution Booster Box", False),                      # selado
+    ("Sealed Single Booster Pack 151", False),                  # 'single' ok em selado
+])
+def test_looks_like_single_card(title, expected):
+    assert S.looks_like_single_card(title) is expected
