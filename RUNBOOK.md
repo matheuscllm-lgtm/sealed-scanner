@@ -22,8 +22,10 @@ python run_all_sources.py
 # Saída: results/unified_<timestamp>/unified_deals.csv  (+ .xlsx completo)
 ```
 
-Classificação (margem **bruta** = (US − BR)/BR): **GREEN ≥40%**, **YELLOW 30–40%**,
-**RED <30%**. Frete real e tamanho do lote ficam fora do scanner (cotados na mão).
+Classificação (margem **bruta** = (US − BR)/BR, só diferença de preço, **sem taxa
+embutida**): **GREEN ≥30%** (é deal), **YELLOW** = match ambíguo (revisar), **RED
+<30%**. Piso de 30% é a regra única do operador (2026-06-06). Frete, cartão, IOF e
+demais taxas ficam fora do scanner (calculados na mão).
 
 ## 2. XLSX condensado p/ entrega
 

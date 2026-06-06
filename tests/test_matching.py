@@ -96,3 +96,37 @@ def test_sealed_single_booster_pack_nao_e_barrado():
 ])
 def test_looks_like_single_card(title, expected):
     assert S.looks_like_single_card(title) is expected
+
+
+# --- guard de acessório PURO: 'Acessórios' não casa box SKU -----------------
+def test_acessorio_puro_nao_casa_box(registry):
+    # Caso real (scan default 2026-06-06, ML): acessório vendido à parte casava
+    # ah-etb-en (ETB real ~R$400) com R$95 → +885% fantasma.
+    aces = "Elite Trainer Box - Ascended Heroes - Acessórios Inglês"
+    assert S.match_listing(aces, registry) == []
+
+
+def test_binder_collection_NAO_e_barrado(registry):
+    # CRÍTICO: 'binder collection' é o type_term dos 4 Collection Box selados —
+    # o guard de acessório NÃO pode barrá-lo (seria falso-negativo de SKU curado).
+    # O "Fichário Binder +440%" do scan é bug de PREÇO do registry (mew-collection-box
+    # US ref de produto caro vs type_term do binder barato), tratado fora do matcher.
+    assert S.looks_like_accessory("Scarlet & Violet 151 Binder Collection") is False
+    assert "mew-collection-box" in ids("Scarlet & Violet 151 Binder Collection English", registry)
+
+
+def test_etb_real_nao_e_barrado_por_acessorio(registry):
+    assert "ah-etb-en" in ids("Pokémon Ascended Heroes Elite Trainer Box Inglês", registry)
+
+
+@pytest.mark.parametrize("title,expected", [
+    ("Elite Trainer Box Acessórios", True),
+    ("Porta Cartas Pokémon Toploader", True),
+    ("Playmat Charizard", True),
+    ("Sleeved Booster Pack Surging Sparks", False),   # 'sleeve' é selado — NÃO barrar
+    ("Scarlet & Violet 151 Binder Collection", False),  # binder collection = selado real
+    ("Prismatic Evolutions Collection Box", False),   # 'collection box' é selado
+    ("Mega Evolution Booster Bundle", False),         # selado
+])
+def test_looks_like_accessory(title, expected):
+    assert S.looks_like_accessory(title) is expected

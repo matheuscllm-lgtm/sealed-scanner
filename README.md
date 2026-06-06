@@ -22,11 +22,15 @@ isolado.
 
 Decisões fixas. Qualquer sessão que rode/entregue o scanner segue **todas**:
 
-1. **Classificação = SÓ margem bruta.** `GREEN` = margem total ≥ 40%; `YELLOW`
-   = 30–40% ou match ambíguo (REVIEW); `RED` = resto. **Sem guarda-chuva de
-   margem líquida** — sem saber frete real + tamanho de lote, o líquido é
-   fabricado. A líquida é calculada/exibida só como alerta, **nunca** define o
-   bucket. (operador 2026-06-02)
+1. **Classificação = SÓ margem bruta, piso de 30%.** `GREEN` = margem bruta
+   ≥ 30% (é deal); `YELLOW` = match ambíguo (1 anúncio casa com 2+ SKUs, precisa
+   revisão manual); `RED` = margem < 30%, sem match, ou sem referência. Margem
+   bruta = só a diferença de preço entre BR e US, **SEM nenhuma taxa embutida**
+   (frete, cartão, IOF etc. o operador calcula por fora, na mão). **Sem
+   guarda-chuva de margem líquida** — sem saber frete real + tamanho de lote, o
+   líquido é fabricado. A líquida é calculada/exibida só como alerta, **nunca**
+   define o bucket. (regra única do operador 2026-06-06; classificação só-bruta
+   desde 2026-06-02)
 2. **Tabelas mostram `Qtd disponível`** (estoque do vendedor) junto do preço —
    o operador importa em **lote**, nunca 1 unidade.
 3. **Sem recomendação de compra.** Claude é técnico (código/dados/auditoria),
@@ -46,6 +50,14 @@ Decisões fixas. Qualquer sessão que rode/entregue o scanner segue **todas**:
    Arquivo **só se o operador pedir explicitamente** (ex.: importar em lote).
    A tabela traz **todos** os deals + `Qtd disponível`. Upload pro Drive
    permanece pulado (base64 inline corrompe; rclone recusado). (operador 2026-06-06)
+8. **Escopo = SELADO-only.** Este repo busca **só produto selado**. Amazon, OLX e
+   ML fazem queries de selado (nunca de cards); a Liga navega as **categorias de
+   selado** aqui. A Liga é **dual-repo**: no repo de *cards* ela busca singles;
+   **neste repo** ela busca selado. Consequência p/ o matcher: qualquer single
+   (carta avulsa) ou acessório (porta-cartas, playmat...) que apareça é **ruído do
+   marketplace** → rejeitado nos guards `looks_like_single_card` /
+   `looks_like_accessory` (NUNCA casa SKU). ⚠️ binder/fichário/álbum **não** são
+   acessório aqui — são o produto "Binder Collection" selado (4 SKUs Collection Box).
 
 ---
 
@@ -119,13 +131,14 @@ compartilhado). Ao adicionar SKUs de uma era nova, repetir o padrão.
 ## Modelo de margem
 
 ```
-margem_total = (preço_US − preço_BR) / preço_BR        # ÚNICO filtro
+margem_bruta = (preço_US − preço_BR) / preço_BR        # ÚNICO filtro
 ```
 
-Lucro sobre o capital de compra, antes das taxas. Classificação **só por margem
-bruta** (ver [Invariantes](#-invariantes-do-operador-não-violar) #1):
-**GREEN** ≥ 40% · **YELLOW** 30–40% ou REVIEW · **RED** < 30% / sem match / sem
-ref US / abaixo do preço mínimo.
+Só a diferença de preço entre os dois produtos, **SEM nenhuma taxa embutida**.
+Classificação **só por margem bruta**, piso de **30%** (regra única do operador
+2026-06-06; ver [Invariantes](#-invariantes-do-operador-não-violar) #1):
+**GREEN** ≥ 30% · **YELLOW** = match ambíguo (REVIEW) · **RED** < 30% / sem match
+/ sem ref US / abaixo do preço mínimo.
 
 A margem líquida (após ~18% de taxas + frete + 3PL) é **calculada e exibida como
 alerta informativo**, mas **NÃO** define o bucket. A diferença também é exibida
