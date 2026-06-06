@@ -793,6 +793,14 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
             cell.font = header_font
             cell.fill = header_fill
 
+        # Cortes de cor da aba Pool. ATENÇÃO: recomputed_margin_vs_us é margem
+        # REALISTA (líquida, já com frete) — métrica diferente da classificação
+        # gross-only (invariante #1), por isso tem cortes próprios, vindos do
+        # config (default 40/30 = comportamento histórico), não o 30% bruto.
+        pool_hl = config.get("pool_highlight", {}) or {}
+        pool_green_cut = float(pool_hl.get("green_margin_pct", 40))
+        pool_yellow_cut = float(pool_hl.get("yellow_margin_pct", 30))
+
         for item in pool_analysis:
             base = [
                 item["sku_id"],
@@ -819,9 +827,9 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
             # Highlight: margem real do maior budget
             biggest = max(pool_budgets)
             r = item["results"].get(biggest)
-            if r and r.recomputed_margin_vs_us >= 40:
+            if r and r.recomputed_margin_vs_us >= pool_green_cut:
                 fill = fills["GREEN"]
-            elif r and r.recomputed_margin_vs_us >= 30:
+            elif r and r.recomputed_margin_vs_us >= pool_yellow_cut:
                 fill = fills["YELLOW"]
             else:
                 fill = None
@@ -931,13 +939,20 @@ def run(args: argparse.Namespace) -> int:
             qty_avail = int(qty_raw) if qty_raw is not None else None
         except (TypeError, ValueError):
             qty_avail = None
+        # Preço malformado de UM anúncio não pode derrubar o run inteiro
+        # (mesmo viés de degradação graciosa do qty acima e do SourceBlockedError):
+        # vira 0.0 e cai no filtro de preço mínimo -> rejeitado, não crash.
+        try:
+            price_brl = float(item.get("price_brl", 0.0))
+        except (TypeError, ValueError):
+            price_brl = 0.0
         row = ScanRow(
             listing_id=str(item.get("id", "")),
             title_br=item.get("title", ""),
             source=item.get("source", args.source),
             seller=item.get("seller", ""),
             url=item.get("url", ""),
-            price_brl=float(item.get("price_brl", 0.0)),
+            price_brl=price_brl,
             qty_avail=qty_avail,
         )
         rows.append(classify(row, registry, us_reference, config))
