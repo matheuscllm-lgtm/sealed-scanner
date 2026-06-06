@@ -41,6 +41,14 @@ Decisões fixas. Qualquer sessão que rode/entregue o scanner segue **todas**:
    **DESATIVADO** — só roda quando o operador pede. Ver [Modo autônomo](#modo-autônomo-desativado).
 7. **Entrega no chat + arquivo em disco.** Upload pro Drive é opcional e hoje
    **pulado** (base64 inline corrompe; rclone recusado pelo operador).
+8. **Escopo = SELADO-only.** Este repo busca **só produto selado**. Amazon, OLX e
+   ML fazem queries de selado (nunca de cards); a Liga navega as **categorias de
+   selado** aqui. A Liga é **dual-repo**: no repo de *cards* ela busca singles;
+   **neste repo** ela busca selado. Consequência p/ o matcher: qualquer single
+   (carta avulsa) ou acessório (porta-cartas, playmat...) que apareça é **ruído do
+   marketplace** → rejeitado nos guards `looks_like_single_card` /
+   `looks_like_accessory` (NUNCA casa SKU). ⚠️ binder/fichário/álbum **não** são
+   acessório aqui — são o produto "Binder Collection" selado (4 SKUs Collection Box).
 
 ---
 
