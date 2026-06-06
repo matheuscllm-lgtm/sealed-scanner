@@ -147,11 +147,18 @@ liga:
 
 amazon:
   # Usado por --source amazon (amazon_adapter.py). Faz uma busca textual no
-  # amazon.com.br/s?k=<query> por SKU do registry. Sem CF, sem auth.
+  # amazon.com.br/s?k=<query> por SKU do registry. A Amazon BR serve 503
+  # anti-bot intermitente ao urllib puro (~50% medido 2026-06-05).
   results_per_sku: 6
   # Bump 1.5 -> 2.5 (+ jitter no adapter) pra aliviar pressão de request e
   # reduzir 503 anti-bot da Amazon BR. Ver docs/HANDOFF-amazon-adapter-2026-06-05.md.
   delay_seconds: 2.5
+  # Fallback Firecrawl (render + proxy residencial) p/ os SKUs que o urllib+retry
+  # não consegue (503 persistente). Liga por padrão SE FIRECRAWL_API_KEY existir
+  # no ambiente; só dispara no esgotamento do urllib → custo de créditos baixo
+  # (~13% dos SKUs). Desligue (false) p/ rodar 100% sem créditos.
+  fallback_firecrawl: true
+  firecrawl_proxy: stealth   # basic | stealth | enhanced | auto (anti-bot da Amazon pede stealth)
 
 olx:
   # Usado por --source olx (olx_adapter.py). Lê __NEXT_DATA__ embutido na

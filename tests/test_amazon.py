@@ -8,6 +8,7 @@ A Amazon BR serve 503 anti-bot intermitente. Estes testes travam:
      em vez de mascarar como "0 anúncios".
 Tudo hermético: nenhum request real à Amazon.
 """
+import json
 import pathlib
 import urllib.error
 
@@ -105,6 +106,11 @@ def _registry(n):
             for i in range(n)]
 
 
+# fallback_firecrawl: False mantém estes testes no caminho urllib-puro,
+# determinístico e SEM rede (mesmo com FIRECRAWL_API_KEY setada no ambiente).
+_NO_FC = {"amazon": {"fallback_firecrawl": False}}
+
+
 def test_bloqueio_total_levanta_source_blocked(monkeypatch):
     def always_503(url, *a, **k):
         raise _http_503()
@@ -112,7 +118,7 @@ def test_bloqueio_total_levanta_source_blocked(monkeypatch):
     monkeypatch.setattr(A, "_fetch_retry", always_503)
     monkeypatch.setattr(A.time, "sleep", lambda *_: None)
     with pytest.raises(SourceBlockedError) as ei:
-        A.fetch_listings({}, _registry(5))
+        A.fetch_listings(_NO_FC, _registry(5))
     assert ei.value.source == "amazon"
 
 
@@ -127,10 +133,69 @@ def test_sucesso_parcial_nao_levanta(monkeypatch, html):
 
     monkeypatch.setattr(A, "_fetch_retry", half_fail)
     monkeypatch.setattr(A.time, "sleep", lambda *_: None)
-    out = A.fetch_listings({}, _registry(5))
+    out = A.fetch_listings(_NO_FC, _registry(5))
     assert out  # coletou anúncios → não é bloqueio
 
 
 def test_registry_vazio_erra(monkeypatch):
     with pytest.raises(ValueError):
         A.fetch_listings({}, [])
+
+
+# --- 5. fallback Firecrawl ------------------------------------------------
+class _FakeResp:
+    """Context manager que imita urllib.request.urlopen p/ a REST do Firecrawl."""
+    def __init__(self, payload):
+        self._b = json.dumps(payload).encode("utf-8")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def read(self):
+        return self._b
+
+
+def test_fetch_firecrawl_devolve_rawhtml(monkeypatch, html):
+    monkeypatch.setattr(A, "_firecrawl_key", lambda: "fake-key")
+    monkeypatch.setattr(A.urllib.request, "urlopen",
+                        lambda req, timeout=90: _FakeResp({"success": True, "data": {"rawHtml": html}}))
+    out = A._fetch_firecrawl("https://www.amazon.com.br/s?k=x")
+    assert "s-search-result" in out
+
+
+def test_fetch_firecrawl_sem_key_erra(monkeypatch):
+    monkeypatch.setattr(A, "_firecrawl_key", lambda: None)
+    with pytest.raises(RuntimeError):
+        A._fetch_firecrawl("https://x")
+
+
+def test_fetch_firecrawl_success_false_erra(monkeypatch):
+    monkeypatch.setattr(A, "_firecrawl_key", lambda: "fake-key")
+    monkeypatch.setattr(A.urllib.request, "urlopen",
+                        lambda req, timeout=90: _FakeResp({"success": False, "error": "blocked"}))
+    with pytest.raises(RuntimeError):
+        A._fetch_firecrawl("https://x")
+
+
+def test_firecrawl_recupera_quando_urllib_falha(monkeypatch, html):
+    """urllib esgota → Firecrawl entrega → coleta anúncios, sem BLOQUEADA."""
+    monkeypatch.setattr(A, "_fetch_retry", lambda url, *a, **k: (_ for _ in ()).throw(_http_503()))
+    monkeypatch.setattr(A, "_firecrawl_key", lambda: "fake-key")
+    monkeypatch.setattr(A, "_fetch_firecrawl", lambda url, **k: html)
+    monkeypatch.setattr(A.time, "sleep", lambda *_: None)
+    out = A.fetch_listings({}, _registry(3))  # fallback default ON
+    assert out  # recuperado via Firecrawl
+
+
+def test_bloqueio_real_so_quando_ambas_rotas_falham(monkeypatch):
+    """urllib E Firecrawl falham → aí sim SourceBlockedError honesto."""
+    monkeypatch.setattr(A, "_fetch_retry", lambda url, *a, **k: (_ for _ in ()).throw(_http_503()))
+    monkeypatch.setattr(A, "_firecrawl_key", lambda: "fake-key")
+    monkeypatch.setattr(A, "_fetch_firecrawl",
+                        lambda url, **k: (_ for _ in ()).throw(RuntimeError("fc down")))
+    monkeypatch.setattr(A.time, "sleep", lambda *_: None)
+    with pytest.raises(SourceBlockedError):
+        A.fetch_listings({}, _registry(5))

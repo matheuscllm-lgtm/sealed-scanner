@@ -19,6 +19,8 @@ agressiva em preço.
 """
 from __future__ import annotations
 
+import json
+import os
 import random
 import re
 import time
@@ -29,6 +31,10 @@ import urllib.request
 from lib.errors import SourceBlockedError
 
 BASE = "https://www.amazon.com.br/s?k="
+# Rota de fallback: Firecrawl (render + proxy residencial) atravessa o 503
+# anti-bot que o urllib direto leva. Chamada via REST pura (sem dependência
+# nova). Só dispara quando o urllib+retry esgota — economiza créditos.
+FIRECRAWL_ENDPOINT = "https://api.firecrawl.dev/v1/scrape"
 # Pool de User-Agents pra não bater na Amazon sempre com a mesma assinatura
 # (reduz a chance de anti-bot disparar por padrão de request).
 UAS = (
@@ -78,6 +84,44 @@ def _fetch_retry(url: str, attempts: int = 3, base_sleep: float = 2.0) -> str:
                 time.sleep(base_sleep * (i + 1) + random.uniform(0, 0.75))
     assert last is not None  # só chega aqui se todas as tentativas falharam
     raise last
+
+
+def _firecrawl_key() -> str | None:
+    return os.environ.get("FIRECRAWL_API_KEY")
+
+
+def _fetch_firecrawl(url: str, proxy: str = "stealth", country: str = "BR",
+                     timeout: int = 90) -> str:
+    """Busca via Firecrawl (render + proxy residencial) — fallback quando o
+    urllib direto leva 503 anti-bot persistente.
+
+    Retorna o `rawHtml` (markup completo da SERP da Amazon), que
+    `parse_search_results` consome SEM mudança — provado em 2026-06-05: o
+    Firecrawl atravessa o block e o parser extrai os mesmos anúncios. Requer
+    FIRECRAWL_API_KEY no ambiente. Sem dependência nova: REST direto via urllib.
+    """
+    key = _firecrawl_key()
+    if not key:
+        raise RuntimeError("FIRECRAWL_API_KEY ausente — fallback Firecrawl indisponível.")
+    body = json.dumps({
+        "url": url,
+        "formats": ["rawHtml"],
+        "proxy": proxy,
+        "location": {"country": country, "languages": ["pt-BR"]},
+        "onlyMainContent": False,
+    }).encode("utf-8")
+    req = urllib.request.Request(FIRECRAWL_ENDPOINT, data=body, headers={
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+    })
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        payload = json.loads(r.read().decode("utf-8", errors="replace"))
+    if not payload.get("success"):
+        raise RuntimeError(f"Firecrawl não retornou success=True: {str(payload)[:200]}")
+    html = (payload.get("data") or {}).get("rawHtml") or ""
+    if not html:
+        raise RuntimeError("Firecrawl retornou rawHtml vazio.")
+    return html
 
 
 def _price_to_float(text: str) -> float | None:
@@ -138,18 +182,36 @@ def fetch_listings(config: dict, registry: list[dict]) -> list[dict]:
     amz = config.get("amazon", {})
     delay = amz.get("delay_seconds", 1.5)
     limit_per_sku = amz.get("results_per_sku", 6)
+    # Fallback Firecrawl: liga por padrão SE a key existir. Só dispara quando o
+    # urllib+retry esgota (≈13% dos SKUs sob ~50% de 503) → custo de créditos baixo.
+    fallback_firecrawl = amz.get("fallback_firecrawl", True)
+    firecrawl_proxy = amz.get("firecrawl_proxy", "stealth")
+    fc_available = bool(fallback_firecrawl and _firecrawl_key())
 
     all_listings: list[dict] = []
     seen_asins: set[str] = set()
-    fails = 0  # SKUs cuja busca falhou mesmo após retry (sinal de bloqueio)
+    fails = 0       # SKUs onde urllib E Firecrawl falharam (sinal de bloqueio real)
+    fc_used = 0     # quantos SKUs caíram no Firecrawl (créditos)
+    fc_recovered = 0
     for i, sku in enumerate(registry):
         query = sku.get("amazon_query") or _derive_query(sku)
         url = BASE + urllib.parse.quote_plus(query)
+        html: str | None = None
         try:
             html = _fetch_retry(url)
         except Exception as exc:
+            # urllib esgotou (provável 503 anti-bot persistente). Tenta Firecrawl.
+            if fc_available:
+                fc_used += 1
+                try:
+                    html = _fetch_firecrawl(url, proxy=firecrawl_proxy)
+                    fc_recovered += 1
+                except Exception as fc_exc:
+                    print(f"  [aviso] Amazon urllib+Firecrawl falharam p/ {sku.get('id')}: {exc} / {fc_exc}")
+            else:
+                print(f"  [aviso] busca Amazon falhou p/ {sku.get('id')}: {exc}")
+        if html is None:
             fails += 1
-            print(f"  [aviso] busca Amazon falhou para {sku.get('id')}: {exc}")
             continue
         results = parse_search_results(html)
         kept = 0
@@ -168,16 +230,21 @@ def fetch_listings(config: dict, registry: list[dict]) -> list[dict]:
             # jitter no delay pra não martelar a Amazon em cadência fixa.
             time.sleep(delay + random.uniform(0, 0.75))
 
-    # Bloqueio honesto: se a maioria das buscas tomou 503/erro mesmo com retry
-    # E nada foi coletado, é anti-bot — não "0 anúncios". Levanta
-    # SourceBlockedError pro orquestrador marcar BLOQUEADA (igual Liga/OLX),
-    # em vez de mascarar o bloqueio como status=ok n_listings=0.
+    if fc_used:
+        print(f"  [amazon] Firecrawl fallback: {fc_recovered}/{fc_used} SKUs "
+              f"recuperados via render/proxy (créditos consumidos).")
+
+    # Bloqueio honesto: se a maioria das buscas falhou em AMBAS as rotas
+    # (urllib+retry E Firecrawl) e nada foi coletado, é block real — não
+    # "0 anúncios". Levanta SourceBlockedError pro orquestrador marcar BLOQUEADA
+    # (igual Liga/OLX), em vez de mascarar como status=ok n_listings=0.
     total = len(registry)
     if fails and not all_listings and fails / max(1, total) >= 0.6:
+        rota = "urllib+Firecrawl" if fc_available else "urllib (Firecrawl off/sem key)"
         raise SourceBlockedError(
             "amazon",
-            f"503 anti-bot em {fails}/{total} buscas",
-            "Amazon BR negou a maioria das requests (anti-bot). "
-            "Aumentar delay_seconds/jitter, reduzir frequência ou rodar mais tarde.",
+            f"anti-bot em {fails}/{total} buscas via {rota}",
+            "Amazon BR negou a maioria das requests em ambas as rotas. "
+            "Conferir FIRECRAWL_API_KEY/créditos, subir delay_seconds ou rodar mais tarde.",
         )
     return all_listings
