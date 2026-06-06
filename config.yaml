@@ -149,7 +149,9 @@ amazon:
   # Usado por --source amazon (amazon_adapter.py). Faz uma busca textual no
   # amazon.com.br/s?k=<query> por SKU do registry. Sem CF, sem auth.
   results_per_sku: 6
-  delay_seconds: 1.5
+  # Bump 1.5 -> 2.5 (+ jitter no adapter) pra aliviar pressão de request e
+  # reduzir 503 anti-bot da Amazon BR. Ver docs/HANDOFF-amazon-adapter-2026-06-05.md.
+  delay_seconds: 2.5
 
 olx:
   # Usado por --source olx (olx_adapter.py). Lê __NEXT_DATA__ embutido na
