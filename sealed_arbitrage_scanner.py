@@ -272,7 +272,15 @@ def load_listings(source: str, mock_path: Path, config: dict,
         listings = olx_adapter.fetch_listings(config, registry_raw or [])
         return listings, f"olx (olx.com.br/brasil — busca ao vivo, {len(listings)} listagens)"
 
-    print(f"ERRO: fonte desconhecida '{source}'. Use 'mock', 'amazon', 'olx' ou 'liga'.")
+    if source == "mercadolivre":
+        # Mercado Livre BR: parser DOM/CSS (sem __NEXT_DATA__). Anti-bot próprio
+        # do ML → firecrawl-first (proxy stealth + waitFor ~14s). Predomina
+        # PT-BR/COPAG; o matcher filtra via exclude_terms.
+        import mercadolivre_adapter
+        listings = mercadolivre_adapter.fetch_listings(config, registry_raw or [])
+        return listings, f"mercadolivre (mercadolivre.com.br — busca ao vivo, {len(listings)} listagens)"
+
+    print(f"ERRO: fonte desconhecida '{source}'. Use 'mock', 'amazon', 'olx', 'mercadolivre' ou 'liga'.")
     sys.exit(2)
 
 
@@ -945,7 +953,8 @@ def main() -> None:
     from lib.console import harden_stdout
     harden_stdout()  # console Windows cp1252 quebra em títulos Liga/PT-BR
     parser = argparse.ArgumentParser(description="TCG Sealed Arbitrage Scanner (Brasil -> EUA)")
-    parser.add_argument("--source", default="mock", choices=["mock", "amazon", "olx", "liga"],
+    parser.add_argument("--source", default="mock",
+                        choices=["mock", "amazon", "olx", "mercadolivre", "liga"],
                         help="fonte dos anúncios (default: mock)")
     parser.add_argument("--config", default=str(SCRIPT_DIR / "config.yaml"),
                         help="caminho do config.yaml")

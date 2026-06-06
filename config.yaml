@@ -190,6 +190,22 @@ olx:
   results_per_query: 50
   delay_seconds: 1.5
 
+mercadolivre:
+  # Usado por --source mercadolivre (mercadolivre_adapter.py). Parser DOM/CSS
+  # (o ML NÃO expõe __NEXT_DATA__). 4ª fonte BR; inventário grande de selado.
+  #
+  # ML tem anti-bot PRÓPRIO (account-verification / suspicious-traffic), NÃO o
+  # Cloudflare da OLX. urllib puro NÃO passa → FIRECRAWL-FIRST. O device-check
+  # (challenge JS) precisa de waitFor ~12-15s pra clarear (6s, o número da OLX,
+  # cai no account-verification). Custo: stealth é o tier caro do Firecrawl →
+  # queries amplas por tipo (~8), 1 página cada; matcher filtra o resto.
+  mode: firecrawl            # firecrawl (default) | urllib (não rende hoje)
+  firecrawl_proxy: stealth
+  firecrawl_wait_ms: 14000   # device-check do ML; NÃO copiar os 6000 da OLX
+  results_per_query: 50
+  delay_seconds: 1.5
+  # firecrawl_api_key: ""    # NÃO commitar; prefira FIRECRAWL_API_KEY / .env
+
 scope:
   include:
     - Booster Box
