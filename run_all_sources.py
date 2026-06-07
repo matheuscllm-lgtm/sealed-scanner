@@ -57,7 +57,7 @@ def _build_rows(listings: list[dict], source: str, registry, us_reference, confi
             source=item.get("source", source),
             seller=item.get("seller", ""),
             url=item.get("url", ""),
-            price_brl=float(item.get("price_brl", 0.0)),
+            price_brl=s._parse_price(item.get("price_brl", 0.0)),
             qty_avail=qty_avail,
         )
         rows.append(s.classify(row, registry, us_reference, config))

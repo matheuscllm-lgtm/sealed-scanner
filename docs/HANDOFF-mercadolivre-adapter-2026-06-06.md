@@ -186,18 +186,16 @@ O ML usa **as mesmas** regras econômicas das outras fontes. Estão centralizada
 em `config.yaml` e impressas no relatório (auditável). **Não criar critério novo
 pro ML** — só plugar a fonte.
 
-- **Classificação (só margem BRUTA, invariante do operador 2026-06-02):**
+- **Classificação (só margem BRUTA, invariante do operador):**
   `margem_total = (preço_US − preço_BR) / preço_BR`
-  - **GREEN** ≥ `min_total_margin_pct` = **0.40** (40%)
-  - **YELLOW** entre `review_floor_pct` **0.30** e 0.40 (revisar)
-  - **RED** abaixo de 0.30, ou sem match, ou abaixo do preço mínimo
-  - Equivalências: 40% de margem total ≈ 29% mais barato que os EUA.
+  - **GREEN** = match HIGH + margem ≥ `min_total_margin_pct` = **0.30** (30%)
+  - **YELLOW** = match ambíguo (1 anúncio casa com 2+ SKUs). NUNCA por faixa de margem.
+  - **RED** abaixo de 0.30, sem match, sem referência US, ou preço inválido/baixo
+  - Equivalências: 30% de margem bruta ≈ 23% mais barato que os EUA.
 - **Filtro de entrada:** `filters.min_brazil_price_brl` = **R$ 25** (corta
   parts/itens incompletos).
-- **Custos (informativo, NÃO definem cor — margem líquida é alerta, não gate):**
-  `platform_fee_pct` 0.13 + `payment_fee_pct` 0.03 + `fx_spread_pct` 0.02 sobre
-  o preço de venda US; `international_shipping_brl` 90 + `three_pl_brl` 25 fixos.
-  Frete BR modelo `flat`: `flat_base_pct` 5% + `flat_per_seller_brl` R$17/loja extra.
+- **Custos operacionais:** FORA do scanner. Ele NÃO calcula nem exibe margem
+  líquida; taxas, frete, 3PL, IOF e lote o operador calcula por fora, na mão.
 - **Câmbio:** `currency.mode=fetch` (AwesomeAPI ao vivo; fallback `usd_brl` 5.05).
 - **Alvos (targets) = o registry curado** (`sku_registry.yaml`, 105 SKUs, EN).
   O ML é especialmente forte em **ETBs** e **booster boxes** importados; provável

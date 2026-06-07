@@ -14,76 +14,15 @@ currency:
   mode: fetch
   usd_brl: 5.05
 
-fees:
-  # Taxas aplicadas sobre o PREÇO DE VENDA nos EUA (onde o produto é revendido).
-  platform_fee_pct: 0.13      # marketplace de revenda (eBay/TCGPlayer)
-  payment_fee_pct: 0.03       # processamento de pagamento
-  fx_spread_pct: 0.02         # spread cambial na repatriação
-  # Custos fixos por unidade, em BRL. Selado é volumoso/pesado — frete maior
-  # que singles. Valores conservadores; ajuste conforme o 3PL real.
-  international_shipping_brl: 90
-  three_pl_brl: 25
-  tax_buffer_pct: 0.00        # buffer de imposto/importação (0 = desligado)
-
-frete:
-  # Modelo de frete usado pelo pool_fill.
-  #   flat       (operador 2026-05-28) — frete FIXO do lote inteiro, via
-  #              consolidador/redirecionador. Não escala por vendedor:
-  #              flat_single_seller_brl se comprar de 1 loja só,
-  #              flat_multi_seller_brl se de várias. Frete é ADICIONAL ao
-  #              budget de produtos (capital real = produtos + frete).
-  #   per_seller (legado) — cada vendedor cobra frete por peso, amortizado
-  #              sobre a qty. Usado se cada compra fosse enviada separada.
-  modelo: flat
-  #
-  # Modelo FLAT final (operador 2026-05-28). Frete tem 2 pernas:
-  #   frete = flat_base_pct × gasto_em_produtos  +  flat_per_seller_brl × (n_lojas − 1)
-  #
-  #   flat_base_pct      = perna internacional + 1ª loja (escala com o valor
-  #                        do lote — consolidador → EUA).
-  #   flat_per_seller_brl = perna doméstica por loja ADICIONAL (cada vendedor
-  #                        Liga manda o pacote dele ao consolidador no Brasil).
-  #
-  # Calibração: reproduz os R$250/350 @ R$5.000 que o operador deu —
-  #   1 loja:  5% × ~4762 (budget-inclusive)            ≈ R$238
-  #   7 lojas: 5% × gasto + R$17×6                       ≈ R$340
-  # Budget é TOTAL: produtos + frete <= budget (frete sai de dentro).
-  flat_base_pct: 0.05            # 5% sobre o gasto em produtos
-  flat_per_seller_brl: 17        # R$ por loja além da primeira
-  #
-  destino_cep: "01310-100"       # placeholder; relevante só no modelo per_seller
-  #
-  # --- abaixo: usado apenas no modelo per_seller (peso-based, legado) ---
-  # Tabela de frete por faixa de peso. Calibrável via cotação Correios real.
-  estimado_brl:
-    until_500g: 22       # 1 pack, 2-3 packs sleeveless, blister
-    until_1kg:  35       # 1 bundle, multiple packs, theme deck
-    until_2kg:  45       # 1 ETB ou 1 booster box pequeno
-    until_3kg:  60       # bundle + extras, ou 2 ETBs
-  fallback_brl: 50       # usado se peso > 3kg ou desconhecido
-  #
-  # Pesos default por product_type (per_seller). compute_shipping faz lookup
-  # aqui; override por SKU via "peso_g: N" no sku_registry.yaml.
-  weights_g_by_type:
-    Booster Pack:        40
-    Sleeved Booster:     40
-    Booster Bundle:      500
-    Elite Trainer Box:   1500
-    Booster Box:         1200
-    Collection Box:      1100
-    Premium Collection:  800
-    Tin:                 300
-    Blister:             80
-    Blister Pack:        80
-    Battle Deck:         100
-    Theme Deck:          100
-    Kit:                 200
+# Custos operacionais (taxas de marketplace, frete internacional, 3PL, imposto)
+# e o modelo de frete do pool: REMOVIDOS. Decisão do operador — o scanner
+# classifica SÓ por margem bruta e NÃO calcula nem exibe margem líquida. Frete,
+# cartão, IOF e qualquer custo são calculados POR FORA, na mão. (README invariante #1)
 
 filters:
   # Filtros mínimos. Antes 150 (era p/ boxes). Baixado pra 25 com a chegada
   # dos booster packs (~R$30-100). Items abaixo de 25 quase sempre são parts
-  # ou itens incompletos. O fee model agora usa bulk_qty por SKU pra
-  # amortizar custos fixos em compras em lote.
+  # ou itens incompletos.
   min_brazil_price_brl: 25
 
 deal_criteria:
@@ -94,13 +33,10 @@ deal_criteria:
   # Regra única do operador (2026-06-06, vale pra TODOS os scanners de TCG dele):
   # margem bruta de 30%. Frete, cartão, IOF e qualquer outra taxa são calculados
   # POR FORA, na mão. O scanner só compara preço com preço.
-  min_total_margin_pct: 0.30   # >= 30% de margem bruta -> GREEN (é deal)
-  review_floor_pct: 0.30       # abaixo de 30% -> RED (rejeitado). YELLOW fica só
-                               # para match ambíguo (1 anúncio casa com 2+ SKUs).
-  # Classificação é SÓ por margem bruta: sem saber o frete real e o tamanho do
-  # lote por remessa, a margem líquida é um número fabricado. Por isso NÃO há
-  # guarda-chuva de ROI líquido — a líquida é calculada e exibida apenas como
-  # alerta informativo, nunca define GREEN/YELLOW/RED.
+  min_total_margin_pct: 0.30   # >= 30% de margem bruta -> GREEN. Abaixo -> RED.
+  # Classificação SÓ por margem bruta. YELLOW é EXCLUSIVAMENTE match ambíguo
+  # (1 anúncio casa com 2+ SKUs) — nunca por faixa de margem. O scanner NÃO
+  # calcula nem exibe margem líquida; custos operacionais ficam fora do scanner.
   # Equivalências (mesma margem, denominador diferente):
   #   30% de margem bruta    <=>  ~23% mais barato que os EUA
   #   30% mais barato que US <=>  ~43% de margem bruta
