@@ -318,56 +318,79 @@ def _build_url(query: str) -> str:
     return BASE + urllib.parse.quote(query, safe="-")
 
 
+# Busca DENTRO de uma loja confiável (search_mode=stores). Mais recall e precisão
+# que a busca ampla: lista.ml.com.br/loja/{slug}/{query} devolve só os itens
+# daquela loja, no MESMO parser SSR (validado ao vivo 2026-06-07: escopo 100% —
+# loja/asmodee/pokemon = só Asmodee). Vale p/ LOJA OFICIAL (tem slug); vendedor
+# comum não tem /loja/ — precisa de filtro por seller_id (evolução futura).
+_LISTA_ROOT = "https://lista.mercadolivre.com.br/"
+
+
+def _store_url(slug: str, query: str) -> str:
+    return f"{_LISTA_ROOT}loja/{slug.strip('/')}/{urllib.parse.quote(query, safe='-')}"
+
+
+def _derive_targets(ml_cfg: dict, registry: list[dict]) -> list[tuple[str, str]]:
+    """Lista de (label, url) conforme search_mode:
+      - 'stores' (recomendado): busca `store_query` DENTRO de cada loja confiável.
+      - 'type'   (fallback): buscas amplas por product_type EN no ML inteiro.
+    Modo stores sem lista de lojas cai no type (não trava a fonte). O `label` é o
+    slug ÚNICO da busca (tipo OU loja) — vira a chave do id do anúncio."""
+    mode = (ml_cfg.get("search_mode") or "type").lower()
+    stores = [str(s).strip() for s in (ml_cfg.get("stores") or []) if str(s).strip()]
+    if mode == "stores" and stores:
+        q = ml_cfg.get("store_query", "pokemon")
+        return [(slug, _store_url(slug, q)) for slug in stores]
+    return [(q.removeprefix("pokemon-").removesuffix("-ingles") or q, _build_url(q))
+            for q in _derive_queries(registry)]
+
+
 def fetch_listings(config: dict, registry: list[dict]) -> list[dict]:
-    if not registry:
-        raise ValueError("mercadolivre_adapter requer o registry para gerar queries.")
     ml_cfg = config.get("mercadolivre", {})
     delay = ml_cfg.get("delay_seconds", 1.5)
     limit_per_query = ml_cfg.get("results_per_query", 50)
-    # seller_allowlist (opcional): VAZIO = sem filtro. Termos casam o vendedor
-    # por substring sem acento/caixa — foca em lojas confiáveis e corta o ruído
-    # de vendedor genérico. NÃO substitui o matcher/escopo (ver config.yaml).
+    mode = (ml_cfg.get("search_mode") or "type").lower()
+    # seller_allowlist (opcional, modo TYPE): VAZIO = sem filtro. Termos casam o
+    # vendedor por substring sem acento/caixa. No modo STORES a URL já escopa por
+    # loja, então o filtro é redundante e fica DESLIGADO lá.
     seller_allow = [_norm_text(t) for t in (ml_cfg.get("seller_allowlist") or []) if str(t).strip()]
 
-    queries = _derive_queries(registry)
-    if not queries:
+    targets = _derive_targets(ml_cfg, registry)
+    if not targets:
         raise ValueError(
-            "nenhuma query Mercado Livre gerada (registry vazio ou sem product_types conhecidos)."
+            "nenhuma busca Mercado Livre gerada (modo type sem registry/product_types, "
+            "ou modo stores sem lista de lojas)."
         )
 
     fetcher = _make_fetcher(ml_cfg)
     all_listings: list[dict] = []
     seen_ids: set[str] = set()
-    failed = 0  # queries que não entregaram HTML (block ou transitório)
+    failed = 0  # buscas que não entregaram HTML (block ou transitório)
     try:
-        for i, query in enumerate(queries):
-            url = _build_url(query)
+        for i, (label, url) in enumerate(targets):
             try:
                 html = fetcher.get_html(url)
             except SourceBlockedError:
-                # Anti-bot nesta query. NÃO aborta a fonte no 1º block: conta como
+                # Anti-bot nesta busca. NÃO aborta a fonte no 1º block: conta como
                 # perdida e segue. Só vira BLOQUEADA se TODAS falharem e nada
                 # coletado (ver no fim) — mesmo contrato honesto da OLX/Amazon.
                 failed += 1
-                print(f"  [aviso] ML bloqueado para '{query}' (anti-bot). Seguindo...")
+                print(f"  [aviso] ML bloqueado para '{label}' (anti-bot). Seguindo...")
                 continue
             except Exception as exc:
                 failed += 1
-                print(f"  [aviso] busca ML falhou para '{query}': {exc}")
+                print(f"  [aviso] busca ML falhou para '{label}': {exc}")
                 continue
             results = parse_search_results(html)
-            if seller_allow:
+            if seller_allow and mode != "stores":
                 before = len(results)
                 results = [r for r in results
                            if any(a in _norm_text(r.get("seller", "")) for a in seller_allow)]
                 dropped = before - len(results)
                 if dropped:
-                    print(f"  [filtro] ML seller_allowlist: -{dropped} anúncio(s) de vendedor fora da lista ('{query}')")
-            # slug descritivo e ÚNICO por query: usa o termo completo (sem o
-            # prefixo/sufixo fixos), NÃO query.split("-")[1] — esse pegava só
-            # "booster" tanto p/ booster-box quanto booster-bundle e, como `kept`
-            # reseta por query, dois anúncios distintos colidiam em "ML-booster-1".
-            slug = query.removeprefix("pokemon-").removesuffix("-ingles") or query
+                    print(f"  [filtro] ML seller_allowlist: -{dropped} anúncio(s) de vendedor fora da lista ('{label}')")
+            # `label` é o slug ÚNICO da busca (tipo OU loja) → chave do id, sem
+            # colisão entre buscas (regressão do bug "ML-booster-1" duplicado).
             kept = 0
             for r in results[:limit_per_query]:
                 mid = str(r.get("ml_id", ""))
@@ -376,23 +399,23 @@ def fetch_listings(config: dict, registry: list[dict]) -> list[dict]:
                 if mid:
                     seen_ids.add(mid)
                 entry = dict(r)
-                entry["id"] = f"ML-{slug}-{kept + 1}"
+                entry["id"] = f"ML-{label}-{kept + 1}"
                 entry["source"] = "mercadolivre"
-                entry["query"] = query
+                entry["query"] = label
                 all_listings.append(entry)
                 kept += 1
-            if i < len(queries) - 1:
+            if i < len(targets) - 1:
                 time.sleep(delay + random.uniform(0, 0.75))
     finally:
         fetcher.close()
 
-    # BLOQUEADA honesto só no fim: todas as queries falharam E nada coletado.
+    # BLOQUEADA honesto só no fim: todas as buscas falharam E nada coletado.
     # (Mesma trilha de Amazon PR #9 / OLX PR #10 — não mascarar block como
     # "ok, 0 anúncios", mas não estourar BLOQUEADA num 0-inventário parcial.)
-    if failed and not all_listings and failed == len(queries):
+    if failed and not all_listings and failed == len(targets):
         raise SourceBlockedError(
             "mercadolivre",
-            f"todas as {failed} queries falharam (anti-bot/transitório)",
+            f"todas as {failed} buscas falharam (anti-bot/transitório)",
             _BLOCK_HINT,
         )
     return all_listings

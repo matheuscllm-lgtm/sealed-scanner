@@ -154,6 +154,25 @@ mercadolivre:
   delay_seconds: 1.5
   # firecrawl_api_key: ""    # NÃO commitar; prefira FIRECRAWL_API_KEY / .env
   #
+  # Estratégia de busca:
+  #   stores = busca "store_query" DENTRO de cada loja confiável (RECOMENDADO).
+  #            URL lista.ml.com.br/loja/{slug}/{query} devolve só itens da loja,
+  #            no parser padrão (validado 2026-06-07: loja/asmodee/pokemon = 100%
+  #            Asmodee, recall maior que a busca ampla). Vale p/ LOJA OFICIAL.
+  #   type   = 8 buscas amplas por tipo no ML inteiro (+ seller_allowlist filtra).
+  search_mode: stores
+  store_query: pokemon       # termo buscado dentro de cada loja (amplo; o matcher filtra)
+  stores:                    # slugs de loja oficial (lista.ml.com.br/loja/{slug})
+    - asmodee                # validado ao vivo (escopo 100%); blisters/Mega Evolution
+    - brink-center           # Galápagos: boosters/displays/blisters Chaos Rising
+    - baby-world             # ETBs Perfect Order / Chaos Rising
+    - pokemon                # Loja Oficial Pokémon — maior fonte EN do ML
+    - copag                  # distribuidor oficial; importados EN além do PT-BR
+  # Lojas NÃO-oficiais (FLOR IMPORTS, BTPRIME, WBSHOP, THE_COLLECTOR_BR) não têm
+  # /loja/{slug} — precisam de filtro por seller_id (evolução futura). E as de
+  # decks/cartas douradas (FLOR/LEITURA/Lehadry/WBSHOP) ficam fora do escopo
+  # selado-inglês de qualquer jeito (o matcher rejeita).
+  #
   # Foco em vendedores confiáveis (OPCIONAL). VAZIO = sem filtro (todo o ML).
   # Quando preenchido, mantém só anúncios cujo vendedor casa (substring, sem
   # acento/caixa) algum item — corta o ruído de vendedor genérico ("Mercado
