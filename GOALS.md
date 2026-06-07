@@ -7,7 +7,7 @@
 ## Em andamento agora
 
 - [ ] **P1** (operador) Rodar no PC o re-scan com o registry novo (105 SKUs, latas re-adicionadas) e entregar o XLSX condensado no Drive. Comandos em `RUNBOOK.md` (refresh US → `run_all_sources.py` → `build_delivery_xlsx.py`). Não roda na nuvem (CF da Liga bloqueia IP de datacenter).
-- [ ] **P1** Pós-Pool-Fill: validar manualmente os Top 5 GREEN do `Pool Analysis` num scan Liga real (confirmar qty + frete real antes de mover capital). Rodar: `python sealed\sealed_arbitrage_scanner.py --source liga --pool-budget 5000`.
+- [ ] **P1** (operador) Validar manualmente os Top 5 GREEN num scan Liga real (confirmar qty + frete real antes de mover capital). Rodar: `python sealed\sealed_arbitrage_scanner.py --source liga`.
 - [ ] **P2** OLX block CF WAF é por IP (não Turnstile) — patchright NÃO resolve (validado). Pra firmar: proxy residencial (ScraperAPI/Firecrawl). Decisão de capital — fora de escopo de código.
 
 ## Backlog priorizado
@@ -19,7 +19,7 @@
   - OLX-elite-4 Temporal Forces ETB R$1290 (review — Walking Wake vs Iron Leaves)
   - AMZ-pre-etb-en-1 Chaos Rising Booster Bundle R$200
 - [ ] **P1** Rodar scan completo Liga local (todas as 8 categorias) e gerar snapshot Markdown.
-- [ ] **P1** Pós-Pool-Fill: validar manualmente os Top 5 GREEN do `Pool Analysis` (confirmar qty + frete real antes de mover capital).
+- [ ] **P1** Validar manualmente os Top 5 GREEN do último scan (confirmar qty + frete real antes de mover capital).
 - [ ] **P2** Alertas automáticos (Telegram ou email) quando aparecer um GREEN novo.
 - [ ] **P2** GitHub Actions cron diário — refresh de preços US + scan + commit do snapshot. Atenção ao quota cap observado no MYP repo.
 - [ ] **P2** Expandir registry pra sets antigos quando inventário de sets recentes virar commodity: Crown Zenith, Silver Tempest, Lost Origin, Astral Radiance, Brilliant Stars.
@@ -27,6 +27,8 @@
 - [ ] **P3** Filtrar Liga local por sets do registry antes de baixar página de produto, pra não desperdiçar tempo em produtos fora do scope (PT-BR, JAP, etc).
 
 ## Feito recente
+
+- [x] (2026-06-07) **Scanner 100% margem bruta — margem líquida e Pool removidas** — o scanner não calcula nem exibe margem líquida em lugar nenhum; classificação só por margem bruta (GREEN = HIGH + bruta ≥30%; YELLOW = match ambíguo; RED = resto, incl. preço inválido). Custos operacionais removidos do código e do `config` (taxas/frete/3PL, modelo de frete, `pool_fill.py`, `lib/shipping.py`, aba Pool Analysis, flags `--pool-*`). Preço malformado → RED (não crash, não falso GREEN). Docs/CSV/XLSX/snapshots/testes atualizados; `review_floor_pct` removido (resolve o `elif` morto do issue #20).
 
 - [x] (2026-06-02) **Review pós-tins: matching das latas endurecido** — revisão multi-agente achou que os termos largos das latas (`lata`/`tin` soltos + set_term genérico `151`) casavam carta avulsa ("Carta 151/165 na lata"), lata vazia e lote como GREEN falso (bypassa o guard `nao_e_selado`), e que excluir `booster`/`premium` derrubava lata legítima ("2 boosters + carta promo"). Fix: type_terms exigem "mini" (mini tin/mini lata); excludes trocam `booster`/`premium` por `vazia`/`vazio`/`lote`; `+mega heroes` no set Mega (latas são marca "Mega Heroes Mini Tin"). Script e registry batem (provenance), zero colisões, 22/22 testes.
 - [x] (2026-06-02) **Gap SSP Booster Bundle fechado** — Surging Sparks era o único set (de 20) sem SKU de bundle; "Booster Bundle Surging Sparks" caía em NONE. Adicionado `ssp-bundle-en` (TCGPlayer Retail 679564, US$59.18) espelhando `jtg-bundle-en`. Agora casa HIGH; todos os 20 sets têm bundle. Registry 104→105.

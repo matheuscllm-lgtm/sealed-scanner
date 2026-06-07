@@ -260,8 +260,8 @@ class Sku:
     # Termos OBRIGATÓRIOS (todos precisam estar no título). Útil pra variantes
     # tipo Pokemon Center ETB — sem isso, ela colide com a ETB regular.
     requires_terms: list[str] = field(default_factory=list)
-    # Quantidade comprada em lote para amortizar custos fixos (frete intl + 3PL).
-    # Packs costumam ser comprados em ≥24 unidades; boxes/ETBs = 1.
+    # Quantidade típica de compra em lote (packs ≥24, boxes/ETBs = 1). Metadado do
+    # registry; NÃO entra na classificação (custos operacionais ficam fora do scanner).
     bulk_qty: int = 1
     # SKU "guarda-chuva de era": o set é o nome de uma ERA que prefixa títulos
     # dos sub-sets (ex.: "Mega Evolution" prefixa Perfect Order, Chaos Rising,
@@ -293,8 +293,6 @@ class ScanRow:
     gross_profit_brl: float | None = None
     total_margin_pct: float | None = None      # (US - BR) / BR  -> filtro principal
     us_discount_pct: float | None = None        # (US - BR) / US  -> "mais barato que US"
-    net_profit_brl: float | None = None
-    net_margin_pct: float | None = None
     deal_confidence: str = ""         # GREEN / YELLOW / RED
     bucket: str = ""                  # real_opportunities / review_required / rejected
     main_risk: str = ""
@@ -369,13 +367,6 @@ def build_registry(registry_data: dict) -> list[Sku]:
     if not skus:
         print("ERRO: sku_registry.yaml não tem nenhum SKU.")
         sys.exit(2)
-    # SKU sem set_terms OU type_terms nunca casa (match_listing exige any() das
-    # duas listas) — falha silenciosa. Avisar cedo em vez de sumir do resultado.
-    weak = [s.id for s in skus if not s.set_terms or not s.type_terms]
-    if weak:
-        shown = ", ".join(weak[:5]) + ("..." if len(weak) > 5 else "")
-        print(f"  [registry] AVISO: {len(weak)} SKU(s) sem set_terms/type_terms "
-              f"(nunca casam): {shown}")
     return skus
 
 
@@ -417,9 +408,21 @@ def match_listing(title: str, registry: list[Sku]) -> list[Sku]:
 # --------------------------------------------------------------------------
 # Cálculo de margem (convenção ROI: lucro sobre o capital investido)
 # --------------------------------------------------------------------------
-def compute_margin(price_brl: float, us_usd: float, config: dict, bulk_qty: int = 1) -> dict:
+def _parse_price(raw) -> float:
+    """Preço malformado de UM anúncio não derruba o run: vira 0.0 e cai no filtro
+    de preço mínimo -> RED (preço inválido). Mesma degradação graciosa do qty e
+    do SourceBlockedError."""
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return 0.0
+
+
+def compute_margin(price_brl: float, us_usd: float, config: dict) -> dict:
+    """Só margem BRUTA = (preço_US − preço_BR) / preço_BR. Custos operacionais
+    (taxas, frete, 3PL, lote) ficam FORA do scanner — o operador calcula por
+    fora. O scanner NÃO computa nem exibe margem líquida."""
     fx = config["currency"]["usd_brl"]
-    fees = config["fees"]
 
     us_brl = us_usd * fx
     gross_profit = us_brl - price_brl
@@ -428,28 +431,11 @@ def compute_margin(price_brl: float, us_usd: float, config: dict, bulk_qty: int 
     # Quanto o BR está mais barato que a referência US (denominador = preço US).
     us_discount = gross_profit / us_brl if us_brl else 0.0
 
-    # Taxas percentuais incidem sobre o preço de VENDA nos EUA.
-    pct_fees = us_brl * (
-        fees["platform_fee_pct"] + fees["payment_fee_pct"] + fees["fx_spread_pct"]
-    )
-    # Custos fixos (frete intl + 3PL) são amortizados por bulk_qty: você embarca
-    # bulk_qty unidades no mesmo container para o 3PL. Para boxes/ETBs bulk=1
-    # (já é a unidade de embarque); para packs costuma ser ≥24.
-    flat_fees = (fees["international_shipping_brl"] + fees["three_pl_brl"]) / max(1, bulk_qty)
-    tax = us_brl * fees.get("tax_buffer_pct", 0.0)
-
-    net_profit = us_brl - price_brl - pct_fees - flat_fees - tax
-    net_margin = net_profit / price_brl if price_brl else 0.0
-
     return {
         "us_price_brl": round(us_brl, 2),
         "gross_profit_brl": round(gross_profit, 2),
         "total_margin_pct": round(total_margin, 4),
         "us_discount_pct": round(us_discount, 4),
-        "net_profit_brl": round(net_profit, 2),
-        "net_margin_pct": round(net_margin, 4),
-        "flat_fees_brl": round(flat_fees, 2),
-        "bulk_qty": bulk_qty,
     }
 
 
@@ -459,7 +445,6 @@ def compute_margin(price_brl: float, us_usd: float, config: dict, bulk_qty: int 
 def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict) -> ScanRow:
     criteria = config["deal_criteria"]
     min_total = criteria["min_total_margin_pct"]
-    review_floor = criteria["review_floor_pct"]
     min_price = config["filters"]["min_brazil_price_brl"]
 
     candidates = match_listing(row.title_br, registry)
@@ -528,39 +513,30 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
         row.recommended_action = "Coletar referência TCGPlayer antes de avaliar"
         return row
 
-    fin = compute_margin(row.price_brl, us_usd, config, bulk_qty=sku.bulk_qty)
+    fin = compute_margin(row.price_brl, us_usd, config)
     row.us_price_usd = us_usd
     row.usd_brl = config["currency"]["usd_brl"]
     row.us_price_brl = fin["us_price_brl"]
     row.gross_profit_brl = fin["gross_profit_brl"]
     row.total_margin_pct = fin["total_margin_pct"]
     row.us_discount_pct = fin["us_discount_pct"]
-    row.net_profit_brl = fin["net_profit_brl"]
-    row.net_margin_pct = fin["net_margin_pct"]
 
     total_m = fin["total_margin_pct"]
 
-    # Classificação por MARGEM BRUTA apenas (operador 2026-06-02): sem saber o
-    # frete real e o tamanho do lote por remessa, a margem líquida é fabricada;
-    # GREEN/YELLOW/RED é puro margem total (bruta). A líquida segue calculada e
-    # exibida (row.net_*), mas só como alerta informativo, nunca como filtro.
+    # Classificação por MARGEM BRUTA apenas. GREEN se a margem bruta atinge o
+    # piso; senão RED. YELLOW é EXCLUSIVAMENTE match ambíguo (REVIEW, tratado
+    # acima) — nunca por faixa de margem. Custos operacionais (frete, taxas,
+    # lote) ficam FORA do scanner; o operador calcula por fora. Sem margem líquida.
     if total_m >= min_total:
         row.deal_confidence = "GREEN"
         row.bucket = "real_opportunities"
         row.main_risk = "Margem bruta — custo de frete/lote a cotar fora do scanner"
         row.recommended_action = "Validar estoque e cotar frete/lote"
-    elif total_m >= review_floor:
-        row.deal_confidence = "YELLOW"
-        row.bucket = "review_required"
-        row.main_risk = (
-            f"Margem total {total_m:.1%} entre o piso {review_floor:.0%} e o alvo {min_total:.0%}"
-        )
-        row.recommended_action = "Revisar — margem perto do alvo"
     else:
         row.deal_confidence = "RED"
         row.bucket = "rejected"
         row.reject_reason = "margem_total_abaixo_do_minimo"
-        row.main_risk = f"Margem total {total_m:.1%} abaixo do piso de {review_floor:.0%}"
+        row.main_risk = f"Margem total {total_m:.1%} abaixo do mínimo de {min_total:.0%}"
         row.recommended_action = "Ignorar"
     return row
 
@@ -586,8 +562,6 @@ CSV_COLUMNS = [
     ("gross_profit_brl", "Lucro bruto (R$)"),
     ("total_margin_pct", "Margem total %"),
     ("us_discount_pct", "Mais barato que US %"),
-    ("net_profit_brl", "Lucro líquido est. (R$)"),
-    ("net_margin_pct", "Margem líquida est. %"),
     ("match_confidence", "Confiança do match"),
     ("deal_confidence", "Confiança do deal"),
     ("main_risk", "Risco principal"),
@@ -600,7 +574,7 @@ def cell_value(row: ScanRow, key: str):
     val = getattr(row, key)
     if val is None:
         return ""
-    if key in ("total_margin_pct", "us_discount_pct", "net_margin_pct"):
+    if key in ("total_margin_pct", "us_discount_pct"):
         return f"{val * 100:.2f}"
     return val
 
@@ -616,92 +590,7 @@ def write_csv(rows: list[ScanRow], path: Path) -> None:
 # --------------------------------------------------------------------------
 # Saída — XLSX
 # --------------------------------------------------------------------------
-def compute_pool_analysis(buckets: dict, config: dict, budgets: list[float],
-                           min_qty: int) -> list[dict]:
-    """Pra cada SKU GREEN/YELLOW, calcula fill_pool em cada budget configurado.
-
-    Devolve lista de dicts (1 dict por SKU). Cada dict tem:
-      sku_id, sku_name, product_type, n_sellers, best_price, us_price_brl,
-      results: dict[budget] -> PoolResult.
-    """
-    # Imports duplos pra suportar `python sealed/...` (script direto) E
-    # `python -m sealed.sealed_arbitrage_scanner` / pytest (package mode).
-    try:
-        from sealed.lib.shipping import shipping_for_sku
-        from sealed.pool_fill import fill_pool
-    except ImportError:
-        from lib.shipping import shipping_for_sku  # type: ignore[no-redef]
-        from pool_fill import fill_pool  # type: ignore[no-redef]
-
-    frete_cfg = config.get("frete", {}) or {}
-    freight_model = frete_cfg.get("modelo", "per_seller")
-    # Modelo flat final: frete = base_pct × gasto + per_seller × (n_lojas-1).
-    flat_base_pct = float(frete_cfg.get("flat_base_pct", 0.05))
-    flat_per_seller = float(frete_cfg.get("flat_per_seller_brl", 17.0))
-
-    # Agrupa rows GREEN+YELLOW por sku_id; só HIGH-match (sku_id != "")
-    by_sku: dict[str, list] = {}
-    for bucket_key in ("real_opportunities", "review_required"):
-        for r in buckets.get(bucket_key, []):
-            if r.match_confidence != "HIGH" or not r.sku_id:
-                continue
-            by_sku.setdefault(r.sku_id, []).append(r)
-
-    out: list[dict] = []
-    for sku_id, sku_rows in by_sku.items():
-        # Listings dict no formato esperado pelo pool_fill
-        listings_for_pool = [
-            {
-                "seller": r.seller,
-                "price_brl": r.price_brl,
-                "qty_avail": r.qty_avail,
-                "url": r.url,
-            }
-            for r in sku_rows
-        ]
-        first = sku_rows[0]
-        us_brl = first.us_price_brl or 0.0
-        # frete per_seller a partir do product_type (só usado se modelo=per_seller)
-        frete_unit = shipping_for_sku({"product_type": first.product_type}, frete_cfg)
-
-        results: dict[float, "PoolResult"] = {}  # type: ignore[name-defined]
-        for budget in budgets:
-            # Frete flat final: base_pct × gasto + per_seller × (n_lojas-1).
-            results[budget] = fill_pool(
-                listings_for_pool, sku_id, budget, us_brl,
-                frete_unit=frete_unit,
-                freight_model=freight_model,
-                flat_base_pct=flat_base_pct,
-                flat_per_seller_brl=flat_per_seller,
-                skip_qty_unknown=True,
-                min_qty_per_seller=min_qty,
-            )
-
-        prices = sorted(r.price_brl for r in sku_rows)
-        out.append({
-            "sku_id": sku_id,
-            "sku_name": first.sku_name,
-            "product_type": first.product_type,
-            "n_sellers": len(sku_rows),
-            "best_price": prices[0] if prices else 0.0,
-            "us_price_brl": us_brl,
-            "frete_unit": frete_unit,
-            "freight_model": freight_model,
-            "results": results,
-        })
-
-    # Sort: melhor margem realista no maior budget primeiro
-    def sort_key(item):
-        biggest_budget = max(budgets) if budgets else 0
-        r = item["results"].get(biggest_budget)
-        return -(r.recomputed_margin_vs_us if r else -999)
-    out.sort(key=sort_key)
-    return out
-
-
-def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
-                pool_analysis: list[dict] | None = None,
-                pool_budgets: list[float] | None = None) -> bool:
+def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path) -> bool:
     try:
         from openpyxl import Workbook
         from openpyxl.styles import Font, PatternFill
@@ -750,113 +639,20 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
     for cell in ws[1]:
         cell.font = header_font
         cell.fill = header_fill
-    fees = config["fees"]
     assumptions = [
         ("Fonte dos anúncios", source_desc),
         ("Referência US", ", ".join(config["sources"]["usa"])),
         ("Câmbio USD/BRL", config["currency"]["usd_brl"]),
         ("Modo de câmbio", config["currency"]["mode"]),
-        ("Taxa de marketplace (venda)", f"{fees['platform_fee_pct']:.0%}"),
-        ("Taxa de pagamento", f"{fees['payment_fee_pct']:.0%}"),
-        ("Spread cambial", f"{fees['fx_spread_pct']:.0%}"),
-        ("Frete internacional (R$/un)", fees["international_shipping_brl"]),
-        ("3PL / manuseio (R$/un)", fees["three_pl_brl"]),
-        ("Buffer de imposto", f"{fees.get('tax_buffer_pct', 0.0):.0%}"),
         ("Preço mínimo BR (R$)", config["filters"]["min_brazil_price_brl"]),
-        ("Margem total alvo (GREEN)", f"{config['deal_criteria']['min_total_margin_pct']:.0%}"),
+        ("Margem bruta mínima (GREEN)", f"{config['deal_criteria']['min_total_margin_pct']:.0%}"),
+        ("Custos operacionais", "fora do scanner (operador calcula por fora)"),
+        ("Margem líquida", "não calculada — só margem bruta"),
     ]
-    # YELLOW-por-margem só existe se o piso de revisão < alvo. Quando são iguais
-    # (regra do operador: min_total == review_floor), não há banda YELLOW por
-    # margem — abaixo do alvo é RED direto. Não anunciar um YELLOW que não ocorre.
-    _min_total = config["deal_criteria"]["min_total_margin_pct"]
-    _review_floor = config["deal_criteria"]["review_floor_pct"]
-    if _review_floor < _min_total:
-        assumptions.append(("Piso p/ revisão (YELLOW)", f"{_review_floor:.0%}"))
-    else:
-        assumptions.append(("Piso de rejeição (RED abaixo de)", f"{_min_total:.0%}"))
-    frete_cfg = config.get("frete", {}) or {}
-    if frete_cfg.get("modelo") == "flat":
-        base_pct = frete_cfg.get("flat_base_pct", 0.05)
-        per_seller = frete_cfg.get("flat_per_seller_brl", 17)
-        assumptions += [
-            ("Modelo de frete (pool)", "flat: base % + custo por loja"),
-            ("Frete base (sobre gasto)", f"{base_pct:.0%}"),
-            ("Frete por loja adicional (R$)", per_seller),
-            ("Budget inclui frete", "sim (produtos + frete <= budget)"),
-        ]
     for label, value in assumptions:
         ws.append([label, value])
     ws.column_dimensions["A"].width = 32
     ws.column_dimensions["B"].width = 48
-
-    # Pool Analysis (apenas se executado com --pool-budget)
-    if pool_analysis and pool_budgets:
-        ws = wb.create_sheet("Pool Analysis")
-        freight_model = pool_analysis[0].get("freight_model", "per_seller") if pool_analysis else "per_seller"
-        # Header dinâmico — uma coluna por (métrica, budget)
-        header = ["SKU", "Produto", "Tipo", "# Vendedores", "Melhor preço (R$)",
-                  "US ref (R$)"]
-        for b in pool_budgets:
-            tag = f"R${int(b):,}".replace(",", ".")
-            header.extend([
-                f"Unid @ {tag}", f"Preço efetivo @ {tag}",
-                f"Frete lote @ {tag}", f"Outlay @ {tag}",
-                f"Margem real @ {tag} (%)", f"# Lojas @ {tag}",
-            ])
-        ws.append(header)
-        for cell in ws[1]:
-            cell.font = header_font
-            cell.fill = header_fill
-
-        # Cortes de cor da aba Pool. ATENÇÃO: recomputed_margin_vs_us é margem
-        # REALISTA (líquida, já com frete) — métrica diferente da classificação
-        # gross-only (invariante #1), por isso tem cortes próprios, vindos do
-        # config (default 40/30 = comportamento histórico), não o 30% bruto.
-        pool_hl = config.get("pool_highlight", {}) or {}
-        pool_green_cut = float(pool_hl.get("green_margin_pct", 40))
-        pool_yellow_cut = float(pool_hl.get("yellow_margin_pct", 30))
-
-        for item in pool_analysis:
-            base = [
-                item["sku_id"],
-                item["sku_name"],
-                item["product_type"],
-                item["n_sellers"],
-                round(item["best_price"], 2),
-                round(item["us_price_brl"], 2),
-            ]
-            for b in pool_budgets:
-                r = item["results"].get(b)
-                if r and r.total_units > 0:
-                    base.extend([
-                        r.total_units,
-                        round(r.avg_price_per_unit, 2),
-                        round(r.total_freight_brl, 2),
-                        round(r.total_outlay_brl, 2),
-                        round(r.recomputed_margin_vs_us, 1),
-                        r.n_sellers_used,
-                    ])
-                else:
-                    base.extend(["—", "—", "—", "—", "—", "—"])
-            ws.append(base)
-            # Highlight: margem real do maior budget
-            biggest = max(pool_budgets)
-            r = item["results"].get(biggest)
-            if r and r.recomputed_margin_vs_us >= pool_green_cut:
-                fill = fills["GREEN"]
-            elif r and r.recomputed_margin_vs_us >= pool_yellow_cut:
-                fill = fills["YELLOW"]
-            else:
-                fill = None
-            if fill:
-                for cell in ws[ws.max_row]:
-                    cell.fill = fill
-
-        # Larguras
-        widths = [16, 42, 18, 12, 14, 14] + [12, 18, 16, 16, 18, 12] * len(pool_budgets)
-        for idx, w in enumerate(widths, start=1):
-            ws.column_dimensions[get_column_letter(idx)].width = w
-        ws.freeze_panes = "C2"
 
     # Summary
     ws = wb.create_sheet("Summary", 0)
@@ -871,28 +667,6 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
     ):
         ws.append([label, len(buckets[key])])
     ws.append(["TOTAL", sum(len(v) for v in buckets.values())])
-    # Top 5 SKUs por margem realista no maior budget
-    if pool_analysis and pool_budgets:
-        biggest = max(pool_budgets)
-        tag = f"R${int(biggest):,}".replace(",", ".")
-        ws.append([])
-        ws.append([f"Top SKUs por margem realista (@ {tag})"])
-        for cell in ws[ws.max_row]:
-            cell.font = header_font
-            cell.fill = header_fill
-        ws.append(["SKU", "Unid", "Preço efetivo (R$)", "Margem real %"])
-        for cell in ws[ws.max_row]:
-            cell.font = Font(bold=True)
-        for item in pool_analysis[:5]:
-            r = item["results"].get(biggest)
-            if not r or r.total_units == 0:
-                continue
-            ws.append([
-                item["sku_name"][:40],
-                r.total_units,
-                round(r.avg_price_per_unit, 2),
-                round(r.recomputed_margin_vs_us, 1),
-            ])
     ws.column_dimensions["A"].width = 42
     ws.column_dimensions["B"].width = 14
     ws.column_dimensions["C"].width = 20
@@ -907,9 +681,6 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path,
 # --------------------------------------------------------------------------
 def run(args: argparse.Namespace) -> int:
     config = load_yaml(Path(args.config), "config.yaml")
-    # Mock é offline/determinístico: não bater na API de câmbio (latência/flaky).
-    if args.source == "mock":
-        config.setdefault("currency", {})["mode"] = "manual"
     fx_source = resolve_fx_rate(config)
     config["currency"]["_source"] = fx_source
     print(f"  [fx] cambio USD/BRL: {fx_source}")
@@ -957,20 +728,13 @@ def run(args: argparse.Namespace) -> int:
             qty_avail = int(qty_raw) if qty_raw is not None else None
         except (TypeError, ValueError):
             qty_avail = None
-        # Preço malformado de UM anúncio não pode derrubar o run inteiro
-        # (mesmo viés de degradação graciosa do qty acima e do SourceBlockedError):
-        # vira 0.0 e cai no filtro de preço mínimo -> rejeitado, não crash.
-        try:
-            price_brl = float(item.get("price_brl", 0.0))
-        except (TypeError, ValueError):
-            price_brl = 0.0
         row = ScanRow(
             listing_id=str(item.get("id", "")),
             title_br=item.get("title", ""),
             source=item.get("source", args.source),
             seller=item.get("seller", ""),
             url=item.get("url", ""),
-            price_brl=price_brl,
+            price_brl=_parse_price(item.get("price_brl", 0.0)),
             qty_avail=qty_avail,
         )
         rows.append(classify(row, registry, us_reference, config))
@@ -993,27 +757,8 @@ def run(args: argparse.Namespace) -> int:
     for key in buckets:
         write_csv(buckets[key], out_dir / f"{key}.csv")
 
-    # Pool Analysis (apenas se --pool-budget passado)
-    pool_budgets: list[float] = []
-    pool_analysis: list[dict] | None = None
-    if args.pool_budget:
-        try:
-            pool_budgets = [float(b.strip()) for b in args.pool_budget.split(",") if b.strip()]
-        except ValueError as exc:
-            print(f"  [aviso] --pool-budget inválido ({exc}); pool analysis pulada.")
-            pool_budgets = []
-    if pool_budgets:
-        # CEP override
-        if args.pool_cep:
-            config.setdefault("frete", {})["destino_cep"] = args.pool_cep
-        print(f"  [pool] computando análise para budgets {pool_budgets} BRL "
-              f"(min_qty_per_seller={args.pool_min_qty})...")
-        pool_analysis = compute_pool_analysis(buckets, config, pool_budgets, args.pool_min_qty)
-        print(f"  [pool] {len(pool_analysis)} SKUs analisados")
-
     xlsx_path = out_dir / f"sealed_scan_{stamp}.xlsx"
-    xlsx_ok = write_xlsx(buckets, config, source_desc, xlsx_path,
-                          pool_analysis=pool_analysis, pool_budgets=pool_budgets)
+    xlsx_ok = write_xlsx(buckets, config, source_desc, xlsx_path)
 
     print()
     print("=" * 64)
@@ -1067,13 +812,6 @@ def main() -> None:
                         help="caminho do sku_registry.yaml")
     parser.add_argument("--mock", default=str(SCRIPT_DIR / "mock_data" / "liga_listings.json"),
                         help="caminho do JSON de anúncios mockados")
-    parser.add_argument("--pool-budget", default="",
-                        help="budgets (BRL) pra análise de pool — múltiplos via vírgula. "
-                             "Ex.: '5000' ou '1000,5000,10000'. Vazio = desligado (default).")
-    parser.add_argument("--pool-cep", default="",
-                        help="CEP destino — sobrescreve config.frete.destino_cep (calibração).")
-    parser.add_argument("--pool-min-qty", type=int, default=1,
-                        help="qty mínima por vendedor pra entrar no pool (default 1).")
     args = parser.parse_args()
     sys.exit(run(args))
 

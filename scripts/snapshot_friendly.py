@@ -6,6 +6,9 @@ Gera uma nota Markdown legível pra humano não-técnico. Agrupa por
 produto (não por anúncio), destaca o melhor vendedor de cada SKU,
 explica o que cada coluna significa.
 
+Só margem BRUTA. Custos operacionais (taxas, frete, 3PL, lote) ficam FORA
+do scanner — o operador calcula por fora. Nada de margem líquida.
+
 Saída ao lado do snapshot técnico:
     sealed/snapshots/scan-YYYY-MM-DD-HHMM-friendly.md
 
@@ -45,9 +48,8 @@ def collect_rows() -> list[dict]:
                 continue
             for r in csv.DictReader(open(p, encoding="utf-8")):
                 r["_bucket"] = fn.replace(".csv", "")
-                r["_total"] = _f(r.get("Margem total %"))
-                r["_net"] = _f(r.get("Margem líquida est. %"))
-                r["_net_brl"] = _f(r.get("Lucro líquido est. (R$)"))
+                r["_total"] = _f(r.get("Margem total %"))        # margem BRUTA
+                r["_gross_brl"] = _f(r.get("Lucro bruto (R$)"))   # lucro BRUTO
                 r["_price"] = _f(r.get("Preço BR (R$)"))
                 r["_us_brl"] = _f(r.get("Preço US (R$)"))
                 if r["_price"] is None:
@@ -75,20 +77,20 @@ def group_by_product(rows: list[dict]) -> dict[str, list[dict]]:
         tipo = r.get("Tipo") or ""
         key = f"{prod} | {tipo}" if tipo else prod
         grp[key].append(r)
-    # Ordena cada grupo pelo melhor (líquido decrescente, depois preço)
+    # Ordena cada grupo pelo melhor (margem bruta decrescente, depois preço)
     for k in grp:
-        grp[k].sort(key=lambda r: (-(r["_net_brl"] or -9e9), r["_price"] or 9e9))
+        grp[k].sort(key=lambda r: (-(r["_total"] or -9e9), r["_price"] or 9e9))
     return grp
 
 
 def render_product_block(produto: str, ofertas: list[dict], rank: int) -> list[str]:
     """Bloco didático pra um SKU agrupado.
 
-    Mostra só ofertas com lucro líquido positivo (as caras do mesmo SKU que
+    Mostra só ofertas com lucro bruto positivo (as caras do mesmo SKU que
     dão prejuízo poluem a tabela). Se nenhuma for positiva, mostra a melhor.
     """
     best = ofertas[0]
-    positivas = [o for o in ofertas if (o["_net_brl"] or -1) > 0]
+    positivas = [o for o in ofertas if (o["_gross_brl"] or -1) > 0]
     perdedoras = len(ofertas) - len(positivas)
     mostrar = positivas[:5] if positivas else ofertas[:1]
 
@@ -96,22 +98,22 @@ def render_product_block(produto: str, ofertas: list[dict], rank: int) -> list[s
     out.append(f"### {rank}. {produto}")
     out.append("")
     out.append(f"- **{len(ofertas)} vendedor(es)** vendendo esse produto")
-    out.append(f"- **{len(positivas)} oferta(s) com lucro real** (resto: preço alto demais)")
+    out.append(f"- **{len(positivas)} oferta(s) com lucro bruto** (resto: preço alto demais)")
     if best["_us_brl"]:
         usd = _f(best.get("Preço US (US$)")) or 0
         out.append(f"- **Vale nos EUA**: R$ {best['_us_brl']:.2f} (= US$ {usd:.2f})")
     out.append("")
     out.append(f"**{'Top ' + str(len(mostrar)) + ' ofertas vencedoras' if positivas else 'Menos pior oferta'}:**")
     out.append("")
-    out.append("| Onde comprar | Preço Brasil | Lucro líquido/unid | ROI líquido | Link |")
+    out.append("| Onde comprar | Preço Brasil | Lucro bruto/unid | Margem bruta | Link |")
     out.append("|---|---:|---:|---:|---|")
-    # CSV armazena margens já em percentual (ex.: 9.12 = 9,12%) — não multiplicar.
+    # CSV armazena margens já em percentual (ex.: 32.5 = 32,5%) — não multiplicar.
     for o in mostrar:
-        roi = f"{o['_net']:.1f}%" if o["_net"] is not None else "-"
-        net = f"R$ {o['_net_brl']:.2f}" if o["_net_brl"] is not None else "-"
+        marg = f"{o['_total']:.1f}%" if o["_total"] is not None else "-"
+        bruto = f"R$ {o['_gross_brl']:.2f}" if o["_gross_brl"] is not None else "-"
         price = f"R$ {o['_price']:.2f}" if o["_price"] is not None else "-"
         seller = o.get("Vendedor", "") or "—"
-        out.append(f"| {_src(o)} ({seller}) | {price} | {net} | {roi} | [abrir]({o.get('URL', '')}) |")
+        out.append(f"| {_src(o)} ({seller}) | {price} | {bruto} | {marg} | [abrir]({o.get('URL', '')}) |")
     if perdedoras:
         out.append("")
         out.append(f"_+{perdedoras} outro(s) vendedor(es) desse mesmo produto com preço alto demais — ignorados._")
@@ -147,8 +149,8 @@ def main() -> None:
             yellows.append((prod, ofertas))
         else:
             reds.append((prod, ofertas))
-    greens.sort(key=lambda kv: -(kv[1][0]["_net_brl"] or -9e9))
-    yellows.sort(key=lambda kv: -(kv[1][0]["_net_brl"] or -9e9))
+    greens.sort(key=lambda kv: -(kv[1][0]["_total"] or -9e9))
+    yellows.sort(key=lambda kv: -(kv[1][0]["_total"] or -9e9))
     reds.sort(key=lambda kv: len(kv[1]), reverse=True)
 
     n_green_listings = sum(1 for r in rows if r["_bucket"] == "real_opportunities")
@@ -182,7 +184,7 @@ def main() -> None:
         L.append("_Nenhum produto verde neste scan._")
         L.append("")
     else:
-        L.append("Em ordem de **lucro líquido por unidade** (do mais lucrativo pro menos).")
+        L.append("Em ordem de **margem bruta** (da maior pra menor).")
         L.append("")
         for i, (prod, ofertas) in enumerate(greens, start=1):
             L += render_product_block(prod, ofertas, i)
@@ -196,7 +198,7 @@ def main() -> None:
         L.append("_Nenhum produto amarelo neste scan._")
         L.append("")
     else:
-        L.append("Margem boa **no papel**, mas o alerta de cada um diz por que precisa revisão. Ofertas em ordem de lucro líquido.")
+        L.append("Match ambíguo (o anúncio casa com mais de um SKU) — confira a versão exata antes de comprar. Ofertas em ordem de margem bruta.")
         L.append("")
         for i, (prod, ofertas) in enumerate(yellows, start=1):
             L += render_product_block(prod, ofertas, i)
@@ -227,17 +229,16 @@ def main() -> None:
     L.append("")
     L.append("- **Preço Brasil**: quanto você paga aqui (Liga/OLX/Amazon BR)")
     L.append("- **Vale nos EUA**: preço de venda na TCGPlayer Market (convertido pelo câmbio)")
-    L.append("- **Lucro líquido / unidade**: o que sobra _por unidade_ depois de tudo: taxas de marketplace (13%), processamento (3%), spread cambial (2%), frete internacional (R$90) e logística 3PL (R$25). Custos fixos amortizados por bulk (packs = 24/box).")
-    L.append("- **ROI líquido**: lucro_líquido ÷ preço_BR. É o **retorno do seu dinheiro investido**. Acima de 5% é o mínimo defensável; acima de 15% é excelente.")
-    L.append("- **GREEN**: margem total ≥ 40% **E** ROI líquido ≥ 5% **E** lucro líquido positivo.")
-    L.append("- **YELLOW**: margem entre 30-40%, OU margem ≥ 40% mas algum dos guarda-chuvas (líquido negativo, ROI raso) trava.")
-    L.append("- **RED**: margem total < 30%. Sem retorno suficiente.")
+    L.append("- **Lucro bruto / unidade**: Preço US − Preço Brasil, por unidade. SEM taxas/frete — custos operacionais ficam FORA do scanner; o operador calcula por fora.")
+    L.append("- **Margem bruta**: lucro_bruto ÷ preço_BR. É só preço contra preço, antes de qualquer custo.")
+    L.append("- **GREEN**: margem bruta ≥ 30%.")
+    L.append("- **YELLOW**: match ambíguo (1 anúncio casa com 2+ SKUs) — precisa revisão da versão exata.")
+    L.append("- **RED**: margem bruta < 30%, sem match, sem referência US, ou preço inválido/baixo.")
     L.append("")
     L.append("### Premissas do cálculo (editáveis em `sealed/config.yaml`)")
     L.append("")
-    L.append("- Câmbio USD→BRL: **R$ 5,40** (ajustar conforme cotação real)")
-    L.append("- Taxa eBay/TCGPlayer: 13% · processamento: 3% · spread cambial: 2%")
-    L.append("- Frete internacional: R$ 90 por embarque · 3PL: R$ 25")
+    L.append("- Câmbio USD→BRL: vem do `config.yaml` (`mode: fetch` busca ao vivo; fallback manual).")
+    L.append("- Custos operacionais (frete, taxas, IOF, lote): **fora do scanner** — calculados por fora, na mão.")
     L.append("")
     L.append(f"_Gerado em {datetime.now(timezone.utc).isoformat(timespec='seconds')}_")
 

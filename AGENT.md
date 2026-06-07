@@ -48,33 +48,30 @@ formato selado e edição.
 us_price_brl  = us_price_usd × câmbio
 lucro_bruto   = us_price_brl − preço_compra_br
 
-margem_total       = lucro_bruto / preço_compra_br    <- filtro principal
+margem_total       = lucro_bruto / preço_compra_br    <- ÚNICO filtro (bruta)
 mais_barato_que_us = lucro_bruto / us_price_brl        <- métrica de leitura
-
-lucro_liquido  = lucro_bruto
-                 − taxas_percentuais(sobre a venda US)
-                 − frete_internacional − 3PL − buffer_imposto
-margem_liquida = lucro_liquido / preço_compra_br       <- alerta, não filtro
 ```
 
-Todas as premissas vivem em `config.yaml` e são impressas no relatório —
-nunca escondidas.
+Só margem BRUTA. O scanner **NÃO** calcula nem exibe margem líquida, e **não**
+embute custos operacionais (taxas de marketplace, frete internacional, 3PL,
+imposto, lote) — o operador calcula isso por fora, na mão. As premissas que
+restam (câmbio, preço mínimo, piso de margem) vivem em `config.yaml` e são
+impressas no relatório — nunca escondidas.
 
 ## Critérios de deal
 
-Filtro principal: **margem total** — lucro sobre o preço de compra, antes das
-taxas. Alvo: 30–35% mais barato que os EUA, o que equivale a ≥40% de margem
-total.
+Filtro único: **margem bruta** = (preço_US − preço_BR) / preço_BR — só preço
+contra preço, SEM nenhuma taxa embutida. Piso: **30%**.
 
-- `GREEN`  — match HIGH e margem total ≥ 40%.
-- `YELLOW` — margem total entre 30% e 40%; ou match ambíguo (REVIEW).
-- `RED`    — margem total < 30%, sem match, sem referência US, ou abaixo do
-  preço mínimo de operação.
+- `GREEN`  — match HIGH e margem bruta ≥ 30%.
+- `YELLOW` — match ambíguo (REVIEW): 1 anúncio casa com 2+ SKUs. NUNCA por
+  faixa de margem.
+- `RED`    — margem bruta < 30%, sem match, sem referência US, ou preço
+  inválido/abaixo do mínimo de operação.
 
-Classificação é SÓ por margem bruta (operador 2026-06-02): sem saber o frete
-real e o tamanho do lote por remessa, a margem líquida é um número fabricado.
-A margem líquida após taxas segue calculada e exibida apenas como alerta
-informativo — NUNCA define GREEN/YELLOW/RED.
+Classificação é SÓ por margem bruta. O scanner NÃO calcula nem exibe margem
+líquida; custos operacionais (frete, taxas, lote) ficam FORA do scanner — o
+operador calcula por fora.
 
 Saída separada em três baldes: `real_opportunities`, `review_required`,
 `rejected`.
