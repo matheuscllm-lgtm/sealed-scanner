@@ -42,6 +42,7 @@ import os
 import random
 import re
 import time
+import unicodedata
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -109,6 +110,14 @@ def _is_block_page(body: str) -> bool:
 def _looks_used(title: str) -> bool:
     low = title.lower()
     return any(tok in low for tok in _USED_TOKENS)
+
+
+def _norm_text(s: str) -> str:
+    """casefold + remove acento, p/ casar o vendedor contra o seller_allowlist
+    sem depender de acento/caixa ('ML POKÉMON' ~ 'pokemon', 'COPAG' ~ 'copag')."""
+    s = unicodedata.normalize("NFKD", s or "")
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return s.casefold().strip()
 
 
 def _price_to_float(text: str) -> float | None:
@@ -315,6 +324,10 @@ def fetch_listings(config: dict, registry: list[dict]) -> list[dict]:
     ml_cfg = config.get("mercadolivre", {})
     delay = ml_cfg.get("delay_seconds", 1.5)
     limit_per_query = ml_cfg.get("results_per_query", 50)
+    # seller_allowlist (opcional): VAZIO = sem filtro. Termos casam o vendedor
+    # por substring sem acento/caixa — foca em lojas confiáveis e corta o ruído
+    # de vendedor genérico. NÃO substitui o matcher/escopo (ver config.yaml).
+    seller_allow = [_norm_text(t) for t in (ml_cfg.get("seller_allowlist") or []) if str(t).strip()]
 
     queries = _derive_queries(registry)
     if not queries:
@@ -343,6 +356,13 @@ def fetch_listings(config: dict, registry: list[dict]) -> list[dict]:
                 print(f"  [aviso] busca ML falhou para '{query}': {exc}")
                 continue
             results = parse_search_results(html)
+            if seller_allow:
+                before = len(results)
+                results = [r for r in results
+                           if any(a in _norm_text(r.get("seller", "")) for a in seller_allow)]
+                dropped = before - len(results)
+                if dropped:
+                    print(f"  [filtro] ML seller_allowlist: -{dropped} anúncio(s) de vendedor fora da lista ('{query}')")
             # slug descritivo e ÚNICO por query: usa o termo completo (sem o
             # prefixo/sufixo fixos), NÃO query.split("-")[1] — esse pegava só
             # "booster" tanto p/ booster-box quanto booster-bundle e, como `kept`

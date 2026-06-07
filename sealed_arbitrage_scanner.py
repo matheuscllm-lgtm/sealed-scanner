@@ -527,7 +527,22 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
     # piso; senão RED. YELLOW é EXCLUSIVAMENTE match ambíguo (REVIEW, tratado
     # acima) — nunca por faixa de margem. Custos operacionais (frete, taxas,
     # lote) ficam FORA do scanner; o operador calcula por fora. Sem margem líquida.
-    if total_m >= min_total:
+    review_above = criteria.get("review_above_margin_pct")
+    if total_m >= min_total and review_above is not None and total_m >= review_above:
+        # Margem implausível p/ selado: forte sinal de produto/variante trocada
+        # (acessório barato casando SKU caro — ex.: fichário avulso ~R$230 vs o
+        # "151 Binder Collection" selado de US$240 -> 432%). NÃO vira GREEN; e
+        # NÃO vira YELLOW (YELLOW é só match ambíguo, invariante). RED honesto
+        # com motivo auditável, p/ o operador abrir e conferir o anúncio.
+        row.deal_confidence = "RED"
+        row.bucket = "rejected"
+        row.reject_reason = "margem_anomala"
+        row.main_risk = (
+            f"Margem {total_m:.0%} alta demais p/ selado — provável produto/variante "
+            "trocada (ex.: acessório/fichário avulso casando SKU caro). Verifique antes de comprar."
+        )
+        row.recommended_action = "Abrir o anúncio e confirmar que é o produto selado correto"
+    elif total_m >= min_total:
         row.deal_confidence = "GREEN"
         row.bucket = "real_opportunities"
         row.main_risk = "Margem bruta — custo de frete/lote a cotar fora do scanner"

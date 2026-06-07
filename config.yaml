@@ -34,6 +34,13 @@ deal_criteria:
   # margem bruta de 30%. Frete, cartão, IOF e qualquer outra taxa são calculados
   # POR FORA, na mão. O scanner só compara preço com preço.
   min_total_margin_pct: 0.30   # >= 30% de margem bruta -> GREEN. Abaixo -> RED.
+  # Teto de plausibilidade. Margem bruta ALTA demais p/ selado quase sempre é
+  # artefato de match, não oportunidade: um acessório barato (fichário/álbum
+  # avulso ~R$230) casa o SKU selado caro ("151 Binder Collection", US$240) e
+  # gera 432% fantasma. Acima deste teto, um match HIGH NÃO vira GREEN: cai em
+  # RED com motivo `margem_anomala` (auditável) p/ verificação manual, em vez de
+  # falso-GREEN. Vazio/ausente = sem teto (comportamento antigo).
+  review_above_margin_pct: 2.0   # > 200% de margem bruta -> RED (margem_anomala)
   # Classificação SÓ por margem bruta. YELLOW é EXCLUSIVAMENTE match ambíguo
   # (1 anúncio casa com 2+ SKUs) — nunca por faixa de margem. O scanner NÃO
   # calcula nem exibe margem líquida; custos operacionais ficam fora do scanner.
@@ -146,6 +153,20 @@ mercadolivre:
   results_per_query: 50
   delay_seconds: 1.5
   # firecrawl_api_key: ""    # NÃO commitar; prefira FIRECRAWL_API_KEY / .env
+  #
+  # Foco em vendedores confiáveis (OPCIONAL). VAZIO = sem filtro (todo o ML).
+  # Quando preenchido, mantém só anúncios cujo vendedor casa (substring, sem
+  # acento/caixa) algum item — corta o ruído de vendedor genérico ("Mercado
+  # Livre" anônimo). Medido no probe ao vivo 2026-06-07: estas lojas carregam
+  # selado INGLÊS limpo ("Inglês"/"-en"/"Lacrado") e dominam o inventário do ML;
+  # a Loja Oficial Pokémon e a COPAG também vendem inglês explícito (não só PT-BR).
+  # NÃO substitui o matcher/escopo — só estreita a quem vende. Descomente p/ ligar.
+  seller_allowlist: []
+  #   - pokémon       # Loja Oficial Pokémon (ML) — maior volume de selado EN
+  #   - copag         # distribuidor oficial; lista importados EN além do PT-BR
+  #   - asmodee
+  #   - galapagos
+  #   - barao geek
 
 scope:
   include:
