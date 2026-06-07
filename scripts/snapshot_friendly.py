@@ -43,7 +43,7 @@ def collect_rows() -> list[dict]:
             p = d / fn
             if not p.exists():
                 continue
-            for r in csv.DictReader(open(p)):
+            for r in csv.DictReader(open(p, encoding="utf-8")):
                 r["_bucket"] = fn.replace(".csv", "")
                 r["_total"] = _f(r.get("Margem total %"))
                 r["_net"] = _f(r.get("Margem líquida est. %"))
