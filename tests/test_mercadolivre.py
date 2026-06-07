@@ -190,3 +190,38 @@ def test_make_fetcher_mode_default_is_firecrawl(monkeypatch):
     monkeypatch.setattr(M, "_load_dotenv_if_present", lambda: None)
     fetcher = M._make_fetcher({})
     assert isinstance(fetcher, M._FirecrawlFetcher)
+
+
+# --- id ÚNICO entre queries (regressão: booster-box vs booster-bundle) --------
+def test_fetch_listings_ids_unique_across_queries(monkeypatch):
+    # Booster Box e Booster Bundle geram queries cujo 2º token é o mesmo
+    # ("booster"). Antes do fix, slug=query.split("-")[1] + `kept` resetando por
+    # query faziam dois anúncios DISTINTOS receberem o mesmo id "ML-booster-1".
+    reg = [
+        {"language": "EN", "product_type": "Booster Box"},
+        {"language": "EN", "product_type": "Booster Bundle"},
+    ]
+
+    def _card(mlid, title):
+        return (
+            '<li class="ui-search-layout__item">'
+            f'<a class="poly-component__title" href="https://www.mercadolivre.com.br/p/MLB-{mlid}">{title}</a>'
+            '<div class="poly-price__current"><span class="andes-money-amount">'
+            '<span class="andes-money-amount__fraction">100</span></span></div></li>'
+        )
+
+    class _PerQueryFetcher:
+        # Cada query devolve um anúncio com ml_id diferente (senão o dedup por
+        # ml_id removeria o 2º e a colisão de id nem apareceria).
+        def get_html(self, url):
+            mlid = "111" if "bundle" in url else "222"
+            return "<html>" + _card(mlid, "Pokemon EN") + "</html>"
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(M, "_make_fetcher", lambda cfg: _PerQueryFetcher())
+    rows = M.fetch_listings({"mercadolivre": {}}, reg)
+    assert len(rows) == 2
+    ids = [r["id"] for r in rows]
+    assert len(set(ids)) == len(ids)  # ids globalmente únicos entre queries
