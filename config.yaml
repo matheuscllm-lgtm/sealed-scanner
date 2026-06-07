@@ -155,12 +155,15 @@ mercadolivre:
   # firecrawl_api_key: ""    # NÃO commitar; prefira FIRECRAWL_API_KEY / .env
   #
   # Estratégia de busca:
-  #   stores = busca "store_query" DENTRO de cada loja confiável (RECOMENDADO).
-  #            URL lista.ml.com.br/loja/{slug}/{query} devolve só itens da loja,
-  #            no parser padrão (validado 2026-06-07: loja/asmodee/pokemon = 100%
-  #            Asmodee, recall maior que a busca ampla). Vale p/ LOJA OFICIAL.
-  #   type   = 8 buscas amplas por tipo no ML inteiro (+ seller_allowlist filtra).
-  search_mode: stores
+  #   type   = 8 buscas amplas por tipo no ML inteiro (ATIVO). No teste ao vivo
+  #            2026-06-07 a ampla rendeu MAIS: 74 matches EN, porque pega o inglês
+  #            "espalhado" pela marca Pokémon e por vendedor genérico. Com
+  #            seller_allowlist VAZIO = sem filtro (a versão que rende mais).
+  #   stores = busca "store_query" DENTRO de cada loja oficial (lista.ml.com.br/
+  #            loja/{slug}/{query}; validado: escopo 100%). Mais limpo, MAS só vê
+  #            loja oficial — perde o inglês espalhado (pegou só 8 EN no teste).
+  #            Use p/ focar numa loja específica (ex.: Asmodee, Brink Center).
+  search_mode: type
   store_query: pokemon       # termo buscado dentro de cada loja (amplo; o matcher filtra)
   stores:                    # slugs de loja oficial (lista.ml.com.br/loja/{slug})
     - asmodee                # validado ao vivo (escopo 100%); blisters/Mega Evolution
@@ -183,15 +186,16 @@ mercadolivre:
   #
   # Curadoria do operador por volume de vendas (2026-06-07). Termo = substring do
   # vendedor (sem acento/caixa). ATENÇÃO: ativar a lista faz o scan manter SÓ
-  # estes vendedores (derruba o resto, inclusive vendedor genérico).
-  seller_allowlist:
-    # --- selado INGLÊS no escopo (boxes / ETB / bundle / blister) -----------
-    - asmodee          # distribuidor oficial TCG; blisters + Mega Evolution
-    - brink center     # Galápagos: boosters/displays/blisters Chaos Rising
-    - galapagos        #   (mesma linha aparece como "GALAPAGOS" direto)
-    - baby world       # ETBs Perfect Order / Chaos Rising
-    - btprime          # ETBs e selados originais
-    - collector        # THE_COLLECTOR_BR: boosters/bundles Phantasmal Flames
+  # estes vendedores. No teste isso derrubava ~59 dos 74 matches EN (incl. os 37
+  # da marca "ML POKÉMON" + genéricos) — por isso fica VAZIO (busca ampla completa).
+  # Descomente p/ estreitar a quem vende (mais limpo, menos cobertura).
+  seller_allowlist: []
+    # - asmodee        # distribuidor oficial TCG; blisters + Mega Evolution
+    # - brink center   # Galápagos: boosters/displays/blisters Chaos Rising
+    # - galapagos      #   (mesma linha aparece como "GALAPAGOS" direto)
+    # - baby world     # ETBs Perfect Order / Chaos Rising
+    # - btprime        # ETBs e selados originais
+    # - collector      # THE_COLLECTOR_BR: boosters/bundles Phantasmal Flames
   # FORA do escopo selado-inglês (decks, cartas douradas/single, lotes): o
   # matcher REJEITA o que vendem (não há SKU de deck/single no registry). Só
   # rende se AMPLIARMOS o escopo — descomente junto com a expansão:
