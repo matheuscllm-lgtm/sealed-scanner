@@ -34,6 +34,13 @@ deal_criteria:
   # margem bruta de 30%. Frete, cartão, IOF e qualquer outra taxa são calculados
   # POR FORA, na mão. O scanner só compara preço com preço.
   min_total_margin_pct: 0.30   # >= 30% de margem bruta -> GREEN. Abaixo -> RED.
+  # Teto de plausibilidade. Margem bruta ALTA demais p/ selado quase sempre é
+  # artefato de match, não oportunidade: um acessório barato (fichário/álbum
+  # avulso ~R$230) casa o SKU selado caro ("151 Binder Collection", US$240) e
+  # gera 432% fantasma. Acima deste teto, um match HIGH NÃO vira GREEN: cai em
+  # RED com motivo `margem_anomala` (auditável) p/ verificação manual, em vez de
+  # falso-GREEN. Vazio/ausente = sem teto (comportamento antigo).
+  review_above_margin_pct: 2.0   # > 200% de margem bruta -> RED (margem_anomala)
   # Classificação SÓ por margem bruta. YELLOW é EXCLUSIVAMENTE match ambíguo
   # (1 anúncio casa com 2+ SKUs) — nunca por faixa de margem. O scanner NÃO
   # calcula nem exibe margem líquida; custos operacionais ficam fora do scanner.
@@ -146,6 +153,59 @@ mercadolivre:
   results_per_query: 50
   delay_seconds: 1.5
   # firecrawl_api_key: ""    # NÃO commitar; prefira FIRECRAWL_API_KEY / .env
+  #
+  # Estratégia de busca:
+  #   type   = 8 buscas amplas por tipo no ML inteiro (ATIVO). No teste ao vivo
+  #            2026-06-07 a ampla rendeu MAIS: 74 matches EN, porque pega o inglês
+  #            "espalhado" pela marca Pokémon e por vendedor genérico. Com
+  #            seller_allowlist VAZIO = sem filtro (a versão que rende mais).
+  #   stores = busca "store_query" DENTRO de cada loja oficial (lista.ml.com.br/
+  #            loja/{slug}/{query}; validado: escopo 100%). Mais limpo, MAS só vê
+  #            loja oficial — perde o inglês espalhado (pegou só 8 EN no teste).
+  #            Use p/ focar numa loja específica (ex.: Asmodee, Brink Center).
+  search_mode: type
+  store_query: pokemon       # termo buscado dentro de cada loja (amplo; o matcher filtra)
+  stores:                    # slugs de loja oficial (lista.ml.com.br/loja/{slug})
+    - asmodee                # validado ao vivo (escopo 100%); blisters/Mega Evolution
+    - brink-center           # Galápagos: boosters/displays/blisters Chaos Rising
+    - baby-world             # ETBs Perfect Order / Chaos Rising
+    - pokemon                # Loja Oficial Pokémon — maior fonte EN do ML
+    - copag                  # distribuidor oficial; importados EN além do PT-BR
+  # Lojas NÃO-oficiais (FLOR IMPORTS, BTPRIME, WBSHOP, THE_COLLECTOR_BR) não têm
+  # /loja/{slug} — precisam de filtro por seller_id (evolução futura). E as de
+  # decks/cartas douradas (FLOR/LEITURA/Lehadry/WBSHOP) ficam fora do escopo
+  # selado-inglês de qualquer jeito (o matcher rejeita).
+  #
+  # Foco em vendedores confiáveis (OPCIONAL). VAZIO = sem filtro (todo o ML).
+  # Quando preenchido, mantém só anúncios cujo vendedor casa (substring, sem
+  # acento/caixa) algum item — corta o ruído de vendedor genérico ("Mercado
+  # Livre" anônimo). Medido no probe ao vivo 2026-06-07: estas lojas carregam
+  # selado INGLÊS limpo ("Inglês"/"-en"/"Lacrado") e dominam o inventário do ML;
+  # a Loja Oficial Pokémon e a COPAG também vendem inglês explícito (não só PT-BR).
+  # NÃO substitui o matcher/escopo — só estreita a quem vende. Descomente p/ ligar.
+  #
+  # Curadoria do operador por volume de vendas (2026-06-07). Termo = substring do
+  # vendedor (sem acento/caixa). ATENÇÃO: ativar a lista faz o scan manter SÓ
+  # estes vendedores. No teste isso derrubava ~59 dos 74 matches EN (incl. os 37
+  # da marca "ML POKÉMON" + genéricos) — por isso fica VAZIO (busca ampla completa).
+  # Descomente p/ estreitar a quem vende (mais limpo, menos cobertura).
+  seller_allowlist: []
+    # - asmodee        # distribuidor oficial TCG; blisters + Mega Evolution
+    # - brink center   # Galápagos: boosters/displays/blisters Chaos Rising
+    # - galapagos      #   (mesma linha aparece como "GALAPAGOS" direto)
+    # - baby world     # ETBs Perfect Order / Chaos Rising
+    # - btprime        # ETBs e selados originais
+    # - collector      # THE_COLLECTOR_BR: boosters/bundles Phantasmal Flames
+  # FORA do escopo selado-inglês (decks, cartas douradas/single, lotes): o
+  # matcher REJEITA o que vendem (não há SKU de deck/single no registry). Só
+  # rende se AMPLIARMOS o escopo — descomente junto com a expansão:
+  #   - flor imports   # kits de decks ("Kit 3 Decks 165 Cartas")
+  #   - leitura        # decks de batalha (Dragapult ex League)
+  #   - lehadry        # cartas douradas/gold (single/novelty)
+  #   - wbshop         # kits de cartas douradas
+  # Top fontes EN MEDIDAS no probe (recomendado incluir) — descomente p/ ligar:
+  #   - pokémon        # Loja Oficial Pokémon — 37 matches EN (a MAIOR fonte)
+  #   - copag          # distribuidor oficial — também lista importados EN
 
 scope:
   include:

@@ -150,6 +150,75 @@ def test_fetch_listings_empty_registry_raises():
         M.fetch_listings({"mercadolivre": {}}, [])
 
 
+# --- seller_allowlist (foco em lojas confiáveis, opcional) -------------------
+def _seller_card(mlid, title, seller):
+    return (
+        '<li class="ui-search-layout__item">'
+        f'<a class="poly-component__title" href="https://www.mercadolivre.com.br/p/MLB-{mlid}">{title}</a>'
+        '<div class="poly-price__current"><span class="andes-money-amount">'
+        '<span class="andes-money-amount__fraction">100</span></span></div>'
+        f'<span class="poly-component__seller">{seller}</span></li>'
+    )
+
+
+def test_seller_allowlist_filters_by_seller(monkeypatch):
+    # Mantém só o vendedor casado por substring, SEM acento/caixa
+    # ('POKÉMON' ~ 'pokemon'); descarta o resto.
+    class _Fetcher:
+        def get_html(self, url):
+            return ("<html>"
+                    + _seller_card("111", "Pokemon EN A", "POKÉMON")
+                    + _seller_card("222", "Pokemon EN B", "Loja Aleatoria XYZ")
+                    + "</html>")
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(M, "_make_fetcher", lambda cfg: _Fetcher())
+    rows = M.fetch_listings({"mercadolivre": {"seller_allowlist": ["pokemon"]}}, _REG)
+    assert len(rows) == 1
+    assert "POK" in rows[0]["seller"].upper()
+
+
+def test_seller_allowlist_empty_keeps_all(monkeypatch, html):
+    # VAZIO = sem filtro: comportamento default, zero regressão.
+    fake = _FakeFetcher(html=html)
+    monkeypatch.setattr(M, "_make_fetcher", lambda cfg: fake)
+    rows = M.fetch_listings({"mercadolivre": {"seller_allowlist": []}}, _REG)
+    assert len(rows) == 3
+
+
+# --- search_mode=stores (busca DENTRO de loja confiável) --------------------
+def test_store_url_format():
+    assert M._store_url("asmodee", "pokemon") == "https://lista.mercadolivre.com.br/loja/asmodee/pokemon"
+
+
+def test_derive_targets_stores_mode():
+    cfg = {"search_mode": "stores", "store_query": "pokemon",
+           "stores": ["asmodee", "brink-center"]}
+    targets = M._derive_targets(cfg, [])  # registry irrelevante no modo stores
+    assert [t[0] for t in targets] == ["asmodee", "brink-center"]
+    assert targets[0][1] == "https://lista.mercadolivre.com.br/loja/asmodee/pokemon"
+
+
+def test_derive_targets_stores_empty_falls_back_to_type():
+    cfg = {"search_mode": "stores", "stores": []}
+    targets = M._derive_targets(cfg, [{"language": "EN", "product_type": "Booster Box"}])
+    assert targets and all("games-brinquedos" in u for _, u in targets)
+
+
+def test_fetch_listings_stores_mode_uses_slug_and_skips_allowlist(monkeypatch, html):
+    # Modo stores: ids usam o slug da loja e o seller_allowlist é IGNORADO (a URL
+    # já escopa) — por isso um termo que não casa ninguém não derruba os cards.
+    fake = _FakeFetcher(html=html)
+    monkeypatch.setattr(M, "_make_fetcher", lambda cfg: fake)
+    cfg = {"mercadolivre": {"search_mode": "stores", "stores": ["asmodee"],
+                            "store_query": "pokemon", "seller_allowlist": ["loja-inexistente"]}}
+    rows = M.fetch_listings(cfg, [])  # registry vazio é OK no modo stores
+    assert len(rows) == 3
+    assert all(r["id"].startswith("ML-asmodee-") for r in rows)
+
+
 # --- transporte Firecrawl: POST mockado --------------------------------------
 def test_firecrawl_fetcher_parses_rawhtml(monkeypatch, html):
     captured = {}

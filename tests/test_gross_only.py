@@ -99,6 +99,35 @@ def test_low_gross_margin_is_red(registry, config):
     assert row.reject_reason == "margem_total_abaixo_do_minimo"
 
 
+def test_anomalous_margin_is_red_not_false_green(registry, config):
+    # Margem absurda (>= review_above_margin_pct) num match HIGH é artefato —
+    # acessório barato casando SKU caro — não oportunidade. Reproduz o
+    # falso-GREEN do "151 Binder Collection" (fichário avulso ~R$230 vs US$240).
+    # Tem de cair em RED `margem_anomala`, NUNCA GREEN nem YELLOW.
+    assert config["deal_criteria"].get("review_above_margin_pct") is not None
+    fx = config["currency"]["usd_brl"]
+    us_brl = 100.0 * fx
+    price = us_brl / 5.0  # margem bruta ~400% (acima do teto de 200%)
+    row = S.classify(_row("Surging Sparks Booster Box (English)", price),
+                     registry, US_REF, config)
+    assert row.match_confidence == "HIGH"
+    assert row.deal_confidence == "RED"
+    assert row.bucket == "rejected"
+    assert row.reject_reason == "margem_anomala"
+
+
+def test_high_but_plausible_margin_stays_green(registry, config):
+    # Logo ABAIXO do teto continua GREEN: o guard não engole oportunidade real.
+    fx = config["currency"]["usd_brl"]
+    us_brl = 100.0 * fx
+    ceiling = config["deal_criteria"]["review_above_margin_pct"]  # 2.0
+    price = us_brl / (1 + (ceiling - 0.2))  # margem ~ (teto - 20pp)
+    row = S.classify(_row("Surging Sparks Booster Box (English)", price),
+                     registry, US_REF, config)
+    assert row.deal_confidence == "GREEN"
+    assert row.total_margin_pct < ceiling
+
+
 def test_no_match_is_red(registry, config):
     row = S.classify(_row("Produto Aleatório Sem Set Conhecido XYZ", 500.0),
                      registry, US_REF, config)
