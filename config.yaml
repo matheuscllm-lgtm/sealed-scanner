@@ -105,6 +105,14 @@ deal_criteria:
   #   30% de margem bruta    <=>  ~23% mais barato que os EUA
   #   30% mais barato que US <=>  ~43% de margem bruta
 
+pool_highlight:
+  # Cores da aba "Pool Analysis" do XLSX (só com --pool-budget). ATENÇÃO: aqui o
+  # número é margem REALISTA (líquida, JÁ com o modelo de frete do pool), métrica
+  # distinta da classificação gross-only (deal_criteria / invariante #1). Por isso
+  # tem cortes próprios — NÃO confundir com os 30% brutos. Em pct (40 = 40%).
+  green_margin_pct: 40    # margem realista >= 40% -> verde
+  yellow_margin_pct: 30   # entre 30% e 40% -> amarelo; abaixo -> sem cor
+
 sources:
   brazil:
     - Liga Pokémon
