@@ -161,12 +161,28 @@ mercadolivre:
   # selado INGLÊS limpo ("Inglês"/"-en"/"Lacrado") e dominam o inventário do ML;
   # a Loja Oficial Pokémon e a COPAG também vendem inglês explícito (não só PT-BR).
   # NÃO substitui o matcher/escopo — só estreita a quem vende. Descomente p/ ligar.
-  seller_allowlist: []
-  #   - pokémon       # Loja Oficial Pokémon (ML) — maior volume de selado EN
-  #   - copag         # distribuidor oficial; lista importados EN além do PT-BR
-  #   - asmodee
-  #   - galapagos
-  #   - barao geek
+  #
+  # Curadoria do operador por volume de vendas (2026-06-07). Termo = substring do
+  # vendedor (sem acento/caixa). ATENÇÃO: ativar a lista faz o scan manter SÓ
+  # estes vendedores (derruba o resto, inclusive vendedor genérico).
+  seller_allowlist:
+    # --- selado INGLÊS no escopo (boxes / ETB / bundle / blister) -----------
+    - asmodee          # distribuidor oficial TCG; blisters + Mega Evolution
+    - brink center     # Galápagos: boosters/displays/blisters Chaos Rising
+    - galapagos        #   (mesma linha aparece como "GALAPAGOS" direto)
+    - baby world       # ETBs Perfect Order / Chaos Rising
+    - btprime          # ETBs e selados originais
+    - collector        # THE_COLLECTOR_BR: boosters/bundles Phantasmal Flames
+  # FORA do escopo selado-inglês (decks, cartas douradas/single, lotes): o
+  # matcher REJEITA o que vendem (não há SKU de deck/single no registry). Só
+  # rende se AMPLIARMOS o escopo — descomente junto com a expansão:
+  #   - flor imports   # kits de decks ("Kit 3 Decks 165 Cartas")
+  #   - leitura        # decks de batalha (Dragapult ex League)
+  #   - lehadry        # cartas douradas/gold (single/novelty)
+  #   - wbshop         # kits de cartas douradas
+  # Top fontes EN MEDIDAS no probe (recomendado incluir) — descomente p/ ligar:
+  #   - pokémon        # Loja Oficial Pokémon — 37 matches EN (a MAIOR fonte)
+  #   - copag          # distribuidor oficial — também lista importados EN
 
 scope:
   include:
