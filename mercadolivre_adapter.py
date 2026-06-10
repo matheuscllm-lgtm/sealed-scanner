@@ -13,9 +13,14 @@ ACESSO (probe ao vivo 2026-06-06): o ML é mais duro que a OLX.
     account-verification. Só com waitFor≈12-15s o device-check (challenge JS)
     clareia e a busca server-side completa volta (medido: 1.46 MB, 50 cards).
 
-Por isso o adapter é FIRECRAWL-FIRST (≠ OLX, que é urllib-first): o urllib puro
-não rende aqui, sem nem a "janela de IP frio" da OLX. Mantém-se um modo `urllib`
-opcional só por simetria/futuro, mas hoje ele cai direto no anti-bot.
+Por isso o urllib puro não rende aqui, sem nem a "janela de IP frio" da OLX.
+
+DESDE 2026-06-10 o adapter é BROWSER-FIRST: Chrome REAL via patchright
+(`lib.browser.LocalChromeFetcher`, mesma infra da Liga) roda do PC do operador
+e executa o device-check JS nativamente — probe ao vivo 2026-06-10: 48 cards,
+0 block, $0. O modo `firecrawl` (que pagava proxy stealth + waitFor 14s pra
+simular a mesma coisa) vira LEGADO opt-in — útil só se um dia precisar rodar
+da nuvem (sem janela). `urllib` segue por simetria/futuro (cai no anti-bot).
 
 O parser é DOM/CSS (BeautifulSoup), igual Amazon — a busca do ML NÃO expõe
 `__NEXT_DATA__` (OLX) nem `preloadedState` (legado morto). Seletores validados
@@ -72,12 +77,12 @@ _BLOCK_TOKENS = (
 )
 _BLOCK_HINT = (
     "Mercado Livre serviu o anti-bot próprio (account-verification / "
-    "suspicious-traffic), não o WAF da OLX. urllib puro NÃO passa; o caminho é "
-    "config.mercadolivre.mode=firecrawl (proxy stealth + waitFor ~14s, "
-    "FIRECRAWL_API_KEY já no ambiente). O device-check é intermitente por "
-    "reputação de IP — pode falhar mesmo via proxy; nesse caso é BLOQUEADA "
-    "honesto. Rota robusta futura: API oficial via OAuth (HANDOFF §11). As "
-    "outras fontes (amazon/liga/olx) seguem operacionais."
+    "suspicious-traffic), não o WAF da OLX. urllib puro NÃO passa; o caminho "
+    "default é config.mercadolivre.mode=browser (Chrome real headful no PC do "
+    "operador, $0 — o device-check JS resolve sozinho na janela). Fallback "
+    "pago: mode=firecrawl (proxy stealth + waitFor ~14s, FIRECRAWL_API_KEY). "
+    "Rota robusta futura: API oficial via OAuth (HANDOFF §11). As outras "
+    "fontes (amazon/liga/olx) seguem operacionais."
 )
 
 # Heurística FRACA de usado por título (a condição real não está no card —
@@ -242,6 +247,35 @@ class _UrllibFetcher(_Fetcher):
         return body
 
 
+class _BrowserFetcher(_Fetcher):
+    """Chrome REAL via patchright (lib.browser.LocalChromeFetcher) — $0.
+
+    Mesma infra da Liga: roda do PC do operador (IP residencial), perfil
+    persistente PRÓPRIO (`~/.pw_profile_ml_sealed`, isolado do da Liga pra um
+    clearance não poluir o outro). O device-check JS do ML resolve nativamente
+    no browser real (probe 2026-06-10: 48 cards, 0 block). Headful por default
+    (igual Liga); headless não foi validado contra o device-check."""
+
+    PROFILE_DIR = str(Path.home() / ".pw_profile_ml_sealed")
+    WAIT_SELECTOR = "li.ui-search-layout__item"
+
+    def __init__(self, headless: bool = False, profile_dir: str | None = None):
+        from lib.browser import LocalChromeFetcher
+        self._chrome = LocalChromeFetcher(profile_dir or self.PROFILE_DIR,
+                                          headless=headless)
+
+    def get_html(self, url: str) -> str:
+        html = self._chrome.get(url, wait_for_selector=self.WAIT_SELECTOR,
+                                cf_wait_s=20)
+        if _is_block_page(html):
+            raise SourceBlockedError(
+                "mercadolivre", "anti-bot do ML mesmo via browser real", _BLOCK_HINT)
+        return html
+
+    def close(self) -> None:
+        self._chrome.close()
+
+
 class _FirecrawlFetcher(FirecrawlFetcher):
     """ML é firecrawl-first: o device-check próprio precisa de waitFor ~14s
     (≠ 6s da OLX) e o anti-bot é o `account-verification` dele, não o CF.
@@ -261,10 +295,16 @@ class _FirecrawlFetcher(FirecrawlFetcher):
 
 
 def _make_fetcher(ml_cfg: dict) -> _Fetcher:
-    """Cria o fetcher conforme config.mercadolivre.mode. FIRECRAWL-FIRST: o
-    default é `firecrawl` (≠ OLX, que é urllib). Env MERCADOLIVRE_MODE tem prioridade."""
+    """Cria o fetcher conforme config.mercadolivre.mode. BROWSER-FIRST (2026-06-10):
+    o default é `browser` (Chrome real, $0). `firecrawl` é legado opt-in (pago);
+    `urllib` segue por simetria. Env MERCADOLIVRE_MODE tem prioridade."""
     _load_dotenv_if_present()
-    mode = (os.environ.get("MERCADOLIVRE_MODE") or ml_cfg.get("mode") or "firecrawl").lower()
+    mode = (os.environ.get("MERCADOLIVRE_MODE") or ml_cfg.get("mode") or "browser").lower()
+    if mode == "browser":
+        return _BrowserFetcher(
+            headless=bool(ml_cfg.get("browser_headless", False)),
+            profile_dir=ml_cfg.get("browser_profile_dir"),
+        )
     if mode == "urllib":
         return _UrllibFetcher()
     if mode == "firecrawl":
@@ -282,7 +322,8 @@ def _make_fetcher(ml_cfg: dict) -> _Fetcher:
             wait_ms=ml_cfg.get("firecrawl_wait_ms", _DEFAULT_WAIT_MS),
         )
     raise ValueError(
-        f"mercadolivre.mode desconhecido: {mode!r}. Use 'firecrawl' (default) ou 'urllib'."
+        f"mercadolivre.mode desconhecido: {mode!r}. Use 'browser' (default, $0), "
+        "'firecrawl' (legado pago) ou 'urllib'."
     )
 
 

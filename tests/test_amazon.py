@@ -106,9 +106,9 @@ def _registry(n):
             for i in range(n)]
 
 
-# fallback_firecrawl: False mantém estes testes no caminho urllib-puro,
-# determinístico e SEM rede (mesmo com FIRECRAWL_API_KEY setada no ambiente).
-_NO_FC = {"amazon": {"fallback_firecrawl": False}}
+# fallback_browser/firecrawl: False mantém estes testes no caminho urllib-puro,
+# determinístico e SEM rede/browser (mesmo com FIRECRAWL_API_KEY no ambiente).
+_NO_FC = {"amazon": {"fallback_firecrawl": False, "fallback_browser": False}}
 
 
 def test_bloqueio_total_levanta_source_blocked(monkeypatch):
@@ -181,12 +181,14 @@ def test_fetch_firecrawl_success_false_erra(monkeypatch):
 
 
 def test_firecrawl_recupera_quando_urllib_falha(monkeypatch, html):
-    """urllib esgota → Firecrawl entrega → coleta anúncios, sem BLOQUEADA."""
+    """urllib esgota → Firecrawl entrega → coleta anúncios, sem BLOQUEADA.
+    (Firecrawl é opt-in desde 2026-06-10: precisa de fallback_firecrawl: true.)"""
     monkeypatch.setattr(A, "_fetch_retry", lambda url, *a, **k: (_ for _ in ()).throw(_http_503()))
     monkeypatch.setattr(A, "_firecrawl_key", lambda: "fake-key")
     monkeypatch.setattr(A, "_fetch_firecrawl", lambda url, **k: html)
     monkeypatch.setattr(A.time, "sleep", lambda *_: None)
-    out = A.fetch_listings({}, _registry(3))  # fallback default ON
+    cfg = {"amazon": {"fallback_browser": False, "fallback_firecrawl": True}}
+    out = A.fetch_listings(cfg, _registry(3))
     assert out  # recuperado via Firecrawl
 
 
@@ -197,5 +199,78 @@ def test_bloqueio_real_so_quando_ambas_rotas_falham(monkeypatch):
     monkeypatch.setattr(A, "_fetch_firecrawl",
                         lambda url, **k: (_ for _ in ()).throw(RuntimeError("fc down")))
     monkeypatch.setattr(A.time, "sleep", lambda *_: None)
+    cfg = {"amazon": {"fallback_browser": False, "fallback_firecrawl": True}}
+    with pytest.raises(SourceBlockedError):
+        A.fetch_listings(cfg, _registry(5))
+
+
+# --- 6. fallback browser ($0, default desde 2026-06-10) --------------------
+class _FakeBrowser:
+    """Dublê da _BrowserSession — sem Chrome real no teste."""
+    def __init__(self, html=None, exc=None):
+        self.html, self.exc = html, exc
+        self.calls = 0
+        self.closed = False
+
+    def get_html(self, url):
+        self.calls += 1
+        if self.exc is not None:
+            raise self.exc
+        return self.html
+
+    def close(self):
+        self.closed = True
+
+
+def test_browser_recupera_quando_urllib_falha(monkeypatch, html):
+    """urllib esgota → browser ($0) entrega → coleta anúncios, sem BLOQUEADA."""
+    fake = _FakeBrowser(html=html)
+    monkeypatch.setattr(A, "_BrowserSession", lambda **k: fake)
+    monkeypatch.setattr(A, "_fetch_retry", lambda url, *a, **k: (_ for _ in ()).throw(_http_503()))
+    monkeypatch.setattr(A.time, "sleep", lambda *_: None)
+    out = A.fetch_listings({}, _registry(3))  # default: browser ON, firecrawl OFF
+    assert out
+    assert fake.calls >= 1
+    assert fake.closed  # sessão fechada no fim do run
+
+
+def test_firecrawl_default_off_nao_dispara(monkeypatch):
+    """Default 2026-06-10: com browser falhando e firecrawl SEM opt-in, NÃO
+    gasta crédito (mesmo com key no ambiente) → bloqueio honesto."""
+    fc = {"n": 0}
+    fake = _FakeBrowser(exc=RuntimeError("browser down"))
+    monkeypatch.setattr(A, "_BrowserSession", lambda **k: fake)
+    monkeypatch.setattr(A, "_fetch_retry", lambda url, *a, **k: (_ for _ in ()).throw(_http_503()))
+    monkeypatch.setattr(A, "_firecrawl_key", lambda: "fake-key")
+
+    def fc_spy(url, **k):
+        fc["n"] += 1
+        return "<html></html>"
+
+    monkeypatch.setattr(A, "_fetch_firecrawl", fc_spy)
+    monkeypatch.setattr(A.time, "sleep", lambda *_: None)
     with pytest.raises(SourceBlockedError):
         A.fetch_listings({}, _registry(5))
+    assert fc["n"] == 0  # nenhum crédito gasto
+
+
+def test_escada_browser_depois_firecrawl(monkeypatch, html):
+    """Com firecrawl opt-in: urllib falha → browser falha → firecrawl entrega."""
+    fake = _FakeBrowser(exc=RuntimeError("browser down"))
+    monkeypatch.setattr(A, "_BrowserSession", lambda **k: fake)
+    monkeypatch.setattr(A, "_fetch_retry", lambda url, *a, **k: (_ for _ in ()).throw(_http_503()))
+    monkeypatch.setattr(A, "_firecrawl_key", lambda: "fake-key")
+    monkeypatch.setattr(A, "_fetch_firecrawl", lambda url, **k: html)
+    monkeypatch.setattr(A.time, "sleep", lambda *_: None)
+    cfg = {"amazon": {"fallback_firecrawl": True}}
+    out = A.fetch_listings(cfg, _registry(3))
+    assert out  # recuperado via Firecrawl no degrau 3
+
+
+def test_fetch_retry_browser_nao_retenta_block(monkeypatch):
+    """SourceBlockedError (captcha real) propaga na hora — retry não resolve."""
+    fake = _FakeBrowser(exc=SourceBlockedError("amazon", "captcha", "hint"))
+    monkeypatch.setattr(A.time, "sleep", lambda *_: None)
+    with pytest.raises(SourceBlockedError):
+        A._fetch_retry_browser(fake, "https://x", attempts=3)
+    assert fake.calls == 1

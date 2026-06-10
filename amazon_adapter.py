@@ -31,11 +31,17 @@ from lib.errors import SourceBlockedError
 from lib.firecrawl import FIRECRAWL_V1, extract_raw_html, post_scrape  # transporte /scrape compartilhado (Issue #13)
 
 BASE = "https://www.amazon.com.br/s?k="
-# Rota de fallback: Firecrawl (render + proxy residencial) atravessa o 503
-# anti-bot que o urllib direto leva. Só dispara quando o urllib+retry esgota
-# — economiza créditos. Usa a rota /v1 (papel de FALLBACK), não a classe
-# primária do lib.firecrawl (que OLX/ML usam como transporte principal).
+# Fallback PRIMÁRIO (2026-06-10): Chrome REAL via patchright (lib.browser),
+# mesma infra da Liga — $0, roda do PC do operador. Atravessa o 503 anti-bot
+# que o urllib direto leva (probe ao vivo 2026-06-10: 13 resultados, 0 block).
+# Abre 1× por run (lazy: só se algum SKU precisar) e reusa a sessão.
+#
+# Fallback LEGADO opt-in: Firecrawl (render + proxy residencial) — pago
+# (~51 créditos/run sob block pesado). Mantido só pra rodar da nuvem (sem
+# janela). Usa a rota /v1 (papel de FALLBACK), não a classe primária do
+# lib.firecrawl (que OLX/ML usam como transporte principal).
 FIRECRAWL_ENDPOINT = FIRECRAWL_V1
+_BROWSER_PROFILE = None  # default: ~/.pw_profile_amazon_sealed (ver _BrowserSession)
 # Pool de User-Agents pra não bater na Amazon sempre com a mesma assinatura
 # (reduz a chance de anti-bot disparar por padrão de request).
 UAS = (
@@ -114,6 +120,61 @@ def _fetch_firecrawl(url: str, proxy: str = "stealth", country: str = "BR",
     return extract_raw_html(envelope, default_success=False)
 
 
+# Sinais de página anti-bot da Amazon BR servida AO BROWSER (raro: a SERP em
+# browser real costuma carregar limpa; isto pega captcha/robot-check residual).
+_AMZ_BLOCK_TOKENS = ("robot check", "captcha", "algo deu errado", "/errors/validatecaptcha")
+
+
+class _BrowserSession:
+    """Sessão Chrome real LAZY pro fallback ($0). Abre no 1º uso, reusa entre
+    SKUs, fecha no fim do run (fetch_listings faz o close no finally)."""
+
+    def __init__(self, headless: bool = False, profile_dir: str | None = None):
+        from pathlib import Path
+        self._headless = headless
+        self._profile = profile_dir or str(Path.home() / ".pw_profile_amazon_sealed")
+        self._chrome = None
+
+    def get_html(self, url: str) -> str:
+        if self._chrome is None:
+            from lib.browser import LocalChromeFetcher
+            self._chrome = LocalChromeFetcher(self._profile, headless=self._headless)
+        html = self._chrome.get(
+            url, wait_for_selector='div[data-component-type="s-search-result"]',
+            cf_wait_s=15)
+        low = html.lower()
+        if any(tok in low for tok in _AMZ_BLOCK_TOKENS):
+            raise SourceBlockedError(
+                "amazon", "anti-bot da Amazon mesmo via browser real",
+                "Captcha/robot-check na SERP em Chrome real — raro; tente de novo "
+                "mais tarde ou resolva o captcha na janela.")
+        return html
+
+    def close(self) -> None:
+        if self._chrome is not None:
+            self._chrome.close()
+            self._chrome = None
+
+
+def _fetch_retry_browser(browser: "_BrowserSession", url: str,
+                         attempts: int = 2, base_sleep: float = 2.0) -> str:
+    """Browser fallback com 1 retentativa (página em branco/transitório de
+    rede). Block real (SourceBlockedError) propaga na hora — retentar captcha
+    não resolve sozinho."""
+    last: Exception | None = None
+    for i in range(attempts):
+        try:
+            return browser.get_html(url)
+        except SourceBlockedError:
+            raise
+        except Exception as exc:
+            last = exc
+            if i < attempts - 1:
+                time.sleep(base_sleep + random.uniform(0, 0.75))
+    assert last is not None
+    raise last
+
+
 def _price_to_float(text: str) -> float | None:
     """'R$ 1.412,58' -> 1412.58 (BR: ponto = milhar, vírgula = decimal)."""
     cleaned = "".join(c for c in text if c.isdigit() or c in ".,")
@@ -172,64 +233,89 @@ def fetch_listings(config: dict, registry: list[dict]) -> list[dict]:
     amz = config.get("amazon", {})
     delay = amz.get("delay_seconds", 1.5)
     limit_per_sku = amz.get("results_per_sku", 6)
-    # Fallback Firecrawl: liga por padrão SE a key existir. Só dispara quando o
-    # urllib+retry esgota (≈13% dos SKUs sob ~50% de 503) → custo de créditos baixo.
-    fallback_firecrawl = amz.get("fallback_firecrawl", True)
+    # Fallback BROWSER ($0, default): Chrome real, abre lazy no 1º SKU que o
+    # urllib+retry não resolver. Fallback FIRECRAWL é LEGADO opt-in (pago) —
+    # default DESLIGADO desde 2026-06-10; útil só rodando da nuvem.
+    fallback_browser = amz.get("fallback_browser", True)
+    fallback_firecrawl = amz.get("fallback_firecrawl", False)
     firecrawl_proxy = amz.get("firecrawl_proxy", "stealth")
     fc_available = bool(fallback_firecrawl and _firecrawl_key())
+    browser = _BrowserSession(
+        headless=bool(amz.get("browser_headless", False)),
+        profile_dir=amz.get("browser_profile_dir"),
+    ) if fallback_browser else None
 
     all_listings: list[dict] = []
     seen_asins: set[str] = set()
-    fails = 0       # SKUs onde urllib E Firecrawl falharam (sinal de bloqueio real)
+    fails = 0       # SKUs onde TODAS as rotas falharam (sinal de bloqueio real)
+    br_used = 0     # quantos SKUs caíram no browser ($0)
+    br_recovered = 0
     fc_used = 0     # quantos SKUs caíram no Firecrawl (créditos)
     fc_recovered = 0
-    for i, sku in enumerate(registry):
-        query = sku.get("amazon_query") or _derive_query(sku)
-        url = BASE + urllib.parse.quote_plus(query)
-        html: str | None = None
-        via = "urllib"
-        try:
-            html = _fetch_retry(url)
-        except Exception as exc:
-            # urllib esgotou (provável 503 anti-bot persistente). Tenta Firecrawl.
-            if fc_available:
-                via = "firecrawl"
-                fc_used += 1
-                try:
-                    html = _fetch_firecrawl(url, proxy=firecrawl_proxy)
-                    fc_recovered += 1
-                except Exception as fc_exc:
+    try:
+        for i, sku in enumerate(registry):
+            query = sku.get("amazon_query") or _derive_query(sku)
+            url = BASE + urllib.parse.quote_plus(query)
+            html: str | None = None
+            via = "urllib"
+            try:
+                html = _fetch_retry(url)
+            except Exception as exc:
+                # urllib esgotou (provável 503 anti-bot persistente).
+                # Escada: browser ($0) → firecrawl (opt-in pago) → FALHOU.
+                if browser is not None:
+                    via = "browser"
+                    br_used += 1
+                    try:
+                        html = _fetch_retry_browser(browser, url)
+                        br_recovered += 1
+                    except Exception as br_exc:
+                        exc = br_exc
+                        html = None
+                if html is None and fc_available:
+                    via = "firecrawl"
+                    fc_used += 1
+                    try:
+                        html = _fetch_firecrawl(url, proxy=firecrawl_proxy)
+                        fc_recovered += 1
+                    except Exception as fc_exc:
+                        exc = fc_exc
+                        html = None
+                if html is None:
                     via = "FALHOU"
-                    print(f"  [aviso] Amazon urllib+Firecrawl falharam p/ {sku.get('id')}: {exc} / {fc_exc}", flush=True)
+                    print(f"  [aviso] busca Amazon falhou p/ {sku.get('id')}: {exc}", flush=True)
+            kept = 0
+            if html is None:
+                fails += 1
             else:
-                via = "FALHOU"
-                print(f"  [aviso] busca Amazon falhou p/ {sku.get('id')}: {exc}", flush=True)
-        kept = 0
-        if html is None:
-            fails += 1
-        else:
-            results = parse_search_results(html)
-            for r in results[:limit_per_sku]:
-                asin = r.get("asin") or ""
-                if asin and asin in seen_asins:
-                    continue
-                if asin:
-                    seen_asins.add(asin)
-                entry = dict(r)
-                entry["id"] = f"AMZ-{sku['id']}-{kept + 1}"
-                entry["source"] = "amazon"
-                all_listings.append(entry)
-                kept += 1
-        # progresso AO VIVO por SKU (flush): o fetch antes era silencioso no
-        # sucesso, sem visibilidade de quantos SKUs caíram no Firecrawl durante
-        # um run longo. via = urllib | firecrawl | FALHOU.
-        print(f"  [amazon] {i + 1:3}/{len(registry)} {str(sku.get('id'))[:22]:22} "
-              f"via={via:9} +{kept} anuncios={len(all_listings):3} "
-              f"fc={fc_used}(recup={fc_recovered}) fails={fails}", flush=True)
-        if i < len(registry) - 1:
-            # jitter no delay pra não martelar a Amazon em cadência fixa.
-            time.sleep(delay + random.uniform(0, 0.75))
+                results = parse_search_results(html)
+                for r in results[:limit_per_sku]:
+                    asin = r.get("asin") or ""
+                    if asin and asin in seen_asins:
+                        continue
+                    if asin:
+                        seen_asins.add(asin)
+                    entry = dict(r)
+                    entry["id"] = f"AMZ-{sku['id']}-{kept + 1}"
+                    entry["source"] = "amazon"
+                    all_listings.append(entry)
+                    kept += 1
+            # progresso AO VIVO por SKU (flush). via = urllib | browser |
+            # firecrawl | FALHOU.
+            print(f"  [amazon] {i + 1:3}/{len(registry)} {str(sku.get('id'))[:22]:22} "
+                  f"via={via:9} +{kept} anuncios={len(all_listings):3} "
+                  f"br={br_used}(recup={br_recovered}) "
+                  f"fc={fc_used}(recup={fc_recovered}) fails={fails}", flush=True)
+            if i < len(registry) - 1:
+                # jitter no delay pra não martelar a Amazon em cadência fixa.
+                time.sleep(delay + random.uniform(0, 0.75))
+    finally:
+        if browser is not None:
+            browser.close()
 
+    if br_used:
+        print(f"  [amazon] browser fallback: {br_recovered}/{br_used} SKUs "
+              f"recuperados via Chrome real ($0).")
     if fc_used:
         print(f"  [amazon] Firecrawl fallback: {fc_recovered}/{fc_used} SKUs "
               f"recuperados via render/proxy (créditos consumidos).")
@@ -240,11 +326,16 @@ def fetch_listings(config: dict, registry: list[dict]) -> list[dict]:
     # (igual Liga/OLX), em vez de mascarar como status=ok n_listings=0.
     total = len(registry)
     if fails and not all_listings and fails / max(1, total) >= 0.6:
-        rota = "urllib+Firecrawl" if fc_available else "urllib (Firecrawl off/sem key)"
+        rotas = ["urllib"]
+        if fallback_browser:
+            rotas.append("browser")
+        if fc_available:
+            rotas.append("Firecrawl")
         raise SourceBlockedError(
             "amazon",
-            f"anti-bot em {fails}/{total} buscas via {rota}",
-            "Amazon BR negou a maioria das requests em ambas as rotas. "
-            "Conferir FIRECRAWL_API_KEY/créditos, subir delay_seconds ou rodar mais tarde.",
+            f"anti-bot em {fails}/{total} buscas via {'+'.join(rotas)}",
+            "Amazon BR negou a maioria das requests em todas as rotas. "
+            "Conferir Chrome/patchright (rota browser), subir delay_seconds "
+            "ou rodar mais tarde.",
         )
     return all_listings
