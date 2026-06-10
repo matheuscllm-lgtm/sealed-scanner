@@ -79,9 +79,10 @@ python scripts/build_delivery_xlsx.py    # 3) XLSX condensado (GREEN+YELLOW) p/ 
   ordenado `GREEN → YELLOW → RED`, aba `Resumo`). Imprime o marcador
   `UNIFIED_OUT_DIR=`. Uma fonte bloqueada (ex.: OLX no CF WAF) **não derruba** o
   run (`SourceBlockedError`, degradação graciosa); só falha se NENHUMA entregar.
-  **Default = Liga + OLX + MercadoLivre.** A **Amazon é opt-in** (`--sources amazon`):
-  seu fallback Firecrawl é per-SKU (~51 créditos/run sob block pesado), caro p/ rodar
-  sempre — as outras 3 custam ~0 (Liga headful) ou ~8 créditos (OLX/ML per-tipo).
+  **Default = Liga + OLX + MercadoLivre.** A **Amazon é opt-in** (`--sources amazon`)
+  pelo TEMPO de run (105 buscas por SKU), não mais por custo: desde 2026-06-10
+  ML e Amazon usam **Chrome real (browser-first / fallback browser) a $0** —
+  Firecrawl virou legado opt-in nas duas (útil só pra rodar da nuvem).
 - Entrega: mostrar **todas** as linhas GREEN/YELLOW no chat (não amostra curada),
   ordem por margem total desc, com `Qtd disponível`. Arquivo completo fica em
   `results/unified_<ts>/` (gitignorado).
@@ -92,8 +93,8 @@ Estado das fontes:
 |---|---|---|---|
 | **Liga Pokémon** | ✅ operacional | ✅ sim | `patchright` + Chrome **headful**. Passo mais longo (~15-25 min). $0. |
 | **OLX** | ⚠️ intermitente | ✅ sim | CF WAF por reputação de IP. `urllib`-first + Tier 2 Firecrawl render/proxy. ~8 créditos quando bloqueado. |
-| **MercadoLivre** | ⚠️ intermitente | ✅ sim | anti-bot próprio (device-check). **firecrawl-first** (`waitFor ~14s`, stealth). ~8 créditos/run. |
-| **Amazon BR** | ✅ operacional | ❌ **opt-in** | `urllib`+retry → fallback Firecrawl per-SKU. **~51 créditos/run** sob block pesado → fora do default; rode com `--sources amazon`. |
+| **MercadoLivre** | ✅ operacional | ✅ sim | anti-bot próprio (device-check). **browser-first** desde 2026-06-10: Chrome real headful resolve o device-check nativamente. **$0.** (Firecrawl = legado opt-in p/ nuvem.) |
+| **Amazon BR** | ✅ operacional | ❌ **opt-in** | `urllib`+retry → **fallback browser** (Chrome real, $0, desde 2026-06-10). Opt-in pelo TEMPO (105 buscas/SKU), não por custo. (Firecrawl = legado opt-in.) |
 
 Rodar uma fonte só (debug):
 

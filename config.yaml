@@ -101,11 +101,18 @@ amazon:
   # Bump 1.5 -> 2.5 (+ jitter no adapter) pra aliviar pressão de request e
   # reduzir 503 anti-bot da Amazon BR. Ver docs/HANDOFF-amazon-adapter-2026-06-05.md.
   delay_seconds: 2.5
-  # Fallback Firecrawl (render + proxy residencial) p/ os SKUs que o urllib+retry
-  # não consegue (503 persistente). Liga por padrão SE FIRECRAWL_API_KEY existir
-  # no ambiente; só dispara no esgotamento do urllib → custo de créditos baixo
-  # (~13% dos SKUs). Desligue (false) p/ rodar 100% sem créditos.
-  fallback_firecrawl: true
+  # Fallback BROWSER ($0, DEFAULT desde 2026-06-10): Chrome REAL via patchright
+  # (mesma infra da Liga, perfil próprio ~/.pw_profile_amazon_sealed). Abre LAZY
+  # no 1º SKU que o urllib+retry não resolver (503 persistente) e reusa a sessão.
+  # Probe ao vivo 2026-06-10: SERP carrega limpa em browser real, 0 block.
+  fallback_browser: true
+  browser_headless: false    # headful (janela) — igual Liga; headless não validado
+  # browser_profile_dir: ""  # default ~/.pw_profile_amazon_sealed
+  #
+  # Fallback Firecrawl — LEGADO opt-in (PAGO, ~51 créditos/run sob block
+  # pesado). Era o fallback default até 2026-06-10; o browser ($0) assumiu.
+  # Útil só p/ rodar da nuvem (sem janela). Requer FIRECRAWL_API_KEY.
+  fallback_firecrawl: false
   firecrawl_proxy: stealth   # basic | stealth | enhanced | auto (anti-bot da Amazon pede stealth)
 
 olx:
@@ -143,11 +150,19 @@ mercadolivre:
   # (o ML NÃO expõe __NEXT_DATA__). 4ª fonte BR; inventário grande de selado.
   #
   # ML tem anti-bot PRÓPRIO (account-verification / suspicious-traffic), NÃO o
-  # Cloudflare da OLX. urllib puro NÃO passa → FIRECRAWL-FIRST. O device-check
-  # (challenge JS) precisa de waitFor ~12-15s pra clarear (6s, o número da OLX,
-  # cai no account-verification). Custo: stealth é o tier caro do Firecrawl →
-  # queries amplas por tipo (~8), 1 página cada; matcher filtra o resto.
-  mode: firecrawl            # firecrawl (default) | urllib (não rende hoje)
+  # Cloudflare da OLX. urllib puro NÃO passa. Modos de transporte:
+  #
+  #   mode=browser    (DEFAULT desde 2026-06-10) Chrome REAL via patchright
+  #                   (mesma infra da Liga, perfil próprio ~/.pw_profile_ml_sealed).
+  #                   O device-check JS resolve NATIVAMENTE no browser — probe
+  #                   ao vivo 2026-06-10: 48 cards, 0 block. $0.
+  #   mode=firecrawl  LEGADO opt-in (PAGO ~8 créditos/run): proxy stealth +
+  #                   waitFor ~14s simulam o que o browser faz de graça. Útil
+  #                   só p/ rodar da nuvem. Requer FIRECRAWL_API_KEY.
+  #   mode=urllib     não rende hoje (cai direto no anti-bot).
+  mode: browser
+  browser_headless: false    # headful (janela) — headless não validado vs device-check
+  # browser_profile_dir: ""  # default ~/.pw_profile_ml_sealed
   firecrawl_proxy: stealth
   firecrawl_wait_ms: 14000   # device-check do ML; NÃO copiar os 6000 da OLX
   results_per_query: 50

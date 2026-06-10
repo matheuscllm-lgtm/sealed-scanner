@@ -252,13 +252,67 @@ def test_make_fetcher_firecrawl_needs_key(monkeypatch):
         M._make_fetcher({"mode": "firecrawl"})
 
 
-def test_make_fetcher_mode_default_is_firecrawl(monkeypatch):
-    # firecrawl-first: sem mode explícito, default = firecrawl (≠ OLX urllib).
+def test_make_fetcher_mode_default_is_browser(monkeypatch):
+    # browser-first (2026-06-10): sem mode explícito, default = browser ($0).
+    # Mesmo com FIRECRAWL_API_KEY no ambiente, NÃO usa firecrawl sem opt-in.
     monkeypatch.delenv("MERCADOLIVRE_MODE", raising=False)
     monkeypatch.setenv("FIRECRAWL_API_KEY", "fake-key")
     monkeypatch.setattr(M, "_load_dotenv_if_present", lambda: None)
+
+    class _FakeChrome:
+        def __init__(self, *a, **k):
+            pass
+
+    import lib.browser as B
+    monkeypatch.setattr(B, "LocalChromeFetcher", _FakeChrome)
     fetcher = M._make_fetcher({})
+    assert isinstance(fetcher, M._BrowserFetcher)
+
+
+def test_make_fetcher_firecrawl_opt_in_continua(monkeypatch):
+    # firecrawl segue disponível como LEGADO opt-in (mode explícito).
+    monkeypatch.delenv("MERCADOLIVRE_MODE", raising=False)
+    monkeypatch.setenv("FIRECRAWL_API_KEY", "fake-key")
+    monkeypatch.setattr(M, "_load_dotenv_if_present", lambda: None)
+    fetcher = M._make_fetcher({"mode": "firecrawl"})
     assert isinstance(fetcher, M._FirecrawlFetcher)
+
+
+def test_browser_fetcher_block_raises(monkeypatch):
+    # device-check servido mesmo no browser real → SourceBlockedError honesto.
+    class _FakeChrome:
+        def __init__(self, *a, **k):
+            pass
+
+        def get(self, url, **k):
+            return "<html>/gz/account-verification</html>"
+
+        def close(self):
+            pass
+
+    import lib.browser as B
+    monkeypatch.setattr(B, "LocalChromeFetcher", _FakeChrome)
+    fetcher = M._BrowserFetcher()
+    with pytest.raises(SourceBlockedError):
+        fetcher.get_html("https://lista.mercadolivre.com.br/x")
+
+
+def test_browser_fetcher_devolve_html(monkeypatch, html):
+    class _FakeChrome:
+        def __init__(self, *a, **k):
+            pass
+
+        def get(self, url, **k):
+            return html
+
+        def close(self):
+            pass
+
+    import lib.browser as B
+    monkeypatch.setattr(B, "LocalChromeFetcher", _FakeChrome)
+    fetcher = M._BrowserFetcher()
+    out = fetcher.get_html("https://lista.mercadolivre.com.br/x")
+    assert "ui-search-layout__item" in out
 
 
 # --- id ÚNICO entre queries (regressão: booster-box vs booster-bundle) --------

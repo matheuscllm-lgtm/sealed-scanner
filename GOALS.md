@@ -55,7 +55,7 @@
 
 - **Repo dedicado**: `matheuscllm-lgtm/sealed-arbitrage-scanner` (módulos na raiz, não mais em `sealed/`). **Branch atual**: `claude/determined-curie-Q1Ur8`.
 - **Stack**: pipeline Python (`sealed_arbitrage_scanner.py`), preços US via tcgcsv (TCGPlayer Market), **105 SKUs** no registry. Classificação só por **margem bruta** desde 2026-06-02.
-- **Fontes BR operacionais**: OLX (`--source olx`), Amazon BR (`--source amazon`), Liga (`--source liga`), Mercado Livre (`--source mercadolivre` — via Firecrawl free tier; ruidoso e margens finas, mas operacional).
+- **Fontes BR operacionais**: OLX (`--source olx`), Amazon BR (`--source amazon`), Liga (`--source liga`), Mercado Livre (`--source mercadolivre`). Desde 2026-06-10 **ML e Amazon rodam a $0** via Chrome real (browser-first no ML; fallback browser na Amazon) — Firecrawl é legado opt-in nas duas (só p/ nuvem). Validação ao vivo 2026-06-10: ML 239 anúncios; Amazon 94 anúncios, 16/16 SKUs bloqueados recuperados via browser, 0 créditos.
 - **Cuidado de credits**: modo `scraperapi` do Liga adapter consome ~25-50 credits por render JS (Liga é "protected domain"). Free tier 1000/mês NÃO cobre 1 scan completo. Preferir `mode=local`.
 - **Custo zero**: rodando da máquina do usuário em casa (Windows 11, Chrome instalado), IP residencial passa o Cloudflare da Liga.
 - **Workflow `/goal execute`** (novo 2026-05-27): orquestrador lê P0 ativo, abre PLAN.md vinculado, executa fase-a-fase com `sealed-reviewer` agent entre cada. Comando `/goal` continua read-only sem argumento.
