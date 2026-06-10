@@ -132,8 +132,10 @@ def looks_like_single_card(title: str) -> bool:
 #     Rejeitá-los barraria produto selado real.
 #   - 'sleeve' → 'Sleeved Booster' = 20 SKUs selados.
 #   - 'collection'/'box' → caixas seladas reais.
-# (O "Fichário Binder" +440% do scan NÃO é acessório: é o Collection Box com
-#  preço US do registry inflado — bug de dado, tratado fora deste guard.)
+# (O "Fichário Binder" +440% do scan NÃO é acessório nem bug de dado: auditoria
+#  2026-06-09 via tcgcsv confirmou que 502004 = "151 Binder Collection" e o
+#  market US$241 é real (low US$236; produto out-of-print valorizado). Margens
+#  >200% caem no guard `margem_anomala` p/ verificação manual do anúncio.)
 _ACCESSORY_TOKENS = (
     "acessorio", "acessorios",   # acessório vendido à parte (viés conservador)
     "porta carta", "porta cartas", "porta card", "porta deck",
