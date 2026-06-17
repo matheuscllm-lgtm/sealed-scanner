@@ -42,13 +42,26 @@ Decisões fixas. Qualquer sessão que rode/entregue o scanner segue **todas**:
    vivo **não roda na nuvem**.
 6. **Modo MANUAL** (desde 2026-06-01). O watchdog/Task Scheduler está
    **DESATIVADO** — só roda quando o operador pede. Ver [Modo autônomo](#modo-autônomo-desativado).
-7. **Entrega = tabela no chat, NUNCA arquivo.** O resultado vai pro operador
-   como **tabela markdown no chat do Claude Code** (terminal ou app), não como
-   arquivo `.xlsx`/`.csv` pra download. O scanner ainda **escreve** a planilha
-   local (gitignored) como subproduto de trabalho, mas a **ENTREGA** é a tabela.
-   Arquivo **só se o operador pedir explicitamente** (ex.: importar em lote).
-   A tabela traz **todos** os deals + `Qtd disponível`. Upload pro Drive
-   permanece pulado (base64 inline corrompe; rclone recusado). (operador 2026-06-06)
+7. **Entrega = tabela no chat, NUNCA arquivo — gerada via `scripts/snapshot.py`,
+   NUNCA à mão.** O resultado vai pro operador como **tabela markdown no chat do
+   Claude Code** (terminal ou app), não como arquivo `.xlsx`/`.csv` pra download.
+   **O formato da entrega é OBRIGATÓRIO e tem um caminho só:** rode
+   `python scripts/snapshot.py` sobre o `unified_deals.csv` da run e
+   cole/mostre o markdown que ele gerou. Você **não** redesenha, reordena nem
+   monta a tabela "na mão" — o layout (colunas, links, `Qtd disponível`, flags)
+   vive **dentro** do `snapshot.py`, é a única fonte de verdade. A tabela traz
+   **todos** os deals (não amostra curada), com `Qtd disponível` (estoque do
+   vendedor — importa em lote) e **dois links clicáveis verificáveis** por linha:
+   o **anúncio BR** (validar preço/estoque) e a **página TCGPlayer de referência**
+   (validar o preço US). Deals que precisam de conferência manual (match ambíguo
+   YELLOW ou margem/variante anômala) vão marcados com **⚠️** + o motivo. O
+   scanner ainda **escreve** a planilha local (gitignored) como subproduto de
+   trabalho, mas a **ENTREGA** é a tabela do `snapshot.py`. Arquivo `.xlsx`
+   (`scripts/build_delivery_xlsx.py`) **só se o operador pedir explicitamente**
+   (ex.: importar em lote — caso de uso real e recorrente do selado). Upload pro
+   Drive permanece pulado (base64 inline corrompe; rclone recusado). Comando
+   literal em [Entrega da tabela](#entrega-da-tabela-no-chat-obrigatório-via-snapshotpy).
+   (operador 2026-06-06; formato mandatório 2026-06-17)
 8. **Escopo = SELADO-only.** Este repo busca **só produto selado**. Amazon, OLX e
    ML fazem queries de selado (nunca de cards); a Liga navega as **categorias de
    selado** aqui. A Liga é **dual-repo**: no repo de *cards* ela busca singles;
@@ -71,7 +84,8 @@ pip install -r requirements.txt          # 1ª vez
 python build_us_reference.py             # 1) refresca preços US (tcgcsv) — rápido
 python run_all_sources.py                # 2) scan default: Liga(HEADFUL) + OLX + MercadoLivre — NO PC
                                          #    (Amazon é opt-in: --sources amazon)
-python scripts/build_delivery_xlsx.py    # 3) XLSX condensado (GREEN+YELLOW) p/ entrega
+python scripts/snapshot.py               # 3) ENTREGA: tabela markdown p/ o chat (OBRIGATÓRIO) ⭐
+python scripts/build_delivery_xlsx.py    # 4) XLSX condensado — só se o operador pedir o arquivo
 ```
 
 - `run_all_sources.py` orquestra as fontes e escreve
@@ -83,9 +97,11 @@ python scripts/build_delivery_xlsx.py    # 3) XLSX condensado (GREEN+YELLOW) p/ 
   pelo TEMPO de run (105 buscas por SKU), não mais por custo: desde 2026-06-10
   ML e Amazon usam **Chrome real (browser-first / fallback browser) a $0** —
   Firecrawl virou legado opt-in nas duas (útil só pra rodar da nuvem).
-- Entrega: mostrar **todas** as linhas GREEN/YELLOW no chat (não amostra curada),
-  ordem por margem total desc, com `Qtd disponível`. Arquivo completo fica em
-  `results/unified_<ts>/` (gitignorado).
+- Entrega: gere a tabela com `python scripts/snapshot.py` e cole/mostre o
+  markdown no chat — **todas** as linhas GREEN/YELLOW (não amostra curada),
+  ordem por margem desc, com `Qtd disponível` + links clicáveis. Detalhe em
+  [Entrega da tabela](#entrega-da-tabela-no-chat-obrigatório-via-snapshotpy).
+  Arquivo completo fica em `results/unified_<ts>/` (gitignorado).
 
 Estado das fontes:
 
@@ -105,6 +121,76 @@ python sealed_arbitrage_scanner.py --source olx
 python sealed_arbitrage_scanner.py --source mercadolivre
 python run_liga_local.py --janela --snapshot     # Liga headful + snapshot
 ```
+
+---
+
+## Entrega da tabela no chat (OBRIGATÓRIO via snapshot.py)
+
+> **Regra dura (invariante #7). Vale pra qualquer agente — inclusive um Claude
+> Code da nuvem que clonou este repo.** Não negociável.
+
+Quando for **entregar o resultado de um scan** ao operador, há **um caminho só**:
+
+> **Rode `scripts/snapshot.py` sobre o `unified_deals.csv` da run e cole/mostre
+> o markdown que ele gerou.** Você **não** redesenha, reordena nem monta a tabela
+> "na mão". O formato canônico (colunas, ordem, links clicáveis, `Qtd disponível`,
+> flags ⚠️) vive **dentro** do `snapshot.py` — é a única fonte de verdade do
+> layout. Se a entrega que você está prestes a colar **não** veio do `snapshot.py`,
+> **pare e gere por ele.**
+
+Em português simples pro operador: o "jeito certo de te mostrar os deals" está
+programado no script; o agente sempre roda o script e te entrega o que saiu.
+
+### Comando literal
+
+```bash
+python scripts/snapshot.py
+#   usa o results/unified_* mais recente; escreve snapshots/scan-<ts>.md
+#   -> cole/mostre o conteúdo desse .md no chat (terminal OU app)
+
+python scripts/snapshot.py --scan-dir results/unified_20260615_154401
+#   aponta uma run específica
+```
+
+### O que o `snapshot.py` gera (e que você entrega assim, sem mexer)
+
+Uma seção **🟢🟡 Deals acionáveis (GREEN + YELLOW)** com **todas** as linhas
+(não amostra curada), ordenadas por margem bruta desc. Colunas, nesta ordem:
+
+```
+| # | Status | Produto (EN) | Tipo | Qtd disp. | TCG (R$) | BR (R$) | Margem bruta % | Δ R$/unid | ⚠️ |
+```
+
+- **`Produto (EN)`** = nome/descrição canônica do SKU selado (ex.: `Mega Evolution
+  Booster Bundle (English)`); `Tipo` = categoria (ETB, Booster Bundle, Tin…).
+- **`Qtd disp.`** = `Qtd disponível` — estoque do vendedor (o operador importa em
+  **LOTE**, nunca 1 unidade). `?` quando o adapter da fonte não parseou o estoque.
+  **Coluna obrigatória** (invariante #2).
+- **`TCG (R$)`** = preço de referência TCGPlayer Market, em R$, **com link clicável**
+  pra página canônica do produto (`tcgplayer.com/product/<id>` do `sku_registry.yaml`)
+  — pra **verificar** o preço US.
+- **`BR (R$)`** = preço do anúncio (Liga/OLX/Amazon/ML), em R$, **com link clicável**
+  pro anúncio — pra **verificar** preço + estoque. Os dois links são **LIDOS** do
+  scan (coluna `URL` do anúncio + `tcgplayer_product_id` do registry); **nunca
+  invente, adivinhe ou monte uma URL** — sem dado, a célula vai sem link.
+- **`Margem bruta %`** / **`Δ R$/unid`** = `(TCG − BR)/BR` e `TCG − BR`. Margem
+  **bruta pura**, sem taxas (invariante #1).
+- **`⚠️`** = deal que precisa de **conferência manual** (match ambíguo YELLOW ou
+  margem/variante anômala). Marcados na coluna **e** listados logo abaixo da tabela
+  com o motivo. Você **reporta** flags e fontes; a decisão de comprar é do operador
+  (invariante #3) — não rankeie "BUY NOW".
+
+O snapshot também inclui um **Ranking completo** (todas as linhas, incl. RED) como
+referência de auditoria.
+
+### Arquivo XLSX — só sob demanda
+
+A entrega padrão é a **tabela no chat** (acima). O XLSX condensado
+(`scripts/build_delivery_xlsx.py`, GREEN+YELLOW + aba Resumo, com `Qtd disponível`)
+é gerado **só quando o operador pedir explicitamente** o arquivo — o que **acontece
+de verdade no selado**, porque ele importa em lote. Sem pedido = sem arquivo. O
+`unified_deals.csv`/`.xlsx` completo continua escrito em `results/<ts>/` como
+matéria-prima (gitignorado) — é o insumo do `snapshot.py`, não a entrega.
 
 ---
 
@@ -205,7 +291,9 @@ powershell -ExecutionPolicy Bypass -File .\register_task.ps1
 ├── run_all_sources.py          # ENTRADA padrão — orquestrador (default 3 fontes + Amazon opt-in) → tabela unificada
 ├── sealed_arbitrage_scanner.py # pipeline (1 fonte por vez): match → margem → classificação
 ├── build_us_reference.py       # gera data/us_reference.json a partir de tcgcsv
-├── scripts/build_delivery_xlsx.py  # XLSX condensado (GREEN+YELLOW) p/ entrega
+├── scripts/snapshot.py         # ⭐ ENTREGA: tabela markdown p/ o chat (Qtd + links clicáveis) — OBRIGATÓRIO
+├── scripts/snapshot_friendly.py    # versão didática (agrupada por produto) — opcional
+├── scripts/build_delivery_xlsx.py  # XLSX condensado (GREEN+YELLOW) — só sob demanda do operador
 ├── watchdog.py / register_task.ps1 # keep-alive autônomo (DESATIVADO — modo manual)
 ├── liga_adapter.py             # Liga (patchright + Chrome headful)
 ├── amazon_adapter.py           # Amazon BR (urllib+retry → fallback Firecrawl; opt-in)
@@ -224,5 +312,9 @@ Cada execução cria `results/<timestamp>/` (gitignorado — runs nunca se mistu
 
 | Arquivo | Conteúdo |
 |---|---|
-| `unified_deals.csv` / `unified_sealed_<ts>.xlsx` | tabela consolidada das fontes (via `run_all_sources.py`) |
+| `unified_deals.csv` / `unified_sealed_<ts>.xlsx` | tabela consolidada das fontes (via `run_all_sources.py`) — **insumo do `snapshot.py`** |
 | `real_opportunities.csv` / `review_required.csv` / `rejected.csv` | por bucket (via `sealed_arbitrage_scanner.py`) |
+
+A **entrega** ao operador é o markdown de `scripts/snapshot.py`
+(`snapshots/scan-<ts>.md`, versionado), **não** os CSV/XLSX brutos — ver
+[Entrega da tabela](#entrega-da-tabela-no-chat-obrigatório-via-snapshotpy).
