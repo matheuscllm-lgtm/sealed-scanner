@@ -27,10 +27,30 @@ embutida**): **GREEN ≥30%** (é deal), **YELLOW** = match ambíguo (revisar), 
 <30%**. Piso de 30% é a regra única do operador (2026-06-06). Frete, cartão, IOF e
 demais taxas ficam fora do scanner (calculados na mão).
 
-## 2. XLSX condensado p/ entrega
+## 2. Entrega = tabela markdown no chat (OBRIGATÓRIO via `snapshot.py`)
+
+A **entrega padrão** é a tabela markdown no chat — **gerada pelo script**, NUNCA
+montada à mão (invariante #7; detalhe no
+[README](README.md#entrega-da-tabela-no-chat-obrigatório-via-snapshotpy)):
+
+```bash
+python scripts/snapshot.py
+#   usa o results/unified_* mais recente; escreve snapshots/scan-<ts>.md
+#   -> cole/mostre o conteúdo desse .md no chat
+# ou aponte uma run específica:
+python scripts/snapshot.py --scan-dir results/unified_<ts>
+```
+
+A tabela traz **todas** as linhas GREEN/YELLOW (não amostra curada), com
+`Qtd disponível` (estoque do vendedor — importa em lote), **link clicável pro
+anúncio BR** e **link clicável pra página TCGPlayer de referência**, margem bruta
+e flag ⚠️ nos deals que precisam de conferência manual.
+
+## 3. XLSX condensado — só sob demanda
 
 O XLSX completo (~800 linhas, maioria RED) é grande demais p/ upload inline.
-Este gera só GREEN+YELLOW + aba Resumo:
+Gere o condensado (só GREEN+YELLOW + aba Resumo, com `Qtd disponível`) **só
+quando o operador pedir o arquivo** (caso de uso real do selado: importar em lote):
 
 ```bash
 python scripts/build_delivery_xlsx.py
@@ -39,7 +59,7 @@ python scripts/build_delivery_xlsx.py
 python scripts/build_delivery_xlsx.py results/unified_<ts> entrega.xlsx
 ```
 
-## 3. Entrega no Drive
+## 4. Entrega no Drive (só quando o operador pedir o arquivo)
 
 - **Manual:** suba o `entrega.xlsx` na pasta do Drive de sempre.
 - **Via sessão Claude:** dê `git add results/unified_<ts>/unified_deals.csv && commit && push`
