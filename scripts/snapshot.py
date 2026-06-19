@@ -208,6 +208,21 @@ def md_link(label: str, url: str) -> str:
     return f"[{label}]({url})"
 
 
+def links_cell(r: dict) -> str:
+    """Coluna `Links` combinada (modelo de tabela do MYP, padrão cross-scanner —
+    operador 2026-06-19): `[oferta](url_BR) · [TCG](url_tcg)` numa célula só.
+    `oferta` = anúncio BR (Liga/OLX/Amazon/ML); `TCG` = página TCGplayer de
+    referência. Só inclui o que existir; sem nenhum, vira '—'."""
+    parts = []
+    liga_url = (r.get("URL") or "").strip()
+    tcg_url = tcg_link(r)
+    if liga_url:
+        parts.append(md_link("oferta", liga_url))
+    if tcg_url:
+        parts.append(md_link("TCG", tcg_url))
+    return " · ".join(parts) if parts else "—"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description="Gera a tabela de ENTREGA (Markdown) do scan de selados.")
     ap.add_argument(
@@ -294,23 +309,21 @@ def main() -> None:
     else:
         lines.append(
             "| # | Status | Produto (EN) | Tipo | Qtd disp. | "
-            "TCG (R$) | BR (R$) | Margem bruta % | Δ R$/unid | ⚠️ |"
+            "TCG (R$) | BR (R$) | Margem bruta % | Δ R$/unid | ⚠️ | Links |"
         )
-        lines.append("|---|---|---|---|---:|---:|---:|---:|---:|---|")
+        lines.append("|---|---|---|---|---:|---:|---:|---:|---:|---|---|")
         for i, r in enumerate(actionable, start=1):
             prod = r.get("Produto (canônico)") or "(ambíguo)"
             tipo = (r.get("Tipo") or "").strip() or "—"
             liga_brl = r.get("Preço BR (R$)") or ""
             tcg_brl = r.get("Preço US (R$)") or ""
-            liga_url = r.get("URL") or ""
-            tcg_url = tcg_link(r)
-            tcg_cell = md_link(fmt_brl(tcg_brl), tcg_url) if tcg_brl else "-"
-            liga_cell = md_link(fmt_brl(liga_brl), liga_url) if liga_brl else "-"
+            tcg_cell = fmt_brl(tcg_brl) if tcg_brl else "-"
+            liga_cell = fmt_brl(liga_brl) if liga_brl else "-"
             flag = "⚠️" if is_suspect(r) else ""
             lines.append(
                 f"| {i} | {status_label(r)} | {prod[:60]} | {tipo} | "
                 f"{fmt_qty(r.get('Qtd disponível'))} | {tcg_cell} | {liga_cell} | "
-                f"{fmt_pct(r.get('Margem total %'))} | {delta_unit(tcg_brl, liga_brl)} | {flag} |"
+                f"{fmt_pct(r.get('Margem total %'))} | {delta_unit(tcg_brl, liga_brl)} | {flag} | {links_cell(r)} |"
             )
         # Notas de suspeita por linha (motivo da flag ⚠️).
         suspects = [(i, r) for i, r in enumerate(actionable, start=1) if is_suspect(r)]
@@ -327,29 +340,28 @@ def main() -> None:
     lines.append("## Ranking completo (do mais vantajoso pro menos)")
     lines.append("")
     lines.append(
-        "| # | Status | Produto (EN) | Qtd disp. | TCG (R$) | BR (R$) | Margem bruta % | Δ R$/unid |"
+        "| # | Status | Produto (EN) | Qtd disp. | TCG (R$) | BR (R$) | Margem bruta % | Δ R$/unid | Links |"
     )
-    lines.append("|---|---|---|---:|---:|---:|---:|---:|")
+    lines.append("|---|---|---|---:|---:|---:|---:|---:|---|")
     for i, r in enumerate(rows, start=1):
         prod = r.get("Produto (canônico)") or "(ambíguo)"
         liga_brl = r.get("Preço BR (R$)") or ""
         tcg_brl = r.get("Preço US (R$)") or ""
-        liga_url = r.get("URL") or ""
-        tcg_url = tcg_link(r)
-        tcg_cell = md_link(fmt_brl(tcg_brl), tcg_url) if tcg_brl else "-"
-        liga_cell = md_link(fmt_brl(liga_brl), liga_url) if liga_brl else "-"
+        tcg_cell = fmt_brl(tcg_brl) if tcg_brl else "-"
+        liga_cell = fmt_brl(liga_brl) if liga_brl else "-"
         lines.append(
             f"| {i} | {status_label(r)} | {prod[:60]} | "
             f"{fmt_qty(r.get('Qtd disponível'))} | {tcg_cell} | {liga_cell} | "
-            f"{fmt_pct(r.get('Margem total %'))} | {delta_unit(tcg_brl, liga_brl)} |"
+            f"{fmt_pct(r.get('Margem total %'))} | {delta_unit(tcg_brl, liga_brl)} | {links_cell(r)} |"
         )
 
     lines.append("")
     lines.append("## Notas")
     lines.append("")
     lines.append("- **Qtd disp.** = estoque do vendedor pra esse anúncio (importamos em LOTE, nunca 1 unidade). `?` quando o adapter da fonte não parseou o estoque.")
-    lines.append("- **TCG (R$)** = TCGPlayer Market price (US$) convertido pra R$ pelo câmbio do scan; clique pra abrir a página canônica do produto pra conferência.")
-    lines.append("- **BR (R$)** = preço atual do anúncio (Liga/OLX/Amazon/ML) em R$; clique pra abrir o anúncio e validar preço + estoque.")
+    lines.append("- **TCG (R$)** = TCGPlayer Market price (US$) convertido pra R$ pelo câmbio do scan.")
+    lines.append("- **BR (R$)** = preço atual do anúncio (Liga/OLX/Amazon/ML) em R$.")
+    lines.append("- **Links** = `[oferta](anúncio BR) · [TCG](página TCGplayer)` numa coluna só (modelo MYP, padrão cross-scanner). Clique em **oferta** pra validar preço + estoque no anúncio, e em **TCG** pra conferir a referência no TCGplayer.")
     lines.append("- **Margem bruta %** = (TCG − BR) / BR × 100 — só preço vs preço, SEM taxas/frete. Custos operacionais ficam fora do scanner (o operador calcula por fora).")
     lines.append("- **Δ R$/unid** = TCG R$ − BR R$, em reais por unidade do produto.")
     lines.append("- **⚠️** = deal que precisa de conferência manual (match ambíguo YELLOW ou margem/variante suspeita) — o motivo está listado acima da tabela.")
