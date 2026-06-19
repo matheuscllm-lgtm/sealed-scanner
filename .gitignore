@@ -25,6 +25,15 @@ credentials.json
 results/
 .config_local_run.yaml
 
+# Local-only operational / strategy notes (kept on disk, not published)
+snapshots/
+GOALS.md
+AGENT.md
+RUNBOOK.md
+docs/SESSION-*.md
+docs/HANDOFF-*.md
+docs/archive/
+
 # Watchdog runtime lock (PID + heartbeat — nunca commitar)
 .watchdog.lock
 
