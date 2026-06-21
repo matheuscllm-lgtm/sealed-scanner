@@ -289,46 +289,59 @@ def group_products(rows: list[dict]) -> list[dict]:
 
     out: list[dict] = []
     for key, listings in groups.items():
-        # oferta líder = a de maior margem (≡ menor BR, dado TCG igual por SKU)
-        leader = max(listings, key=lambda x: (x["_total"] if x["_total"] is not None else -1e9))
-        br_prices = [p for p in (_to_float(x.get("Preço BR (R$)")) for x in listings) if p is not None]
-        qtys = [q for q in (_to_float(x.get("Qtd disponível")) for x in listings) if q is not None]
-        tcg_brl = _to_float(leader.get("Preço US (R$)"))
-        br_ref = min(br_prices) if br_prices else _to_float(leader.get("Preço BR (R$)"))
-
-        if br_ref and tcg_brl:
-            margem = (tcg_brl - br_ref) / br_ref * 100.0
-            delta = tcg_brl - br_ref
-        else:
-            margem = leader["_total"]
-            delta = None
-
-        best_bucket = min((x["_bucket"] for x in listings), key=lambda b: _BUCKET_RANK.get(b, 9))
-
         # escada de unidades disponíveis: BR asc (mais barata primeiro)
         ladder = sorted(
             listings,
             key=lambda x: (_to_float(x.get("Preço BR (R$)")) is None, _to_float(x.get("Preço BR (R$)")) or 0.0),
         )
 
+        # Oferta de REFERÊNCIA = a mais barata que é um deal AUTO-CONSISTENTE
+        # (tem preço BR **E** referência TCG na MESMA linha). Todo o cabeçalho do
+        # produto — preço nacional, margem, Δ, status e link — sai DESSA única
+        # oferta. Nunca cruzamos campos de anúncios diferentes: senão a linha
+        # mostraria uma margem (ex.: BR de um anúncio × TCG de outro) que não
+        # existe em nenhuma oferta real e o link levaria a um preço diferente do
+        # exibido. Fallback: a mais barata, se nenhuma tiver referência TCG.
+        valid = [
+            x for x in ladder
+            if _to_float(x.get("Preço BR (R$)")) is not None
+            and _to_float(x.get("Preço US (R$)")) is not None
+        ]
+        ref = valid[0] if valid else (ladder[0] if ladder else listings[0])
+
+        br_prices = [p for p in (_to_float(x.get("Preço BR (R$)")) for x in listings) if p is not None]
+        qtys = [q for q in (_to_float(x.get("Qtd disponível")) for x in listings) if q is not None]
+        qtd_partial = len(qtys) < len(listings)
+
+        br_ref = _to_float(ref.get("Preço BR (R$)"))
+        tcg_brl = _to_float(ref.get("Preço US (R$)"))
+        if br_ref and tcg_brl:
+            margem = (tcg_brl - br_ref) / br_ref * 100.0
+            delta = tcg_brl - br_ref
+        else:
+            margem = ref.get("_total")
+            delta = None
+
         out.append(
             {
                 "key": key,
-                "produto": leader.get("Produto (canônico)") or "(ambíguo)",
-                "tipo": (leader.get("Tipo") or "").strip() or "—",
-                "colecao": (leader.get("Coleção") or "").strip() or "—",
-                "sku": (leader.get("SKU") or "").strip(),
-                "bucket": best_bucket,
-                "br_ref": br_ref,            # referência nacional (menor BR)
+                "produto": ref.get("Produto (canônico)") or "(ambíguo)",
+                "tipo": (ref.get("Tipo") or "").strip() or "—",
+                "colecao": (ref.get("Coleção") or "").strip() or "—",
+                "sku": (ref.get("SKU") or "").strip(),
+                "bucket": ref.get("_bucket", "rejected"),
+                "br_ref": br_ref,            # referência nacional (oferta válida mais barata)
                 "br_max": max(br_prices) if br_prices else None,
                 "br_median": median(br_prices) if br_prices else None,
-                "tcg_usd": _to_float(leader.get("Preço US (US$)")),
+                "tcg_usd": _to_float(ref.get("Preço US (US$)")),
                 "tcg_brl": tcg_brl,          # referência TCGplayer (R$)
                 "margem": margem,
                 "delta": delta,
                 "qtd_total": int(sum(qtys)) if qtys else None,
+                "qtd_partial": qtd_partial,  # algum anúncio sem estoque parseado
                 "n_ofertas": len(listings),
-                "leader": leader,
+                "ref": ref,
+                "leader": ref,               # alias retrocompat (== ref)
                 "ladder": ladder,
                 "suspect": any(is_suspect(x) for x in listings),
             }
@@ -342,9 +355,19 @@ def group_status_label(g: dict) -> str:
     return _bucket_label(g["bucket"], g["margem"])
 
 
+def fmt_qtd_total(g: dict) -> str:
+    """Qtd total do produto. `N+?` quando algum anúncio não teve estoque parseado
+    (a soma é um piso, não um total exato); `?` quando nenhum teve."""
+    t = g.get("qtd_total")
+    if t is None:
+        return "?"
+    return f"{t}+?" if g.get("qtd_partial") else str(t)
+
+
 def group_links_cell(g: dict) -> str:
-    """Links combinados do grupo: oferta da unidade MAIS BARATA + TCG."""
-    return links_cell(g["leader"])
+    """Links combinados do grupo: oferta da unidade de REFERÊNCIA (a mais barata
+    com referência TCG — a mesma que dá o preço/margem do cabeçalho) + TCG."""
+    return links_cell(g["ref"])
 
 
 def group_risco(g: dict) -> str:
@@ -456,7 +479,7 @@ def main() -> None:
             lines.append(
                 f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | {g['tipo']} | "
                 f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | {fmt_pct(g['margem'])} | "
-                f"{fmt_brl(g['delta'])} | {g['qtd_total'] if g['qtd_total'] is not None else '?'} | "
+                f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
                 f"{g['n_ofertas']} | {flag} | {group_links_cell(g)} |"
             )
 
@@ -476,7 +499,7 @@ def main() -> None:
                 f"**#{i} — {g['produto']}** · {g['tipo']} · Coleção: {g['colecao']} · "
                 f"Ref. TCG {ref_tcg} · Ref. Nacional (menor) {fmt_brl(g['br_ref'])} · "
                 f"mediana BR {med} · {g['n_ofertas']} oferta(s) · Qtd total "
-                f"{g['qtd_total'] if g['qtd_total'] is not None else '?'}"
+                f"{fmt_qtd_total(g)}"
             )
             lines.append("")
             lines.append("| Vendedor | Fonte | Qtd disp. | Preço BR (R$) | Margem bruta % | Oferta |")
@@ -512,7 +535,7 @@ def main() -> None:
         lines.append(
             f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | "
             f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | {fmt_pct(g['margem'])} | "
-            f"{fmt_brl(g['delta'])} | {g['qtd_total'] if g['qtd_total'] is not None else '?'} | "
+            f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
             f"{g['n_ofertas']} | {group_links_cell(g)} |"
         )
 
@@ -520,9 +543,9 @@ def main() -> None:
     lines.append("## Notas")
     lines.append("")
     lines.append("- A entrega é **agrupada por produto** (SKU canônico): cada linha consolida todas as ofertas BR do mesmo produto. O nº entre parênteses no topo mostra quantos anúncios brutos viraram quantos produtos.")
-    lines.append("- **Ref. Nacional (R$)** = MENOR preço BR disponível agora entre todas as ofertas (melhor preço de entrada). A `mediana BR` no detalhamento dá o contexto de mercado nacional.")
+    lines.append("- **Ref. Nacional (R$)** = preço da oferta de REFERÊNCIA = a unidade mais barata que tem referência TCG (a mesma oferta que dá a margem e o link da linha — nunca cruzamos preço de um anúncio com referência de outro). A `mediana BR` no detalhamento dá o contexto de mercado nacional; a escada mostra unidades ainda mais baratas que eventualmente estejam sem referência.")
     lines.append("- **Ref. TCG (R$)** = TCGPlayer Market price (US$) convertido pra R$ pelo câmbio do scan — a referência internacional de revenda.")
-    lines.append("- **Qtd total** = soma do estoque de TODAS as ofertas do produto (importamos em LOTE). **Ofertas** = nº de anúncios. `?` quando o adapter da fonte não parseou o estoque.")
+    lines.append("- **Qtd total** = soma do estoque de TODAS as ofertas do produto (importamos em LOTE). **Ofertas** = nº de anúncios. `N+?` quando algum anúncio não teve estoque parseado (a soma é um piso); `?` quando nenhum teve.")
     lines.append("- O bloco **Quantidades e preços disponíveis por unidade** lista, por produto, CADA anúncio (vendedor, fonte, qtd e preço BR) — a escada de unidades disponíveis, da mais barata pra mais cara.")
     lines.append("- **Links** = `[oferta](anúncio BR mais barato) · [TCG](página TCGplayer)` numa coluna só (modelo MYP). A oferta linkada é a unidade de menor preço; as demais estão no detalhamento.")
     lines.append("- **Margem bruta %** = (Ref. TCG − Ref. Nacional) / Ref. Nacional × 100 — só preço vs preço, SEM taxas/frete. Custos operacionais ficam fora do scanner (o operador calcula por fora).")

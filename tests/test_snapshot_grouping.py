@@ -97,6 +97,49 @@ def test_ambiguous_without_sku_grouped_by_title():
     assert groups[0]["n_ofertas"] == 2
 
 
+def test_no_fabricated_margin_when_cheapest_listing_lacks_tcg_ref():
+    """Regressão (PR #35 review, HIGH): a oferta mais barata SEM referência TCG não
+    pode emprestar seu preço BR pra referência TCG de OUTRO anúncio — isso fabricaria
+    uma margem que não existe em nenhuma oferta real. O cabeçalho deve sair da oferta
+    válida (BR + TCG) mais barata."""
+    rows = [
+        _row(Vendedor="barato_sem_ref", **{"Preço BR (R$)": "100.00", "Preço US (R$)": "", "Preço US (US$)": "", "Margem total %": "0.0", "_total": 0.0, "_bucket": "rejected"}),
+        _row(Vendedor="valido", **{"Preço BR (R$)": "200.00", "Preço US (R$)": "300.00", "Margem total %": "50.0", "_total": 50.0, "_bucket": "real_opportunities"}),
+    ]
+    g = snapshot.group_products(rows)[0]
+    assert g["br_ref"] == 200.00          # oferta válida, NÃO o BR 100 sem referência
+    assert g["tcg_brl"] == 300.00
+    assert round(g["margem"], 1) == 50.0  # não 200% (que seria o cruzamento 300 vs 100)
+    assert g["bucket"] == "real_opportunities"
+    # a unidade mais barata sem referência continua visível na escada
+    assert any(x["Vendedor"] == "barato_sem_ref" for x in g["ladder"])
+    # e o link aponta a oferta de referência (200), não a sem-referência (100)
+    assert "https://liga/x" in snapshot.group_links_cell(g)
+
+
+def test_qtd_total_marks_partial_when_some_stock_unparsed():
+    """Regressão (PR #35 review, MEDIUM): se algum anúncio não teve estoque parseado,
+    a soma vira um PISO e a célula deve sinalizar `N+?`, não um inteiro limpo."""
+    rows = [
+        _row(Vendedor="a", **{"Qtd disponível": "5", "Preço BR (R$)": "179"}),
+        _row(Vendedor="b", **{"Qtd disponível": "?", "Preço BR (R$)": "185"}),
+    ]
+    g = snapshot.group_products(rows)[0]
+    assert g["qtd_total"] == 5
+    assert g["qtd_partial"] is True
+    assert snapshot.fmt_qtd_total(g) == "5+?"
+
+
+def test_qtd_total_exact_when_all_stock_parsed():
+    rows = [
+        _row(Vendedor="a", **{"Qtd disponível": "5", "Preço BR (R$)": "179"}),
+        _row(Vendedor="b", **{"Qtd disponível": "3", "Preço BR (R$)": "185"}),
+    ]
+    g = snapshot.group_products(rows)[0]
+    assert g["qtd_partial"] is False
+    assert snapshot.fmt_qtd_total(g) == "8"
+
+
 def test_group_links_cell_uses_cheapest_offer():
     rows = [
         _row(Vendedor="caro", **{"Preço BR (R$)": "300", "URL": "https://liga/caro", "Margem total %": "0.0", "_total": 0.0}),
