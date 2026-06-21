@@ -242,3 +242,10 @@ scope:
     - Graded Cards
     - Opened Products
     - Damaged Products
+  # Fontes "secondhand-first" (marketplace de USADOS): exigem prova POSITIVA de
+  # lacre no título (lacrado/selado/sealed) — default "usado até provar lacre".
+  # Fontes new-first (liga/olx/mercadolivre/amazon) NÃO entram aqui (não exigem
+  # token de lacre; o gate global de "aberto/usado" já as protege). Enjoei já
+  # listado p/ quando o adapter for construído; inócuo enquanto não for fonte.
+  sealed_only_sources:
+    - enjoei
