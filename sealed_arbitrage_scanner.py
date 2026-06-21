@@ -697,8 +697,13 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path) -> boo
 # Orquestração
 # --------------------------------------------------------------------------
 def reference_age_days(captured_at: str | None) -> int | None:
-    """Idade (em dias) da referência US a partir do `captured_at` do
-    us_reference.json. None se ausente/ilegível (não força rebaixamento)."""
+    """Idade (em dias INTEIROS) da referência US a partir do `captured_at` do
+    us_reference.json. None se ausente/ilegível (não força rebaixamento).
+
+    `.days` trunca pra baixo: uma referência de 14,5 dias retorna 14. Logo o
+    threshold `max_reference_age_days: N` tolera até quase N+1 dias — lenient por
+    até 1 dia, nunca mais estrito. Imaterial no fluxo diário; relevante só se
+    alguém setar N muito pequeno."""
     if not captured_at:
         return None
     try:

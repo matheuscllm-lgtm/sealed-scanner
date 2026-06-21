@@ -97,6 +97,14 @@ def main() -> int:
         print("ERRO: nenhum SKU tem tcgplayer_product_id mapeado.")
         return 2
 
+    # Visibilidade da cobertura do guard: um product_type sem faixa não é checado
+    # (fail-open). Avisa pra que uma grafia divergente/tipo novo não passe sem
+    # sanity-band em silêncio.
+    types_seen = {t[3] for t in targets if t[3]}
+    no_band = sorted(t for t in types_seen if t not in SANITY_BANDS_USD)
+    if no_band:
+        print(f"  [aviso] product_type sem sanity-band (não checado): {', '.join(no_band)}")
+
     prices_cache: dict[int, list] = {}
     out: dict[str, float] = {}
     n_out_of_band = 0
