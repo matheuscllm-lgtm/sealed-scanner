@@ -53,8 +53,15 @@ def test_run_malformed_price_is_red_never_green(tmp_path, monkeypatch):
     # Isola results/ e us_reference num tmp (run() usa SCRIPT_DIR pra ambos).
     monkeypatch.setattr(S, "SCRIPT_DIR", tmp_path)
     (tmp_path / "data").mkdir()
-    (tmp_path / "data" / "us_reference.json").write_text(
-        (ROOT / "data" / "us_reference.json").read_text(encoding="utf-8"), encoding="utf-8")
+    # Referência US PINADA pro SKU do controle — o teste não pode depender do
+    # preço de mercado vivo: com FX 5.05 e BR 500, um preço US que oscile faz a
+    # margem cruzar o piso de 30% ou o teto de anomalia de 200%, quebrando o
+    # controle a cada refresh do us_reference (foi o que aconteceu em 2026-06-21,
+    # SSP subiu p/ 297.70 -> 200,6% -> margem_anomala). 200 USD * 5.05 / 500 ->
+    # 102%: GREEN robusto no meio da banda (30%–200%), imune a drift de dado.
+    ref = json.loads((ROOT / "data" / "us_reference.json").read_text(encoding="utf-8"))
+    ref["prices"][SKU_ID] = 200.0
+    (tmp_path / "data" / "us_reference.json").write_text(json.dumps(ref), encoding="utf-8")
 
     listings = [
         {"id": "GOOD", "title": TITLE, "price_brl": 500.0, "seller": "v", "url": "u"},
