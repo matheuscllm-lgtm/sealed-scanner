@@ -47,7 +47,7 @@ import re
 import sys
 import unicodedata
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 try:
@@ -696,6 +696,18 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path) -> boo
 # --------------------------------------------------------------------------
 # Orquestração
 # --------------------------------------------------------------------------
+def reference_age_days(captured_at: str | None) -> int | None:
+    """Idade (em dias) da referência US a partir do `captured_at` do
+    us_reference.json. None se ausente/ilegível (não força rebaixamento)."""
+    if not captured_at:
+        return None
+    try:
+        dt = datetime.strptime(captured_at, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    except (ValueError, TypeError):
+        return None
+    return (datetime.now(timezone.utc) - dt).days
+
+
 def run(args: argparse.Namespace) -> int:
     config = load_yaml(Path(args.config), "config.yaml")
     fx_source = resolve_fx_rate(config)
@@ -737,6 +749,18 @@ def run(args: argparse.Namespace) -> int:
     ref_data = load_json(SCRIPT_DIR / "data" / "us_reference.json", "data/us_reference.json")
     us_reference = ref_data.get("prices", {})
 
+    # Freshness guard — referência US velha pode inflar margem em GREEN falso (o
+    # modo de falha histórico dos tins). Acima da validade, rebaixa GREEN->YELLOW
+    # (revisão manual). FP-safe: nunca cria deal, só pede conferência do preço atual.
+    ref_age = reference_age_days(ref_data.get("captured_at"))
+    max_age = config.get("deal_criteria", {}).get("max_reference_age_days", 14)
+    ref_stale = ref_age is not None and ref_age > max_age
+    if ref_stale:
+        print(
+            f"  [aviso] referência US tem {ref_age} dias (> {max_age}) — GREEN serão "
+            f"rebaixados p/ YELLOW (conferência). Rode build_us_reference.py p/ refrescar."
+        )
+
     rows: list[ScanRow] = []
     for item in listings:
         qty_raw = item.get("qty_avail")
@@ -754,7 +778,19 @@ def run(args: argparse.Namespace) -> int:
             price_brl=_parse_price(item.get("price_brl", 0.0)),
             qty_avail=qty_avail,
         )
-        rows.append(classify(row, registry, us_reference, config))
+        classify(row, registry, us_reference, config)
+        if ref_stale and row.deal_confidence == "GREEN":
+            # Rebaixa GREEN -> YELLOW (revisão) quando a referência está velha:
+            # o sinal de margem pode estar desatualizado. Mantém o bucket de
+            # revisão (review_required) p/ o operador conferir o TCGplayer atual.
+            row.deal_confidence = "YELLOW"
+            row.bucket = "review_required"
+            row.main_risk = (
+                f"Referência US defasada ({ref_age}d) — margem pode estar desatualizada; "
+                "confira o preço TCGplayer atual antes de comprar."
+            )
+            row.recommended_action = "Refrescar referência (build_us_reference.py) e reconferir"
+        rows.append(row)
 
     buckets = {"real_opportunities": [], "review_required": [], "rejected": []}
     for row in rows:

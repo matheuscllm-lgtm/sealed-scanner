@@ -41,6 +41,11 @@ deal_criteria:
   # RED com motivo `margem_anomala` (auditável) p/ verificação manual, em vez de
   # falso-GREEN. Vazio/ausente = sem teto (comportamento antigo).
   review_above_margin_pct: 2.0   # > 200% de margem bruta -> RED (margem_anomala)
+  # Validade da referência US (dias). Acima disso, GREEN é rebaixado p/ YELLOW
+  # (revisão manual) — referência velha pode inflar margem em GREEN falso. O
+  # fluxo canônico refresca antes do scan (tcgcsv atualiza diário), então só
+  # dispara em scan sem refresh. Vazio/ausente = sem checagem de validade.
+  max_reference_age_days: 14
   # Classificação SÓ por margem bruta. YELLOW é EXCLUSIVAMENTE match ambíguo
   # (1 anúncio casa com 2+ SKUs) — nunca por faixa de margem. O scanner NÃO
   # calcula nem exibe margem líquida; custos operacionais ficam fora do scanner.

@@ -3,6 +3,29 @@
 Registro datado de mudanças relevantes. O repo não usa versionamento semântico
 (SemVer); as entradas são por data. Fonte única de estado segue o `README.md`.
 
+## 2026-06-21 — Guards FP-safe da referência US (parecer de revisor)
+
+Defendem o modo de falha histórico — referência US errada/velha inflando margem
+em GREEN falso (o caso dos tins premium, generalizado) — SEM tocar na precisão do
+match. Ambos só REDUZEM falsos positivos; nunca criam um deal.
+
+- **Sanity-band por tipo (`build_us_reference.py`):** preço fora da faixa
+  plausível do `product_type` (ex.: um SKU "Mini Tin" pegando um bundle de US$230
+  num refresh, ou um booster avulso pegando US$0,50 de code-card) é EXCLUÍDO —
+  o SKU fica sem referência → o scanner classifica `sem_referencia_us` (RED
+  honesto), nunca um deal fabricado. Faixas generosas (`SANITY_BANDS_USD`): só
+  pegam erro grosseiro, validado contra os preços reais 2026-06 (0 exclusões
+  legítimas; 104/105 seguem precificados).
+- **Freshness guard (`run()` + `reference_age_days`):** referência US além da
+  validade (`deal_criteria.max_reference_age_days`, default 14d) rebaixa GREEN →
+  YELLOW (revisão manual) com motivo auditável. O fluxo canônico refresca antes
+  do scan (tcgcsv diário), então só dispara em scan sem refresh.
+- Contexto: o mapeamento de tins foi AUDITADO (eu + agente revisor) e está
+  correto/conservador — cada set aponta pra variante de mini-tin mais barata;
+  NENHUM remap necessário. Loosening do termo "mini" foi REJEITADO (reabre o FP).
+  Estes guards foram a melhoria FP-safe que o revisor recomendou no lugar.
+- +6 testes (`tests/test_reference_guards.py`); 140 no total.
+
 ## 2026-06-20 — Entrega AGRUPADA POR PRODUTO (modelo MYP) com unidades e dupla referência
 
 - **`scripts/snapshot.py`**: a entrega deixa de ser uma lista plana de anúncios e

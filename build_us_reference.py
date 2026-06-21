@@ -36,6 +36,28 @@ except ImportError:
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 POKEMON_CATEGORY_ID = 3
+
+# Faixas de plausibilidade (USD) por tipo de produto — guard FP-safe.
+# Um preço FORA da faixa do tipo quase sempre é pid errado/variante trocada num
+# refresh (ex.: um SKU "Mini Tin" apontando sem querer p/ um bundle de US$230, ou
+# um booster avulso pegando US$0,50 de code-card). Em vez de gravar a referência
+# suspeita — que viraria GREEN/RED falso lá no scanner — o build EXCLUI esse SKU
+# (fica sem referência -> o scanner classifica RED `sem_referencia_us`, nunca um
+# deal fabricado). Faixas GENEROSAS de propósito: só pegam erro grosseiro, não
+# rejeitam deal legítimo. Tipo não-listado = sem checagem (não barra nada novo).
+SANITY_BANDS_USD: dict[str, tuple[float, float]] = {
+    "Sleeved Booster": (2.0, 60.0),
+    "Booster Pack": (2.0, 60.0),
+    "Tech Sticker": (12.0, 130.0),
+    "Booster Bundle": (20.0, 320.0),
+    "Collection Box": (15.0, 450.0),
+    "Elite Trainer Box": (25.0, 950.0),
+    "Premium Collection": (25.0, 1300.0),
+    "Booster Box": (60.0, 1300.0),
+    "Mini Tin": (6.0, 95.0),
+    "Tin": (6.0, 200.0),
+    "Mini Tin Display": (70.0, 750.0),
+}
 UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
@@ -62,14 +84,14 @@ def main() -> int:
     registry = yaml.safe_load(Path(args.registry).read_text(encoding="utf-8"))
     skus = registry.get("skus", [])
 
-    targets: list[tuple[str, int, int]] = []
+    targets: list[tuple[str, int, int, str]] = []
     for sku in skus:
         pid = sku.get("tcgplayer_product_id")
         gid = sku.get("tcgplayer_group_id")
         if pid is None or gid is None:
             print(f"  [aviso] SKU sem tcgplayer_*_id: {sku.get('id')}")
             continue
-        targets.append((sku["id"], int(gid), int(pid)))
+        targets.append((sku["id"], int(gid), int(pid), sku.get("product_type", "")))
 
     if not targets:
         print("ERRO: nenhum SKU tem tcgplayer_product_id mapeado.")
@@ -77,8 +99,9 @@ def main() -> int:
 
     prices_cache: dict[int, list] = {}
     out: dict[str, float] = {}
+    n_out_of_band = 0
 
-    for sku_id, gid, pid in targets:
+    for sku_id, gid, pid, product_type in targets:
         if gid not in prices_cache:
             url = f"https://tcgcsv.com/tcgplayer/{POKEMON_CATEGORY_ID}/{gid}/prices"
             print(f"  fetch group {gid} ...")
@@ -98,7 +121,18 @@ def main() -> int:
         if price is None:
             print(f"  [aviso] {args.price_field} nulo para {sku_id}")
             continue
-        out[sku_id] = float(price)
+        price = float(price)
+        # Guard FP-safe: preço fora da faixa plausível do tipo = pid errado/
+        # variante trocada -> NÃO grava (SKU fica sem referência -> RED honesto).
+        band = SANITY_BANDS_USD.get(product_type)
+        if band is not None and not (band[0] <= price <= band[1]):
+            n_out_of_band += 1
+            print(
+                f"  [GUARD] {sku_id:24s} US${price} FORA da faixa {product_type} "
+                f"{band[0]}-{band[1]} (pid={pid}) — EXCLUÍDO (provável variante trocada)"
+            )
+            continue
+        out[sku_id] = price
         print(f"  {sku_id:24s} {args.price_field}=${price}")
 
     payload = {
@@ -118,6 +152,8 @@ def main() -> int:
     )
     print(f"\nEscrito: {out_path}")
     print(f"SKUs com preço: {len(out)} de {len(targets)}")
+    if n_out_of_band:
+        print(f"[GUARD] {n_out_of_band} SKU(s) excluído(s) por preço fora da faixa do tipo.")
     return 0
 
 
