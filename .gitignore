@@ -3,6 +3,10 @@ __pycache__/
 *.pyc
 *.pyo
 
+# Virtualenv (local interpreter — nunca commitar)
+.venv/
+venv/
+
 # Secrets — NEVER commit
 .env
 .env.*

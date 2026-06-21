@@ -3,6 +3,32 @@
 Registro datado de mudanças relevantes. O repo não usa versionamento semântico
 (SemVer); as entradas são por data. Fonte única de estado segue o `README.md`.
 
+## 2026-06-20 — Entrega AGRUPADA POR PRODUTO (modelo MYP) com unidades e dupla referência
+
+- **`scripts/snapshot.py`**: a entrega deixa de ser uma lista plana de anúncios e
+  passa a ser **consolidada por produto** (SKU canônico). Numa run real, 399
+  anúncios → 45 produtos (o mesmo Booster Bundle aparecia em 18 linhas).
+- Cada produto traz, no estilo da tabela do MYP:
+  - **Ref. Nacional (R$)** = menor preço BR disponível agora (melhor entrada) +
+    `mediana BR` no detalhamento (contexto do mercado nacional);
+  - **Ref. TCG (R$)** = preço TCGPlayer Market (US$→R$), a referência internacional;
+  - **Margem bruta %** e **Δ R$/unid** recalculados na Ref. Nacional vs Ref. TCG;
+  - **Qtd total disp.** (soma do estoque de todas as ofertas) + **Nº de ofertas**;
+  - coluna `Links` combinada `[oferta](BR mais barato) · [TCG](TCGplayer)`.
+- Novo bloco **"Quantidades e preços disponíveis por unidade"**: por produto
+  acionável, a escada de ofertas — cada anúncio com vendedor, fonte, **quantidade
+  disponível** e **preço BR**, da unidade mais barata pra mais cara. O operador
+  importa em LOTE e quer ver cada unidade e seu preço.
+- **Ranking completo** também agrupado por produto (antes ~334 linhas de anúncio →
+  agora 45 linhas de produto).
+- Status do produto = melhor bucket entre suas ofertas (GREEN > YELLOW > RED);
+  flag ⚠️ se qualquer oferta exigir conferência manual.
+- Helpers preservados (`links_cell`, `fmt_*`, `tcg_link`) → testes de links seguem
+  verdes; novos testes em `tests/test_snapshot_grouping.py` (131 no total).
+- _Nota:_ a referência US de selados segue em **tcgcsv.com** (TCGPlayer Market).
+  A API `pokemontcg.io` cobre só **singles**, não produtos selados — por isso não
+  entra aqui (usá-la pra selado daria preço de carta avulsa, não da caixa).
+
 ## 2026-06-17 — Entrega via `snapshot.py` vira convenção OBRIGATÓRIA
 
 - **`scripts/snapshot.py` reescrito** pra ser o gerador canônico da entrega:
