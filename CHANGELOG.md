@@ -3,6 +3,32 @@
 Registro datado de mudanças relevantes. O repo não usa versionamento semântico
 (SemVer); as entradas são por data. Fonte única de estado segue o `README.md`.
 
+## 2026-06-21 — Gate de CONDIÇÃO (selado vs aberto/usado) + análise de fontes BR
+
+Fecha uma lacuna LATENTE achada na auditoria das fontes BR (eu + agente revisor):
+o scanner **não distinguia selado de aberto/usado** — só rejeitava single/acessório/
+idioma. Funcionava por sorte (Liga/OLX/ML são "new-first"); um box aberto/sem cartas
+casado a um SKU selado = margem fantasma.
+
+- **Gate GLOBAL (todas as fontes):** `looks_used()` — título com sinal explícito de
+  aberto/usado/incompleto ("aberto", "sem cartas", "só a caixa", "vazio", "incompleto"...)
+  → 0 candidatos. Validado **zero-regressão**: 0 de 818 matches reais têm esses tokens.
+- **Gate POR-FONTE (`sealed_only`):** `looks_sealed()` + `config.scope.sealed_only_sources`.
+  Fonte secondhand-first (ex.: **Enjoei**) exige PROVA de lacre ("lacrado"/"selado"/
+  "sealed") — default "usado até provar lacre". Fontes new-first (liga/olx/ml/amazon)
+  ficam inalteradas (não exigem token de lacre). Enjoei já listado p/ quando o adapter
+  for construído (inócuo enquanto não é fonte).
+- Motivos de rejeição novos: `produto_aberto_usado`, `lacre_nao_confirmado`.
+- +7 testes (`tests/test_condition_gate.py`); 150 no total. **0 matches reais perdidos.**
+
+**Análise de fontes BR (decisão conjunta, não implementado além do gate):** Liga =
+motor (64 GREEN/scan, imports EN); OLX = gemas de vendedor casual (a Stellar Crown
+93,6% foi OLX); ML = precificado a mercado (mediana −18%, ~0 GREEN — realidade, não
+bug; MANTER como control group barato $0); Amazon = opt-in retail (~0 yield esperado).
+**Enjoei probado ao vivo:** scrapável ($0 browser) mas pende PT-Copag + ruído (busca
+"ingles" traz cursos de inglês) → baixo valor EN; só vale COM o gate de condição (feito).
+ASI-Evolve = ferramenta errada (matcher já no ótimo, ver test_matcher_regression).
+
 ## 2026-06-21 — Guards FP-safe da referência US (parecer de revisor)
 
 Defendem o modo de falha histórico — referência US errada/velha inflando margem

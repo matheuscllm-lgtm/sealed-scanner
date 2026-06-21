@@ -153,6 +153,41 @@ def looks_like_accessory(title: str) -> bool:
     return any(tok in norm for tok in _ACCESSORY_TOKENS)
 
 
+# Sinais EXPLÍCITOS de produto ABERTO/USADO/INCOMPLETO — nunca é uma compra de
+# selado. O scanner é SELADO-only (`scope.exclude`: Opened/Damaged), mas até
+# 2026-06-21 NADA no código barrava isso — só funcionava porque Liga/OLX/ML são
+# "new-first". Um box aberto/sem cartas casado a um SKU selado = margem fantasma.
+# Rejeição GLOBAL (todas as fontes): validado zero-regressão (0 de 818 matches
+# reais têm qualquer destes tokens). Viés conservador de COMPRA: na dúvida, barrar.
+_USED_TOKENS = (
+    "usado", "usada", "usados", "usadas", "aberto", "aberta", "abertos", "abertas",
+    "sem cartas", "sem lacre", "sem o lacre", "sem plastico", "sem o plastico",
+    "sem booster", "sem boosters", "sem os boosters", "so a caixa", "somente a caixa",
+    "apenas a caixa", "vazio", "vazia", "incompleto", "incompleta",
+    "destrocado", "destrocada", "danificado", "danificada",
+)
+# Sinais EXPLÍCITOS de LACRE — prova positiva de selado. Exigidos só para fontes
+# `sealed_only` (marketplaces secondhand-first, ex.: Enjoei), onde o default tem
+# de ser "usado até provar lacre". Fontes new-first NÃO exigem (Liga/OLX/ML novos
+# raramente escrevem "lacrado") — manter o default inalterado = zero regressão.
+_SEALED_TOKENS = (
+    "lacrado", "lacrada", "lacrados", "lacradas", "selado", "selada", "selados",
+    "seladas", "sealed", "factory sealed", "novo lacrado", "nova lacrada",
+)
+
+
+def looks_used(title: str) -> bool:
+    """True se o título sinaliza produto ABERTO/USADO/INCOMPLETO (fora do escopo)."""
+    norm = normalize(title)
+    return any(contains_term(norm, tok) for tok in _USED_TOKENS)
+
+
+def looks_sealed(title: str) -> bool:
+    """True se o título tem prova POSITIVA de lacre (lacrado/selado/sealed)."""
+    norm = normalize(title)
+    return any(contains_term(norm, tok) for tok in _SEALED_TOKENS)
+
+
 # --------------------------------------------------------------------------
 # Config e registry
 # --------------------------------------------------------------------------
@@ -372,14 +407,24 @@ def build_registry(registry_data: dict) -> list[Sku]:
     return skus
 
 
-def match_listing(title: str, registry: list[Sku]) -> list[Sku]:
-    """SKUs candidatos: set_term casa E type_term casa E todos requires_term casam E nenhum exclude_term casa."""
+def match_listing(title: str, registry: list[Sku], sealed_only: bool = False) -> list[Sku]:
+    """SKUs candidatos: set_term casa E type_term casa E todos requires_term casam E nenhum exclude_term casa.
+
+    `sealed_only=True` (fonte secondhand-first, ex.: Enjoei) exige PROVA de lacre
+    no título — sem isso, 0 candidatos. Fontes new-first usam o default (False)."""
     # Guards de fora-de-escopo ANTES do match: este repo é SELADO-only (Amazon/
     # OLX/ML buscam só selado; Liga navega categorias de selado). Logo um single
     # ("Eevee SVP 173 ... ETB ... Single Card") ou um acessório ("ETB ...
     # Acessórios", "Fichário ... Binder") que vem como ruído do marketplace casaria
     # o SKU do box e geraria margem fantasma. Fora do escopo → 0 candidatos.
     if looks_like_single_card(title) or looks_like_accessory(title):
+        return []
+    # Produto explicitamente ABERTO/USADO/INCOMPLETO nunca é compra de selado
+    # (rejeição global, validada zero-regressão).
+    if looks_used(title):
+        return []
+    # Fonte secondhand-first: "usado até provar lacre" — sem token de lacre, barra.
+    if sealed_only and not looks_sealed(title):
         return []
     norm = normalize(title)
     candidates: list[Sku] = []
@@ -449,7 +494,14 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
     min_total = criteria["min_total_margin_pct"]
     min_price = config["filters"]["min_brazil_price_brl"]
 
-    candidates = match_listing(row.title_br, registry)
+    # Fontes secondhand-first (marketplace de usados, ex.: Enjoei) exigem prova
+    # de lacre. Declaradas em scope.sealed_only_sources; demais = new-first.
+    sealed_only_sources = {
+        str(s).lower() for s in (config.get("scope", {}).get("sealed_only_sources") or [])
+    }
+    sealed_only = (row.source or "").lower() in sealed_only_sources
+
+    candidates = match_listing(row.title_br, registry, sealed_only=sealed_only)
     row.match_candidates = [c.id for c in candidates]
 
     # --- sem match -------------------------------------------------------
@@ -458,7 +510,13 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
         row.deal_confidence = "RED"
         row.bucket = "rejected"
         norm = normalize(row.title_br)
-        if any(tok in norm.split() for tok in NON_EN_LANGUAGE_TOKENS):
+        if looks_used(row.title_br):
+            row.reject_reason = "produto_aberto_usado"
+            row.main_risk = "Título sinaliza produto aberto/usado/incompleto — fora do escopo de selado"
+        elif sealed_only and not looks_sealed(row.title_br):
+            row.reject_reason = "lacre_nao_confirmado"
+            row.main_risk = "Fonte de usados sem prova de lacre no título — não confirmável como selado"
+        elif any(tok in norm.split() for tok in NON_EN_LANGUAGE_TOKENS):
             row.reject_reason = "idioma_nao_ingles"
             row.main_risk = "Produto não-inglês — sem liquidez no TCGPlayer"
         elif looks_like_single_card(row.title_br) or contains_term(norm, "carta"):
