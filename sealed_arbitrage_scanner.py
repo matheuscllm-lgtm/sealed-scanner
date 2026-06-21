@@ -173,6 +173,7 @@ _USED_TOKENS = (
 _SEALED_TOKENS = (
     "lacrado", "lacrada", "lacrados", "lacradas", "selado", "selada", "selados",
     "seladas", "sealed", "factory sealed", "novo lacrado", "nova lacrada",
+    "lacre", "lacre de fabrica", "com lacre",   # substantivo (NB: "sem lacre" cai antes no gate de usado)
 )
 
 
