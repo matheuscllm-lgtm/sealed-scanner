@@ -102,3 +102,56 @@ def test_stale_reference_downgrades_green_to_yellow(tmp_path, monkeypatch):
     green, yellow = _run_scan_with_captured_at(tmp_path, monkeypatch, "2000-01-01T00:00:00Z")
     assert "GOOD" not in green
     assert "GOOD" in yellow
+
+
+# ── 3. freshness guard NO ORQUESTRADOR (run_all_sources.run) ────────────────
+# Caminho canônico de produção (watchdog -> run_all_sources -> snapshot). Antes
+# do fix, o guard só existia no single-source; o orquestrador entregava GREEN
+# falso quando a ref envelhecia. Estes testes exercitam run_all_sources.run().
+import run_all_sources as ORQ  # noqa: E402
+
+
+def _run_orchestrator_with_captured_at(tmp_path, monkeypatch, captured_at, us_price=200.0):
+    monkeypatch.setattr(S, "resolve_fx_rate", lambda cfg: "manual (test)")
+    # O orquestrador lê ref_data e escreve resultados a partir do SEU SCRIPT_DIR.
+    monkeypatch.setattr(ORQ, "SCRIPT_DIR", tmp_path)
+    (tmp_path / "data").mkdir()
+    # referência PINADA (200 USD * 5.05 / 500 -> 102%, GREEN robusto) + captured_at controlado.
+    (tmp_path / "data" / "us_reference.json").write_text(
+        json.dumps({"captured_at": captured_at, "prices": {SKU_ID: us_price}}), encoding="utf-8"
+    )
+    listings = [{"id": "GOOD", "title": TITLE, "price_brl": 500.0, "seller": "v", "url": "u"}]
+    mock = tmp_path / "listings.json"
+    mock.write_text(json.dumps({"listings": listings}), encoding="utf-8")
+    args = argparse.Namespace(
+        sources="mock", mock=str(mock),
+        config=str(ROOT / "config.yaml"), registry=str(ROOT / "sku_registry.yaml"),
+    )
+    assert ORQ.run(args) == 0
+    out_dir = sorted((tmp_path / "results").glob("unified_*/"))[-1]
+    # O unified CSV não tem coluna Bucket; o bucket vira a confiança do deal
+    # (GREEN -> review_required = YELLOW). Lê pela coluna "Confiança do deal".
+    rows = list(csv.DictReader((out_dir / "unified_deals.csv").open(encoding="utf-8")))
+    green = {r["ID Anúncio"] for r in rows if r["Confiança do deal"] == "GREEN"}
+    yellow = {r["ID Anúncio"] for r in rows if r["Confiança do deal"] == "YELLOW"}
+    return green, yellow, rows
+
+
+def test_orchestrator_fresh_reference_keeps_green(tmp_path, monkeypatch):
+    today = S.datetime.now(S.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    green, yellow, _ = _run_orchestrator_with_captured_at(tmp_path, monkeypatch, today)
+    assert "GOOD" in green
+    assert "GOOD" not in yellow
+
+
+def test_orchestrator_stale_reference_downgrades_green_to_yellow(tmp_path, monkeypatch):
+    # captured_at antigo (> 14 dias) NO ORQUESTRADOR -> GREEN vira YELLOW/review_required.
+    green, yellow, rows = _run_orchestrator_with_captured_at(
+        tmp_path, monkeypatch, "2000-01-01T00:00:00Z"
+    )
+    assert "GOOD" not in green
+    assert "GOOD" in yellow
+    # confirma o risco anotado p/ o operador (FP-safe: pede conferência, não inventa).
+    good = next(r for r in rows if r["ID Anúncio"] == "GOOD")
+    assert good["Confiança do deal"] == "YELLOW"
+    assert "defasada" in good["Risco principal"].lower()

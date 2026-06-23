@@ -172,17 +172,36 @@ def run(args: argparse.Namespace) -> int:
     print(f"  [orq] fontes: {sources}")
 
     all_rows: list = []
-    summaries: list[dict] = []
+    pending: list[tuple[dict, list]] = []
     for source in sources:
         print(f"\n  [orq] >>> rodando fonte: {source}")
         info = _scan_one(source, config, registry, registry_raw, us_reference, mock_path)
         rows = info.pop("rows")
+        all_rows.extend(rows)
+        pending.append((info, rows))
+
+    # Freshness guard — MESMA lógica do single-source (sealed_arbitrage_scanner.run).
+    # Referência US velha pode inflar margem em GREEN falso (modo de falha histórico
+    # dos tins). Acima da validade, rebaixa CADA GREEN->YELLOW (review_required) antes
+    # de contar buckets / escrever o unified. FP-safe: nunca cria deal. Sem isto, o
+    # caminho canônico de produção (watchdog -> run_all_sources -> snapshot) entregava
+    # GREEN falso quando a ref envelhecia.
+    stale_age = s.apply_freshness_downgrade(all_rows, ref_data, config)
+    if stale_age is not None:
+        max_age = config.get("deal_criteria", {}).get("max_reference_age_days", 14)
+        print(
+            f"\n  [orq][aviso] referência US tem {stale_age} dias (> {max_age}) — "
+            f"GREEN rebaixados p/ YELLOW (conferência). Rode build_us_reference.py p/ refrescar."
+        )
+
+    # Conta buckets DEPOIS do rebaixamento (reflete o downgrade no banner/summary).
+    summaries: list[dict] = []
+    for info, rows in pending:
         info["green"] = sum(1 for r in rows if r.bucket == "real_opportunities")
         info["yellow"] = sum(1 for r in rows if r.bucket == "review_required")
         info["red"] = sum(1 for r in rows if r.bucket == "rejected")
         summaries.append(info)
-        all_rows.extend(rows)
-        print(f"  [orq] <<< {source}: status={info['status']} "
+        print(f"  [orq] <<< {info['source']}: status={info['status']} "
               f"anúncios={info['n_listings']} "
               f"(GREEN={info['green']} YELLOW={info['yellow']} RED={info['red']}) "
               f"{info['elapsed_s']}s")
