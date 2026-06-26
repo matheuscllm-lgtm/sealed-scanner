@@ -4602,3 +4602,318 @@ skus:
     - protetor
     - storage
     - capa para
+- id: ah-megaex-box-emboar
+  name: Ascended Heroes Mega Emboar ex Box (English)
+  product_type: Collection Box
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 672734
+  match:
+    set_terms:
+    - ascended heroes
+    - herois excelsos
+    type_terms:
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    requires_terms:
+    - mega emboar
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+    - booster box
+    - elite trainer
+    - etb
+    - booster bundle
+    - blister
+    - build
+- id: ah-megaex-box-feraligatr
+  name: Ascended Heroes Mega Feraligatr ex Box (English)
+  product_type: Collection Box
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 672735
+  match:
+    set_terms:
+    - ascended heroes
+    - herois excelsos
+    type_terms:
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    requires_terms:
+    - mega feraligatr
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+    - booster box
+    - elite trainer
+    - etb
+    - booster bundle
+    - blister
+    - build
+- id: ah-megaex-box-meganium
+  name: Ascended Heroes Mega Meganium ex Box (English)
+  product_type: Collection Box
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 672733
+  match:
+    set_terms:
+    - ascended heroes
+    - herois excelsos
+    type_terms:
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    requires_terms:
+    - mega meganium
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+    - booster box
+    - elite trainer
+    - etb
+    - booster bundle
+    - blister
+    - build
+- id: ah-poster-lucario
+  name: "Ascended Heroes Premium Poster Collection: Mega Lucario (English)"
+  product_type: Premium Collection
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 668536
+  match:
+    set_terms:
+    - ascended heroes
+    - herois excelsos
+    type_terms:
+    - poster
+    - pôster
+    - colecao poster
+    - coleção pôster
+    - poster collection
+    requires_terms:
+    - mega lucario
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+    - booster box
+    - elite trainer
+    - etb
+    - booster bundle
+    - blister
+    - build
+- id: ah-poster-gardevoir
+  name: "Ascended Heroes Premium Poster Collection: Mega Gardevoir (English)"
+  product_type: Premium Collection
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 668537
+  match:
+    set_terms:
+    - ascended heroes
+    - herois excelsos
+    type_terms:
+    - poster
+    - pôster
+    - colecao poster
+    - coleção pôster
+    - poster collection
+    requires_terms:
+    - mega gardevoir
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+    - booster box
+    - elite trainer
+    - etb
+    - booster bundle
+    - blister
+    - build
