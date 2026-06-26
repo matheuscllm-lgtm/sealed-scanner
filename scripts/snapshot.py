@@ -302,12 +302,27 @@ def group_products(rows: list[dict]) -> list[dict]:
         # mostraria uma margem (ex.: BR de um anúncio × TCG de outro) que não
         # existe em nenhuma oferta real e o link levaria a um preço diferente do
         # exibido. Fallback: a mais barata, se nenhuma tiver referência TCG.
+        #
+        # ⭐ Dentre as válidas, prefira o MELHOR bucket (GREEN > YELLOW > RED) antes
+        # de "a mais barata". Senão uma oferta RED barata anômala (ex.: acessório
+        # mal-casado a R$64 com margem 1600% que o scanner já marcou margem_anomala,
+        # ou um anúncio abaixo do preço mínimo) viraria a referência, herdaria o
+        # bucket RED pro grupo INTEIRO e ESCONDERIA ofertas GREEN legítimas do mesmo
+        # produto da entrega. A oferta mais barata sempre tem a MAIOR margem, então
+        # uma RED-mais-barata só acontece por motivo NÃO-margem (anômala / abaixo do
+        # mínimo / sem ref) — exatamente os casos a pular como referência. `valid`
+        # herda a ordem BR-asc do `ladder`, então o primeiro do melhor bucket é a
+        # entrada mais barata daquele bucket (auto-consistência preservada).
         valid = [
             x for x in ladder
             if _to_float(x.get("Preço BR (R$)")) is not None
             and _to_float(x.get("Preço US (R$)")) is not None
         ]
-        ref = valid[0] if valid else (ladder[0] if ladder else listings[0])
+        if valid:
+            best_rank = min(_BUCKET_RANK.get(x.get("_bucket"), 9) for x in valid)
+            ref = next(x for x in valid if _BUCKET_RANK.get(x.get("_bucket"), 9) == best_rank)
+        else:
+            ref = ladder[0] if ladder else listings[0]
 
         br_prices = [p for p in (_to_float(x.get("Preço BR (R$)")) for x in listings) if p is not None]
         qtys = [q for q in (_to_float(x.get("Qtd disponível")) for x in listings) if q is not None]
