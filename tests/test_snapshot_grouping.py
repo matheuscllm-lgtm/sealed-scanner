@@ -78,6 +78,46 @@ def test_best_bucket_wins_when_listings_mixed():
     assert snapshot.group_status_label(g).startswith("🟢")
 
 
+def test_cheap_anomalous_red_does_not_hide_green(registry=None):
+    """Regressão (scan 2026-06-26, HIGH): uma oferta RED ANÔMALA e BARATA (acessório
+    mal-casado a R$64 com margem 1600% que o scanner marcou margem_anomala) era a
+    "mais barata válida" → virava a referência do grupo, herdava o bucket RED pro
+    produto INTEIRO e ESCONDIA o ETB GREEN real (R$824,95) da entrega acionável.
+
+    Como a oferta mais barata sempre tem a MAIOR margem, uma RED-mais-barata só
+    ocorre por motivo NÃO-margem (anômala/abaixo do mínimo/sem ref) — a referência
+    deve pular pro melhor bucket (a entrada GREEN mais barata)."""
+    rows = [
+        _row(SKU="ah-etb-en", Vendedor="sleeve_anomalo", **{
+            "Produto (canônico)": "Ascended Heroes Elite Trainer Box (English)",
+            "Tipo": "Elite Trainer Box", "Preço BR (R$)": "64.50",
+            "Preço US (R$)": "1096.96", "Preço US (US$)": "211.96",
+            "Margem total %": "1600.7", "_total": 1600.7, "_bucket": "rejected",
+            "Risco principal": "Margem 1601% alta demais p/ selado — provável variante trocada"}),
+        _row(SKU="ah-etb-en", Vendedor="etb_real_barato", **{
+            "Produto (canônico)": "Ascended Heroes Elite Trainer Box (English)",
+            "Tipo": "Elite Trainer Box", "Preço BR (R$)": "824.95",
+            "Preço US (R$)": "1096.96", "Preço US (US$)": "211.96",
+            "Margem total %": "33.0", "_total": 33.0, "_bucket": "real_opportunities",
+            "URL": "https://liga/etb-real"}),
+        _row(SKU="ah-etb-en", Vendedor="etb_real_caro", **{
+            "Produto (canônico)": "Ascended Heroes Elite Trainer Box (English)",
+            "Tipo": "Elite Trainer Box", "Preço BR (R$)": "899.00",
+            "Preço US (R$)": "1096.96", "Preço US (US$)": "211.96",
+            "Margem total %": "22.0", "_total": 22.0, "_bucket": "rejected"}),
+    ]
+    g = snapshot.group_products(rows)[0]
+    # o grupo é GREEN (não RED do sleeve), e a referência é o ETB real mais barato
+    assert g["bucket"] == "real_opportunities"
+    assert snapshot.group_status_label(g).startswith("🟢")
+    assert g["br_ref"] == 824.95
+    assert round(g["margem"], 1) == 33.0
+    # o link do cabeçalho vai pro ETB real, não pro sleeve anômalo
+    assert "https://liga/etb-real" in snapshot.group_links_cell(g)
+    # o sleeve anômalo continua visível na escada (transparência), só não comanda
+    assert any(x["Vendedor"] == "sleeve_anomalo" for x in g["ladder"])
+
+
 def test_distinct_skus_stay_separate_and_sorted_by_margin():
     rows = [
         _row(SKU="low", **{"Produto (canônico)": "Low", "Preço BR (R$)": "100", "Preço US (R$)": "120", "Margem total %": "20.0", "_total": 20.0, "_bucket": "rejected"}),

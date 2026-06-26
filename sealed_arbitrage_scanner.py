@@ -140,16 +140,29 @@ _ACCESSORY_TOKENS = (
     "acessorio", "acessorios",   # acessório vendido à parte (viés conservador)
     "porta carta", "porta cartas", "porta card", "porta deck",
     "toploader", "top loader", "playmat", "tapete", "deck shield",
+    "deck protector", "deck protetor",   # protetor de cartas avulso
 )
+# Pacote de SLEEVES (protetores de carta) vendido à parte — acessório, não selado.
+# Caso real (scan 2026-06-26, MercadoLivre): "Sleeve Dragonite Etb Ascended Heroes
+# (65 Sleeves)" R$64,50 casava ah-etb-en e dava +1600% (o guard margem_anomala
+# pegava como RED, mas a oferta envenenava a entrega do grupo — virava a oferta de
+# referência e escondia o ETB GREEN real). 'sleeve' nu é PROIBIDO aqui (colide com
+# 'Sleeved Booster', 20 SKUs selados); um CONTADOR de sleeves ("65 Sleeves") é o
+# sinal seguro: nenhum selado real diz "N sleeves" (o Sleeved Booster é 1 pacote, e
+# normaliza pra "sleeved", nunca "N sleeves").
+_SLEEVE_PACK_RE = re.compile(r"\b\d+\s*sleeves?\b")
 
 
 def looks_like_accessory(title: str) -> bool:
     """True se o título tem sinal forte de ACESSÓRIO puro (não-selado), fora do escopo.
 
     Mesmo viés conservador de scanner de COMPRA do `looks_like_single_card`.
-    NÃO usa 'sleeve'/'binder'/'fichario'/'album'/'collection'/'box' — todos são
-    (parte de) produtos selados reais neste registry."""
+    NÃO usa 'sleeve'/'binder'/'fichario'/'album'/'collection'/'box' (singular) —
+    todos são (parte de) produtos selados reais neste registry. MAS um contador de
+    sleeves ("65 sleeves") é pacote de protetores avulso = acessório."""
     norm = normalize(title)
+    if _SLEEVE_PACK_RE.search(norm):
+        return True
     return any(tok in norm for tok in _ACCESSORY_TOKENS)
 
 
