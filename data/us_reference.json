@@ -2,7 +2,7 @@
   "_comment": "Gerado por build_us_reference.py a partir de tcgcsv.com (espelho da API do TCGPlayer). NÃO editar à mão — rode o script para refrescar.",
   "reference": "TCGPlayer marketPrice via tcgcsv.com",
   "currency": "USD",
-  "captured_at": "2026-06-26T22:59:11Z",
+  "captured_at": "2026-06-26T23:11:23Z",
   "prices": {
     "ssp-booster-box-en": 298.96,
     "ssp-etb-en": 135.77,
@@ -115,6 +115,11 @@
     "meg-blister-3pack-golduck": 30.53,
     "meg-blister-3pack-psyduck": 41.14,
     "phf-blister-3pack-weavile": 40.07,
-    "pb-blister-3pack-binacle": 42.82
+    "pb-blister-3pack-binacle": 42.82,
+    "ah-megaex-box-emboar": 51.92,
+    "ah-megaex-box-feraligatr": 55.5,
+    "ah-megaex-box-meganium": 54.16,
+    "ah-poster-lucario": 168.84,
+    "ah-poster-gardevoir": 163.96
   }
 }

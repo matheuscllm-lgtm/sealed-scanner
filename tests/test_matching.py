@@ -186,3 +186,25 @@ def test_blister_3pack_casa_pela_variante(title, expected, registry):
 ])
 def test_blister_variante_vizinha_nao_casa_3pack(title, registry):
     assert "cr-blister-3pack-charmeleon" not in ids(title, registry)
+
+
+# --- GAP 2ª leva: caixas Mega-X-ex e Poster Collections de Ascended Heroes ----
+@pytest.mark.parametrize("title,expected", [
+    ("(ING) Caixa - Megaevolução - Ascended Heroes - Mega Emboar ex Box (English)", "ah-megaex-box-emboar"),
+    ("(ING) Caixa - Megaevolução - Ascended Heroes - Mega Feraligatr ex Box (English)", "ah-megaex-box-feraligatr"),
+    # ML usa o nome PT do set ("Heróis Excelsos") — set_terms cobre os dois:
+    ("Box Pokémon: Coleção Mega Meganium Ex Heróis Excelsos (novo)", "ah-megaex-box-meganium"),
+    ("(ING) Caixa - Megaevolução - Ascended Heroes - Coleção Pôster Premium - Mega Lucario (English)", "ah-poster-lucario"),
+    ("Pokémon Box Ascended Heroes Mega Lucario Ex Poster Inglês", "ah-poster-lucario"),
+])
+def test_ah_megaex_box_e_poster_casam_pela_variante(title, expected, registry):
+    # Fixados pelo personagem (requires) + set_terms PT/EN. O Mega Lucario ETB do
+    # ME01 (set diferente) NÃO colide porque o set_term é "ascended heroes".
+    assert ids(title, registry) == [expected]
+
+
+def test_ah_box_e_poster_nao_quebram_etb_bundle(registry):
+    # Caixas/posters novos (type 'box'/'caixa'/'poster' + requires personagem) não
+    # podem roubar o ETB/Bundle/Pack genéricos do mesmo set (sem nome de personagem).
+    assert ids("(ING) Elite Trainer Box - Megaevolução 2.5 - Ascended Heroes (English)", registry) == ["ah-etb-en"]
+    assert ids("(ING) Booster Bundle - Megaevolução 2.5 - Ascended Heroes (English)", registry) == ["ah-bundle-en"]
