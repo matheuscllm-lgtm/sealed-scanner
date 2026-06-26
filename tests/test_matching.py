@@ -123,10 +123,24 @@ def test_etb_real_nao_e_barrado_por_acessorio(registry):
     ("Elite Trainer Box Acessórios", True),
     ("Porta Cartas Pokémon Toploader", True),
     ("Playmat Charizard", True),
+    ("Sleeve Dragonite Etb Ascended Heroes (65 Sleeves)", True),  # pacote de sleeves = acessório
+    ("Pacote 100 Sleeves Pokémon", True),
+    ("Deck Protector Pikachu", True),
     ("Sleeved Booster Pack Surging Sparks", False),   # 'sleeve' é selado — NÃO barrar
+    ("Booster Avulso Megaevolução", False),           # Sleeved Booster real (sem contador)
     ("Scarlet & Violet 151 Binder Collection", False),  # binder collection = selado real
     ("Prismatic Evolutions Collection Box", False),   # 'collection box' é selado
     ("Mega Evolution Booster Bundle", False),         # selado
 ])
 def test_looks_like_accessory(title, expected):
     assert S.looks_like_accessory(title) is expected
+
+
+def test_sleeve_pack_nao_casa_etb(registry):
+    # Caso real (scan 2026-06-26, ML): "Sleeve Dragonite Etb Ascended Heroes
+    # (65 Sleeves)" R$64,50 casava ah-etb-en e dava +1600% (margem_anomala). Pior:
+    # virava a oferta de referência do grupo e escondia o ETB GREEN real da entrega.
+    # O contador "65 Sleeves" é prova de pacote de protetores avulso = acessório.
+    sleeve = "Sleeve Dragonite Etb Ascended Heroes (65 Sleeves)"
+    assert S.looks_like_accessory(sleeve) is True
+    assert S.match_listing(sleeve, registry) == []
