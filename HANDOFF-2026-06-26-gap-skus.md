@@ -135,20 +135,33 @@ Também: sanity-band para `Blister` ($3-150) em `build_us_reference.py`; +16 tes
 (174 total). **Total: 63 anúncios GREEN recuperados em 8 produtos.** Validação por
 reclassificação do scan de hoje (sem re-scan Liga); produção pega no próximo scan.
 
-### 5b. ⏳ FALTA (2ª leva)
+### 5b. ✅ 2ª leva FEITA (PR #50) — caixas Ascended Heroes
 
-- **Collection Boxes** (~15 famílias no gap): Mewtwo Rocket Ex, Garchomp Cynthia
-  Premium, Charizard Ex Especial, Mega Zygarde/Venusaur/Kangaskhan/Latias/Lucario,
-  Dia de Pokémon 2026, Zacian Lupo, Bellibolt Kissera, etc. Cada uma precisa do pid
-  TCG próprio (cuidado: tipo Collection Box já teve FP histórico — usar sanity-band).
-- **Caixas "Mega X ex Box" (Ascended Heroes)**: Mega Emboar/Feraligatr/Meganium ex
-  Box (R$290-700) — achar pid; o grupo AH (24541) tem 0 blisters no tcgcsv, conferir
-  se essas caixas existem como produto lá.
-- **Blister Duplo Ascended Heroes (Komala/Tangela)**: grupo AH **não tem blisters no
-  tcgcsv** → sem referência → ficam RED honesto; não adicionar até haver ref.
+Adicionados 5 SKUs AH (cobertura; todos RED hoje, viram GREEN se BR cair):
+`ah-megaex-box-emboar/feraligatr/meganium` (672734/672735/672733),
+`ah-poster-lucario/gardevoir` (668536/668537). set_terms cobre EN+PT
+("ascended heroes"/"herois excelsos"); fixados pelo personagem em requires_terms.
+180 testes.
+
+### 5c. ⏳ FALTA (3ª leva)
+
+- **Collection Boxes de personagem de OUTROS sets**: Mewtwo Rocket Ex, Garchomp
+  Cynthia Premium, Charizard Ex Especial, Mega Zygarde/Venusaur/Kangaskhan/Latias,
+  Dia de Pokémon 2026, Zacian Lupo, Bellibolt Kissera, Salamence/Reshiram. **Não
+  localizados em grupos tcgcsv limpos no passo de 2026-06-26** (não aparecem nos
+  grupos dos sets nem em promos com nome casável) — precisam de mapeamento
+  per-produto (achar o group_id/pid certo de cada um; cuidado FP do tipo Collection
+  Box). Usar sanity-band + requires=personagem.
+- **Blister Duplo Ascended Heroes (Komala/Tangela)**: grupo AH (24541) **não tem
+  blisters no tcgcsv** → sem referência → RED honesto; não adicionar até haver ref.
 - **Decisão pendente do operador:** Battle Decks / Baralhos entram no escopo?
+  (default histórico: fora).
 - **Blisters genéricos sem Pokémon** ("Blister - <set>") e **Checklane/Single**:
   precisam de variante identificável; pular enquanto ambíguos (precisão primeiro).
+- **Side-finding:** os SKUs `ah-*` existentes (etb/bundle/pack) só têm set_term
+  "ascended heroes" — listings ML em PT ("Heróis Excelsos") são perdidos. Adicionar
+  "herois excelsos" aos set_terms deles recuperaria essas ofertas (mesma classe de
+  bug do ME05/Escuridão Absoluta).
 
 ### Passos para a próxima sessão (2ª leva)
 
