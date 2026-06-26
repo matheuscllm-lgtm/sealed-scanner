@@ -31,6 +31,8 @@ def test_meg_skus_flagged_umbrella(registry):
     assert umbrella == {
         "meg-booster-box", "meg-sleeved-booster", "meg-booster-bundle",
         "meg-mini-tin", "meg-mini-tin-display",
+        # blisters 3-pack do ME01 (gap 2026-06-26) — mesmo set-base da era Mega
+        "meg-blister-3pack-golduck", "meg-blister-3pack-psyduck",
     }
 
 
@@ -144,3 +146,43 @@ def test_sleeve_pack_nao_casa_etb(registry):
     sleeve = "Sleeve Dragonite Etb Ascended Heroes (65 Sleeves)"
     assert S.looks_like_accessory(sleeve) is True
     assert S.match_listing(sleeve, registry) == []
+
+
+# --- GAP fechado 2026-06-26: set ME05 com nome PT + blisters 3-pack ----------
+@pytest.mark.parametrize("title,expected", [
+    # ME05 a Liga chama "Escuridão Absoluta" (PT), não "Pitch Black" → estava no gap.
+    ("(ING) Elite Trainer Box - Megaevolução 5 - Escuridão Absoluta (English)", "pb-etb-en"),
+    ("(ING) Booster Bundle - Megaevolução 5 - Escuridão Absoluta (English)", "pb-bundle-en"),
+    ("(ING) Booster Pack - Megaevolução 5 - Escuridão Absoluta (English)", "pb-pack-en"),
+    ("(ING) Booster Box - Megaevolução 5 - Escuridão Absoluta (English)", "pb-box-en"),
+    # nome EN original segue casando (sem regressão):
+    ("(ING) Elite Trainer Box - Pitch Black (English)", "pb-etb-en"),
+])
+def test_me05_pt_name_escuridao_absoluta(title, expected, registry):
+    assert ids(title, registry) == [expected]
+
+
+@pytest.mark.parametrize("title,expected", [
+    ("(ING) Blister Megaevolução 4 - Chaos Rising - Charmeleon (English)", "cr-blister-3pack-charmeleon"),
+    ("(ING) Blister Megaevolução 3 - Perfect Order - Chikorita (English)", "po-blister-3pack-chikorita"),
+    ("(ING) Blister Escarlate e Violeta 9 - Journey Together - Scrafty (English)", "jtg-blister-3pack-scrafty"),
+    ("(ING) Blister Escarlate e Violeta 9 - Journey Together - Yanmega (English)", "jtg-blister-3pack-yanmega"),
+    ("(ING) Blister Megaevolução 1 - Megaevolução - Golduck (English)", "meg-blister-3pack-golduck"),
+    ("(ING) Blister Megaevolução 1 - Megaevolução - Psyduck (English)", "meg-blister-3pack-psyduck"),
+    ("(ING) Blister Megaevolução 2 - Phantasmal Flames - Weavile (English)", "phf-blister-3pack-weavile"),
+    ("(ING) Blister Megaevolução 5 - Escuridão Absoluta - Binacle (English)", "pb-blister-3pack-binacle"),
+])
+def test_blister_3pack_casa_pela_variante(title, expected, registry):
+    # Cada blister 3-pack é fixado pelo NOME do Pokémon (requires_terms) — sem isso
+    # casaria a variante errada (Single Pack / Premium Checklane do mesmo set).
+    assert ids(title, registry) == [expected]
+
+
+@pytest.mark.parametrize("title", [
+    # Variante VIZINHA do mesmo set NÃO pode casar o SKU do 3-pack [Charmeleon]:
+    "(ING) Blister Checklane - Megaevolução 4 - Chaos Rising - Toxel (English)",
+    "(ING) Blister - Megaevolução 4 - Chaos Rising (English)",   # genérico (sem Pokémon)
+    "(ING) Blister Single Pack - Chaos Rising - Toxel (English)",
+])
+def test_blister_variante_vizinha_nao_casa_3pack(title, registry):
+    assert "cr-blister-3pack-charmeleon" not in ids(title, registry)

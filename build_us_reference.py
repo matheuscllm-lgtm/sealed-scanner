@@ -49,6 +49,7 @@ SANITY_BANDS_USD: dict[str, tuple[float, float]] = {
     "Sleeved Booster": (2.0, 60.0),
     "Booster Pack": (2.0, 60.0),
     "Tech Sticker": (12.0, 130.0),
+    "Blister": (3.0, 150.0),  # single pack ~$8 .. 3-pack/premium ~$45 (banda generosa; barra case ~$600 se pid trocado)
     "Booster Bundle": (20.0, 320.0),
     "Collection Box": (15.0, 450.0),
     "Elite Trainer Box": (25.0, 950.0),

@@ -1025,6 +1025,8 @@ skus:
   match:
     set_terms:
     - pitch black
+    - escuridao absoluta
+    - megaevolucao 5
     type_terms:
     - booster box
     - caixa de booster
@@ -1085,6 +1087,8 @@ skus:
   match:
     set_terms:
     - pitch black
+    - escuridao absoluta
+    - megaevolucao 5
     type_terms:
     - elite trainer box
     - etb
@@ -1141,6 +1145,8 @@ skus:
   match:
     set_terms:
     - pitch black
+    - escuridao absoluta
+    - megaevolucao 5
     type_terms:
     - elite trainer box
     - etb
@@ -1198,6 +1204,8 @@ skus:
   match:
     set_terms:
     - pitch black
+    - escuridao absoluta
+    - megaevolucao 5
     type_terms:
     - booster bundle
     - bundle
@@ -2840,6 +2848,8 @@ skus:
   match:
     set_terms:
     - pitch black
+    - escuridao absoluta
+    - megaevolucao 5
     type_terms:
     - booster pack
     - booster avulso
@@ -4160,3 +4170,435 @@ skus:
     - elite trainer
     - etb
     - blister
+- id: cr-blister-3pack-charmeleon
+  name: Chaos Rising 3-Pack Blister [Charmeleon] (English)
+  product_type: Blister
+  set: Chaos Rising
+  set_code: CR
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24655
+  tcgplayer_product_id: 684458
+  match:
+    set_terms:
+    - chaos rising
+    type_terms:
+    - blister
+    requires_terms:
+    - charmeleon
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+- id: po-blister-3pack-chikorita
+  name: Perfect Order 3-Pack Blister [Chikorita] (English)
+  product_type: Blister
+  set: Perfect Order
+  set_code: PO
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24587
+  tcgplayer_product_id: 672393
+  match:
+    set_terms:
+    - perfect order
+    type_terms:
+    - blister
+    requires_terms:
+    - chikorita
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+- id: jtg-blister-3pack-scrafty
+  name: Journey Together 3-Pack Blister [Scrafty] (English)
+  product_type: Blister
+  set: Journey Together
+  set_code: JTG
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24073
+  tcgplayer_product_id: 610948
+  match:
+    set_terms:
+    - journey together
+    type_terms:
+    - blister
+    requires_terms:
+    - scrafty
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+- id: jtg-blister-3pack-yanmega
+  name: Journey Together 3-Pack Blister [Yanmega] (English)
+  product_type: Blister
+  set: Journey Together
+  set_code: JTG
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24073
+  tcgplayer_product_id: 610940
+  match:
+    set_terms:
+    - journey together
+    type_terms:
+    - blister
+    requires_terms:
+    - yanmega
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+- id: meg-blister-3pack-golduck
+  name: Mega Evolution 3-Pack Blister [Golduck] (English)
+  product_type: Blister
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 644356
+  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
+  match:
+    set_terms:
+    - megaevolução 1
+    - megaevolucao 1
+    - mega evolution
+    type_terms:
+    - blister
+    requires_terms:
+    - golduck
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+- id: meg-blister-3pack-psyduck
+  name: Mega Evolution 3-Pack Blister [Psyduck] (English)
+  product_type: Blister
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 644357
+  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
+  match:
+    set_terms:
+    - megaevolução 1
+    - megaevolucao 1
+    - mega evolution
+    type_terms:
+    - blister
+    requires_terms:
+    - psyduck
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+- id: phf-blister-3pack-weavile
+  name: Phantasmal Flames 3-Pack Blister [Weavile] (English)
+  product_type: Blister
+  set: Phantasmal Flames
+  set_code: PHF
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24448
+  tcgplayer_product_id: 654156
+  match:
+    set_terms:
+    - phantasmal flames
+    type_terms:
+    - blister
+    requires_terms:
+    - weavile
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+- id: pb-blister-3pack-binacle
+  name: Pitch Black 3-Pack Blister [Binacle] (English)
+  product_type: Blister
+  set: Pitch Black
+  set_code: PB
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24688
+  tcgplayer_product_id: 692938
+  match:
+    set_terms:
+    - pitch black
+    - escuridao absoluta
+    - megaevolucao 5
+    type_terms:
+    - blister
+    requires_terms:
+    - binacle
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
