@@ -208,3 +208,51 @@ def test_ah_box_e_poster_nao_quebram_etb_bundle(registry):
     # podem roubar o ETB/Bundle/Pack genéricos do mesmo set (sem nome de personagem).
     assert ids("(ING) Elite Trainer Box - Megaevolução 2.5 - Ascended Heroes (English)", registry) == ["ah-etb-en"]
     assert ids("(ING) Booster Bundle - Megaevolução 2.5 - Ascended Heroes (English)", registry) == ["ah-bundle-en"]
+
+
+# --- GAP de produtos EXISTENTES: nomes PT de set faltando nos set_terms --------
+# A Liga/OLX/ML são marketplaces BR → muitos títulos usam o nome PT do set. SKUs
+# que só tinham o nome EN perdiam silenciosamente essas ofertas (mesma classe de
+# bug do ME05/"Escuridão Absoluta"). Os nomes PT vêm do mapa curado de
+# scripts/expand_registry_modern.py (mesma fonte que já casava p/ AH/Pitch Black).
+@pytest.mark.parametrize("title,expected", [
+    # sets que estavam SEM nenhum nome PT (NONE) — recuperados:
+    ("(ING) Booster Box - Fagulhas Impetuosas (English)", "ssp-booster-box-en"),       # Surging Sparks
+    ("(ING) Booster Box - Equilíbrio Perfeito (English)", "po-box-en"),                 # Perfect Order
+    ("(ING) Booster Box - Caos Ascendente (English)", "cr-box-en"),                     # Chaos Rising
+    ("(ING) Booster Box - Fogo Fantasmagórico (English)", "phf-box-en"),                # Phantasmal Flames
+    ("(ING) Booster Box - Forças Temporais (English)", "tef-box-en"),                   # Temporal Forces
+    ("(ING) Booster Box - Máscaras do Crepúsculo (English)", "twm-box-en"),             # Twilight Masquerade
+    ("(ING) Booster Box - Rivais Predestinados (English)", "dri-box-en"),               # Destined Rivals
+    ("(ING) Booster Box - Amigos de Jornada (English)", "jtg-box-en"),                  # Journey Together
+    # sets PARCIALMENTE cobertos — propagado o nome PT já vivo p/ os SKUs que faltavam:
+    ("(ING) Booster Box - Coroa Estelar (English)", "scr-booster-box-en"),              # Stellar Crown
+    ("(ING) Booster Bundle - Evoluções Prismáticas (English)", "pre-booster-bundle-en"),  # Prismatic Evolutions
+    # forma "Megaevolução N" (numeração da era na Liga) — só onde NÃO colide:
+    ("(ING) Booster Box - Megaevolução 3 - Equilíbrio Perfeito (English)", "po-box-en"),
+    ("(ING) Booster Box - Megaevolução 4 - Caos Ascendente (English)", "cr-box-en"),
+])
+def test_pt_set_name_recupera_oferta(title, expected, registry):
+    assert ids(title, registry) == [expected]
+
+
+@pytest.mark.parametrize("title,expected", [
+    # nome EN segue casando (sem regressão ao adicionar os aliases PT):
+    ("Surging Sparks Booster Box (English)", "ssp-booster-box-en"),
+    ("Temporal Forces Booster Box (English)", "tef-box-en"),
+    ("Coroa Estelar Booster Pack (English)", "scr-pack-en"),
+])
+def test_en_set_name_ainda_casa(title, expected, registry):
+    assert ids(title, registry) == [expected]
+
+
+def test_phantasmal_me2_nao_rouba_ascended_heroes_2_5(registry):
+    # DECISÃO de precisão: "megaevolução 2" (Phantasmal Flames) NÃO foi adicionado
+    # como set_term porque, no match por palavra-inteira, " megaevolução 2 " é
+    # sub-string de um título "Megaevolução 2.5" (Ascended Heroes) → roubaria a
+    # oferta AH. PFL casa pelo nome PT ("Fogo Fantasmagórico"); a numeração ME2
+    # fica de fora até o matcher distinguir 2 de 2.5. Este teste trava a decisão.
+    ah_25 = "(ING) Booster Bundle - Megaevolução 2.5 - Ascended Heroes (English)"
+    got = ids(ah_25, registry)
+    assert got == ["ah-bundle-en"]
+    assert not any(s.startswith("phf") for s in got)

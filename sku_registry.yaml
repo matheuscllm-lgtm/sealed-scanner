@@ -10,6 +10,7 @@ skus:
   tcgplayer_product_id: 565606
   match:
     set_terms:
+    - fagulhas impetuosas
     - surging sparks
     type_terms:
     - booster box
@@ -69,6 +70,7 @@ skus:
   tcgplayer_product_id: 565630
   match:
     set_terms:
+    - fagulhas impetuosas
     - surging sparks
     type_terms:
     - elite trainer box
@@ -124,6 +126,8 @@ skus:
   tcgplayer_product_id: 593355
   match:
     set_terms:
+    - evoluções prismáticas
+    - evolucoes prismaticas
     - prismatic evolutions
     type_terms:
     - elite trainer box
@@ -179,6 +183,8 @@ skus:
   tcgplayer_product_id: 593324
   match:
     set_terms:
+    - evoluções prismáticas
+    - evolucoes prismaticas
     - prismatic evolutions
     type_terms:
     - elite trainer box
@@ -235,6 +241,8 @@ skus:
   tcgplayer_product_id: 600518
   match:
     set_terms:
+    - evoluções prismáticas
+    - evolucoes prismaticas
     - prismatic evolutions
     type_terms:
     - booster bundle
@@ -290,6 +298,7 @@ skus:
   tcgplayer_product_id: 557354
   match:
     set_terms:
+    - coroa estelar
     - stellar crown
     type_terms:
     - booster box
@@ -403,7 +412,11 @@ skus:
   tcgplayer_product_id: 668496
   match:
     set_terms:
+    - heróis excelsos
+    - herois excelsos
     - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms:
     - elite trainer box
     - etb
@@ -459,7 +472,11 @@ skus:
   tcgplayer_product_id: 668497
   match:
     set_terms:
+    - heróis excelsos
+    - herois excelsos
     - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms:
     - elite trainer box
     - etb
@@ -516,7 +533,11 @@ skus:
   tcgplayer_product_id: 668541
   match:
     set_terms:
+    - heróis excelsos
+    - herois excelsos
     - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms:
     - booster bundle
     - bundle
@@ -570,7 +591,11 @@ skus:
   tcgplayer_product_id: 672394
   match:
     set_terms:
+    - equilíbrio perfeito
+    - equilibrio perfeito
     - perfect order
+    - megaevolução 3
+    - megaevolucao 3
     type_terms:
     - booster box
     - caixa de booster
@@ -630,7 +655,11 @@ skus:
   tcgplayer_product_id: 672401
   match:
     set_terms:
+    - equilíbrio perfeito
+    - equilibrio perfeito
     - perfect order
+    - megaevolução 3
+    - megaevolucao 3
     type_terms:
     - elite trainer box
     - etb
@@ -686,7 +715,11 @@ skus:
   tcgplayer_product_id: 672404
   match:
     set_terms:
+    - equilíbrio perfeito
+    - equilibrio perfeito
     - perfect order
+    - megaevolução 3
+    - megaevolucao 3
     type_terms:
     - elite trainer box
     - etb
@@ -743,7 +776,11 @@ skus:
   tcgplayer_product_id: 672396
   match:
     set_terms:
+    - equilíbrio perfeito
+    - equilibrio perfeito
     - perfect order
+    - megaevolução 3
+    - megaevolucao 3
     type_terms:
     - booster bundle
     - bundle
@@ -797,7 +834,10 @@ skus:
   tcgplayer_product_id: 684444
   match:
     set_terms:
+    - caos ascendente
     - chaos rising
+    - megaevolução 4
+    - megaevolucao 4
     type_terms:
     - booster box
     - caixa de booster
@@ -857,7 +897,10 @@ skus:
   tcgplayer_product_id: 684450
   match:
     set_terms:
+    - caos ascendente
     - chaos rising
+    - megaevolução 4
+    - megaevolucao 4
     type_terms:
     - elite trainer box
     - etb
@@ -913,7 +956,10 @@ skus:
   tcgplayer_product_id: 684452
   match:
     set_terms:
+    - caos ascendente
     - chaos rising
+    - megaevolução 4
+    - megaevolucao 4
     type_terms:
     - elite trainer box
     - etb
@@ -970,7 +1016,10 @@ skus:
   tcgplayer_product_id: 684456
   match:
     set_terms:
+    - caos ascendente
     - chaos rising
+    - megaevolução 4
+    - megaevolucao 4
     type_terms:
     - booster bundle
     - bundle
@@ -1259,6 +1308,8 @@ skus:
   tcgplayer_product_id: 654137
   match:
     set_terms:
+    - fogo fantasmagórico
+    - fogo fantasmagorico
     - phantasmal flames
     type_terms:
     - booster box
@@ -1319,6 +1370,8 @@ skus:
   tcgplayer_product_id: 654136
   match:
     set_terms:
+    - fogo fantasmagórico
+    - fogo fantasmagorico
     - phantasmal flames
     type_terms:
     - elite trainer box
@@ -1375,6 +1428,8 @@ skus:
   tcgplayer_product_id: 654135
   match:
     set_terms:
+    - fogo fantasmagórico
+    - fogo fantasmagorico
     - phantasmal flames
     type_terms:
     - elite trainer box
@@ -1432,6 +1487,8 @@ skus:
   tcgplayer_product_id: 654160
   match:
     set_terms:
+    - fogo fantasmagórico
+    - fogo fantasmagorico
     - phantasmal flames
     type_terms:
     - booster bundle
@@ -1486,6 +1543,8 @@ skus:
   tcgplayer_product_id: 536225
   match:
     set_terms:
+    - forças temporais
+    - forcas temporais
     - temporal forces
     type_terms:
     - booster box
@@ -1546,6 +1605,8 @@ skus:
   tcgplayer_product_id: 532845
   match:
     set_terms:
+    - forças temporais
+    - forcas temporais
     - temporal forces
     type_terms:
     - walking wake
@@ -1601,6 +1662,8 @@ skus:
   tcgplayer_product_id: 532848
   match:
     set_terms:
+    - forças temporais
+    - forcas temporais
     - temporal forces
     type_terms:
     - iron leaves
@@ -1656,6 +1719,8 @@ skus:
   tcgplayer_product_id: 541017
   match:
     set_terms:
+    - forças temporais
+    - forcas temporais
     - temporal forces
     type_terms:
     - booster bundle
@@ -1710,6 +1775,8 @@ skus:
   tcgplayer_product_id: 543846
   match:
     set_terms:
+    - máscaras do crepúsculo
+    - mascaras do crepusculo
     - twilight masquerade
     type_terms:
     - booster box
@@ -1770,6 +1837,8 @@ skus:
   tcgplayer_product_id: 543845
   match:
     set_terms:
+    - máscaras do crepúsculo
+    - mascaras do crepusculo
     - twilight masquerade
     type_terms:
     - elite trainer box
@@ -1826,6 +1895,8 @@ skus:
   tcgplayer_product_id: 543844
   match:
     set_terms:
+    - máscaras do crepúsculo
+    - mascaras do crepusculo
     - twilight masquerade
     type_terms:
     - elite trainer box
@@ -1883,6 +1954,8 @@ skus:
   tcgplayer_product_id: 543852
   match:
     set_terms:
+    - máscaras do crepúsculo
+    - mascaras do crepusculo
     - twilight masquerade
     type_terms:
     - booster bundle
@@ -1937,6 +2010,7 @@ skus:
   tcgplayer_product_id: 624679
   match:
     set_terms:
+    - rivais predestinados
     - destined rivals
     type_terms:
     - booster box
@@ -1997,6 +2071,7 @@ skus:
   tcgplayer_product_id: 624676
   match:
     set_terms:
+    - rivais predestinados
     - destined rivals
     type_terms:
     - elite trainer box
@@ -2053,6 +2128,7 @@ skus:
   tcgplayer_product_id: 624675
   match:
     set_terms:
+    - rivais predestinados
     - destined rivals
     type_terms:
     - elite trainer box
@@ -2110,6 +2186,7 @@ skus:
   tcgplayer_product_id: 625670
   match:
     set_terms:
+    - rivais predestinados
     - destined rivals
     type_terms:
     - booster bundle
@@ -2164,6 +2241,7 @@ skus:
   tcgplayer_product_id: 610931
   match:
     set_terms:
+    - amigos de jornada
     - journey together
     type_terms:
     - booster box
@@ -2224,6 +2302,7 @@ skus:
   tcgplayer_product_id: 610930
   match:
     set_terms:
+    - amigos de jornada
     - journey together
     type_terms:
     - elite trainer box
@@ -2280,6 +2359,7 @@ skus:
   tcgplayer_product_id: 610929
   match:
     set_terms:
+    - amigos de jornada
     - journey together
     type_terms:
     - elite trainer box
@@ -2337,6 +2417,7 @@ skus:
   tcgplayer_product_id: 610953
   match:
     set_terms:
+    - amigos de jornada
     - journey together
     type_terms:
     - booster bundle
@@ -2392,6 +2473,7 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - amigos de jornada
     - journey together
     type_terms:
     - booster pack
@@ -2457,6 +2539,7 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - fagulhas impetuosas
     - surging sparks
     type_terms:
     - booster pack
@@ -2522,6 +2605,7 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - coroa estelar
     - stellar crown
     type_terms:
     - booster pack
@@ -2587,6 +2671,8 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - evoluções prismáticas
+    - evolucoes prismaticas
     - prismatic evolutions
     type_terms:
     - booster pack
@@ -2652,7 +2738,11 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - heróis excelsos
+    - herois excelsos
     - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms:
     - booster pack
     - booster avulso
@@ -2717,7 +2807,11 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - equilíbrio perfeito
+    - equilibrio perfeito
     - perfect order
+    - megaevolução 3
+    - megaevolucao 3
     type_terms:
     - booster pack
     - booster avulso
@@ -2782,7 +2876,10 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - caos ascendente
     - chaos rising
+    - megaevolução 4
+    - megaevolucao 4
     type_terms:
     - booster pack
     - booster avulso
@@ -2914,6 +3011,8 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - fogo fantasmagórico
+    - fogo fantasmagorico
     - phantasmal flames
     type_terms:
     - booster pack
@@ -2979,6 +3078,8 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - forças temporais
+    - forcas temporais
     - temporal forces
     type_terms:
     - booster pack
@@ -3044,6 +3145,8 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - máscaras do crepúsculo
+    - mascaras do crepusculo
     - twilight masquerade
     type_terms:
     - booster pack
@@ -3109,6 +3212,7 @@ skus:
   bulk_qty: 24
   match:
     set_terms:
+    - rivais predestinados
     - destined rivals
     type_terms:
     - booster pack
@@ -3973,7 +4077,11 @@ skus:
   tcgplayer_product_id: 668534
   match:
     set_terms:
+    - heróis excelsos
+    - herois excelsos
     - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms: *tin_type
     exclude_terms: *tin_excl_single
 - id: asc-mini-tin-display
@@ -3987,7 +4095,11 @@ skus:
   tcgplayer_product_id: 679556
   match:
     set_terms:
+    - heróis excelsos
+    - herois excelsos
     - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms: *tin_type
     requires_terms: *tin_req
     exclude_terms: *tin_excl_display
@@ -4035,6 +4147,8 @@ skus:
   tcgplayer_product_id: 593457
   match:
     set_terms:
+    - evoluções prismáticas
+    - evolucoes prismaticas
     - prismatic evolutions
     type_terms: *tin_type
     exclude_terms: *tin_excl_single
@@ -4049,6 +4163,8 @@ skus:
   tcgplayer_product_id: 593463
   match:
     set_terms:
+    - evoluções prismáticas
+    - evolucoes prismaticas
     - prismatic evolutions
     type_terms: *tin_type
     requires_terms: *tin_req
@@ -4126,6 +4242,7 @@ skus:
   tcgplayer_product_id: 679564
   match:
     set_terms:
+    - fagulhas impetuosas
     - surging sparks
     type_terms:
     - booster bundle
@@ -4181,7 +4298,10 @@ skus:
   tcgplayer_product_id: 684458
   match:
     set_terms:
+    - caos ascendente
     - chaos rising
+    - megaevolução 4
+    - megaevolucao 4
     type_terms:
     - blister
     requires_terms:
@@ -4234,7 +4354,11 @@ skus:
   tcgplayer_product_id: 672393
   match:
     set_terms:
+    - equilíbrio perfeito
+    - equilibrio perfeito
     - perfect order
+    - megaevolução 3
+    - megaevolucao 3
     type_terms:
     - blister
     requires_terms:
@@ -4287,6 +4411,7 @@ skus:
   tcgplayer_product_id: 610948
   match:
     set_terms:
+    - amigos de jornada
     - journey together
     type_terms:
     - blister
@@ -4340,6 +4465,7 @@ skus:
   tcgplayer_product_id: 610940
   match:
     set_terms:
+    - amigos de jornada
     - journey together
     type_terms:
     - blister
@@ -4505,6 +4631,8 @@ skus:
   tcgplayer_product_id: 654156
   match:
     set_terms:
+    - fogo fantasmagórico
+    - fogo fantasmagorico
     - phantasmal flames
     type_terms:
     - blister
@@ -4612,8 +4740,11 @@ skus:
   tcgplayer_product_id: 672734
   match:
     set_terms:
-    - ascended heroes
+    - heróis excelsos
     - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms:
     - box
     - caixa
@@ -4675,8 +4806,11 @@ skus:
   tcgplayer_product_id: 672735
   match:
     set_terms:
-    - ascended heroes
+    - heróis excelsos
     - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms:
     - box
     - caixa
@@ -4738,8 +4872,11 @@ skus:
   tcgplayer_product_id: 672733
   match:
     set_terms:
-    - ascended heroes
+    - heróis excelsos
     - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms:
     - box
     - caixa
@@ -4801,8 +4938,11 @@ skus:
   tcgplayer_product_id: 668536
   match:
     set_terms:
-    - ascended heroes
+    - heróis excelsos
     - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms:
     - poster
     - pôster
@@ -4864,8 +5004,11 @@ skus:
   tcgplayer_product_id: 668537
   match:
     set_terms:
-    - ascended heroes
+    - heróis excelsos
     - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
     type_terms:
     - poster
     - pôster
