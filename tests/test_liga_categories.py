@@ -26,6 +26,12 @@ def test_latas_categoria_no_scan():
     assert L.DEFAULT_CATEGORIES[24] == "Latas"
 
 
+def test_prerelease_categoria_no_scan():
+    # categ=57 = "Pacote Pré-Lançamento" (prerelease/Build & Battle Box)
+    assert 57 in L.DEFAULT_CATEGORIES
+    assert L.DEFAULT_CATEGORIES[57] == "Pacote Pré-Lançamento"
+
+
 def test_lata_mapeia_product_type_tin():
     # título "Lata ..." da Liga -> product_type "Tin"
     assert L._name_product_type("(ING) Lata Destinos de Paldea - Charizard Shiny ex") == "Tin"

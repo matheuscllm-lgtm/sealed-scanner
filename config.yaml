@@ -84,12 +84,13 @@ liga:
   # scraperapi_key: ""      # NÃO commitar; prefira .env / env var
   #
   # Categorias do site (categ=N em ?view=cards/search):
-  #   10 Caixas de Boosters          25 Blisters
-  #   14 Pacotes / Fat Packs         26 Decks Selados
-  #   21 Boosters Avulsos            27 Coleção Treinador Avançado
-  #   24 Latas                       28 Box Colecionável
-  #                                  38 Kits
-  categorias: [10, 14, 21, 24, 25, 26, 27, 28, 38]
+  #   10 Caixas de Boosters          27 Coleção Treinador Avançado
+  #   14 Pacotes / Fat Packs         28 Box Colecionável
+  #   21 Boosters Avulsos            38 Kits
+  #   24 Latas                       57 Pacote Pré-Lançamento
+  #   25 Blisters
+  #   26 Decks Selados
+  categorias: [10, 14, 21, 24, 25, 26, 27, 28, 38, 57]
   # Idiomas mantidos (do prefixo do nome do produto: ING, PT-BR, JAP, ...).
   # EN é o foco do scanner; adicione PT-BR/JAP pra contexto doméstico.
   keep_languages: ["EN"]

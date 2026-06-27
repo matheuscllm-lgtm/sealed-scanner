@@ -63,6 +63,10 @@ CATEGORY_PRODUCT_TYPE = {
     "kit": "Kit",
     "deck selado": "Theme Deck",
     "lata": "Tin",
+    "pacote pré-lançamento": "Build & Battle Box",
+    "pacote pre-lancamento": "Build & Battle Box",
+    "pré-lançamento": "Build & Battle Box",
+    "pre-lancamento": "Build & Battle Box",
 }
 
 # Categories to scrape. Numbers come from the categ= URL param in
@@ -77,6 +81,7 @@ DEFAULT_CATEGORIES = {
     27: "Coleção Treinador Avançado",
     28: "Box Colecionável",
     38: "Kits",
+    57: "Pacote Pré-Lançamento",
 }
 
 # Idiomas (img title) reconhecidos. Used to populate listing['lang'].
