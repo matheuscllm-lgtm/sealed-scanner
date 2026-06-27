@@ -22,8 +22,10 @@ Nesta sessão (2026-06-27) fechei **duas frentes**:
    aguarda sua decisão de merge.
 
 **Estado do repo agora:**
-- `main` @ `40eeb79` (após #51). Branch de trabalho: **`claude/gap-skus-handoff-5fjsn2`**
-  (= head do PR #52, 1 commit à frente do `main`, árvore limpa).
+- `main` @ `40eeb79` (após #51 mergeado). Branch de trabalho: **`claude/gap-skus-handoff-5fjsn2`**
+  = head do **PR #52 (aberto/draft)**, à frente do `main` com 2 commits — os 4 ETBs
+  do #52 (`8574cc5`) + este handoff (`ef86962`); árvore limpa. (Se o #52 já tiver
+  sido mergeado quando você ler isto, esses commits estarão no `main`.)
 - **122 SKUs** no `sku_registry.yaml` (era 118 no começo da sessão).
 - **201 testes** passando (`python -m pytest`). Era 180.
 - `data/us_reference.json`: **121 de 122** SKUs com preço (o único sem preço é
