@@ -5822,3 +5822,1319 @@ skus:
     - box coleção
     - box colecao
     - premium
+- id: slashing-legends-tin-zacian
+  name: Slashing Legends Tin [Zacian ex] (English)
+  product_type: Tin
+  set: Slashing Legends Tin
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 623648
+  match:
+    set_terms:
+    - slashing legends
+    type_terms:
+    - tin
+    - lata
+    requires_terms:
+    - zacian
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - mini
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    - premium
+    - etb
+    - elite
+    - booster
+    - deck
+    - baralho
+    - display
+    - case
+    - bundle
+- id: slashing-legends-tin-koraidon
+  name: Slashing Legends Tin [Koraidon ex] (English)
+  product_type: Tin
+  set: Slashing Legends Tin
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 623647
+  match:
+    set_terms:
+    - slashing legends
+    type_terms:
+    - tin
+    - lata
+    requires_terms:
+    - koraidon
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - mini
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    - premium
+    - etb
+    - elite
+    - booster
+    - deck
+    - baralho
+    - display
+    - case
+    - bundle
+- id: moonlit-tin-clefable
+  name: Mega Moonlit Tin [Mega Clefable ex] (English)
+  product_type: Tin
+  set: Mega Moonlit Tin
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 686438
+  match:
+    set_terms:
+    - moonlit
+    type_terms:
+    - tin
+    - lata
+    requires_terms:
+    - clefable
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - mini
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    - premium
+    - etb
+    - elite
+    - booster
+    - deck
+    - baralho
+    - display
+    - case
+    - bundle
+- id: moonlit-tin-gengar
+  name: Mega Moonlit Tin [Mega Gengar ex] (English)
+  product_type: Tin
+  set: Mega Moonlit Tin
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 686437
+  match:
+    set_terms:
+    - moonlit
+    type_terms:
+    - tin
+    - lata
+    requires_terms:
+    - gengar
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - mini
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    - premium
+    - etb
+    - elite
+    - booster
+    - deck
+    - baralho
+    - display
+    - case
+    - bundle
+- id: mega-charizard-tin-y
+  name: Mega Charizard Tin [Mega Charizard Y] (English)
+  product_type: Tin
+  set: Mega Charizard Tin
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 671249
+  match:
+    set_terms:
+    - mega charizard
+    type_terms:
+    - tin
+    - lata
+    requires_terms:
+    - y
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - mini
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    - premium
+    - etb
+    - elite
+    - booster
+    - deck
+    - baralho
+    - display
+    - case
+    - bundle
+    - x
+    - ultra
+    - super
+    - upc
+- id: mega-charizard-tin-x
+  name: Mega Charizard Tin [Mega Charizard X] (English)
+  product_type: Tin
+  set: Mega Charizard Tin
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 671250
+  match:
+    set_terms:
+    - mega charizard
+    type_terms:
+    - tin
+    - lata
+    requires_terms:
+    - x
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - mini
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    - premium
+    - etb
+    - elite
+    - booster
+    - deck
+    - baralho
+    - display
+    - case
+    - bundle
+    - y
+    - ultra
+    - super
+    - upc
+- id: team-rocket-tin-nidoking
+  name: Team Rocket Tin [Nidoking ex] (English)
+  product_type: Tin
+  set: Team Rocket Tin
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 649194
+  match:
+    set_terms:
+    - equipe rocket
+    - team rocket
+    type_terms:
+    - tin
+    - lata
+    requires_terms:
+    - nidoking
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - mini
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    - premium
+    - etb
+    - elite
+    - booster
+    - deck
+    - baralho
+    - display
+    - case
+    - bundle
+- id: team-rocket-tin-persian
+  name: Team Rocket Tin [Persian ex] (English)
+  product_type: Tin
+  set: Team Rocket Tin
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 649195
+  match:
+    set_terms:
+    - equipe rocket
+    - team rocket
+    type_terms:
+    - tin
+    - lata
+    requires_terms:
+    - persian
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - mini
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    - premium
+    - etb
+    - elite
+    - booster
+    - deck
+    - baralho
+    - display
+    - case
+    - bundle
+- id: team-rocket-tin-mewtwo
+  name: Team Rocket Tin [Mewtwo ex] (English)
+  product_type: Tin
+  set: Team Rocket Tin
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 649193
+  match:
+    set_terms:
+    - equipe rocket
+    - team rocket
+    type_terms:
+    - tin
+    - lata
+    requires_terms:
+    - mewtwo
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - mini
+    - box
+    - caixa
+    - collection
+    - colecao
+    - coleção
+    - premium
+    - etb
+    - elite
+    - booster
+    - deck
+    - baralho
+    - display
+    - case
+    - bundle
+- id: collector-chest-2025
+  name: Fall 2025 Collector Chest (English)
+  product_type: Collector Chest
+  set: Fall 2025 Collector Chest
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 654593
+  match:
+    set_terms:
+    - collector chest
+    - maleta de colecionador
+    type_terms:
+    - collector chest
+    - maleta de colecionador
+    - chest
+    - lata
+    requires_terms:
+    - 2025
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - 2024
+    - 2023
+    - mini
+    - case
+- id: collector-chest-2024
+  name: Fall 2024 Collector Chest (English)
+  product_type: Collector Chest
+  set: Fall 2024 Collector Chest
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 575706
+  match:
+    set_terms:
+    - collector chest
+    - maleta de colecionador
+    type_terms:
+    - collector chest
+    - maleta de colecionador
+    - chest
+    - lata
+    requires_terms:
+    - 2024
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - 2025
+    - 2023
+    - mini
+    - case
+- id: lumiose-mini-tin-salamence
+  name: Lumiose City Mini Tin [Salamence] (English)
+  product_type: Mini Tin
+  set: Lumiose City Mini Tin
+  set_code: MISC
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 685575
+  match:
+    set_terms:
+    - lumiose
+    type_terms:
+    - mini
+    requires_terms:
+    - salamence
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - display
+    - set of
+- id: lumiose-mini-tin-emboar
+  name: Lumiose City Mini Tin [Emboar] (English)
+  product_type: Mini Tin
+  set: Lumiose City Mini Tin
+  set_code: MISC
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 685577
+  match:
+    set_terms:
+    - lumiose
+    type_terms:
+    - mini
+    requires_terms:
+    - emboar
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - display
+    - set of
+- id: lumiose-mini-tin-feraligatr
+  name: Lumiose City Mini Tin [Feraligatr] (English)
+  product_type: Mini Tin
+  set: Lumiose City Mini Tin
+  set_code: MISC
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 685578
+  match:
+    set_terms:
+    - lumiose
+    type_terms:
+    - mini
+    requires_terms:
+    - feraligatr
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - display
+    - set of
+- id: lumiose-mini-tin-gallade
+  name: Lumiose City Mini Tin [Gallade] (English)
+  product_type: Mini Tin
+  set: Lumiose City Mini Tin
+  set_code: MISC
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 685579
+  match:
+    set_terms:
+    - lumiose
+    type_terms:
+    - mini
+    requires_terms:
+    - gallade
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - display
+    - set of
+- id: lumiose-mini-tin-meganium
+  name: Lumiose City Mini Tin [Meganium] (English)
+  product_type: Mini Tin
+  set: Lumiose City Mini Tin
+  set_code: MISC
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 685576
+  match:
+    set_terms:
+    - lumiose
+    type_terms:
+    - mini
+    requires_terms:
+    - meganium
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - display
+    - set of
