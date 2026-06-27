@@ -192,6 +192,36 @@ def test_blister_variante_vizinha_nao_casa_3pack(title, registry):
     assert "cr-blister-3pack-charmeleon" not in ids(title, registry)
 
 
+# --- GAP 3ª leva: set Paldean Fates / "Destinos de Paldea" (títulos REAIS da Liga,
+# capturados por busca-alvo 2026-06-27). set_terms PT+EN; cada variante fixada. ----
+@pytest.mark.parametrize("title,expected", [
+    ("(ING) Lata Destinos de Paldea - Charizard Shiny ex", "paf-tin-charizard"),
+    ("(ING) Coleção Treinador Avançado - Escarlate e Violeta - Destinos de Paldea", "paf-etb-en"),
+    ("(ING) Coleção Treinador Avançado - Escarlate e Violeta - Destinos de Paldea - Pokémon Center", "paf-etb-pc-en"),
+    ("(ING) Booster Avulso - Escarlate e Violeta 4.5 - Destinos de Paldea", "paf-sleeved-en"),
+    ("(ING) Blister Triplo Tech Sticker Escarlate e Violeta 4.5 - Destinos de Paldea - Fidough", "paf-tech-sticker-fidough"),
+    ("(ING) Blister Triplo Tech Sticker Escarlate e Violeta 4.5 - Destinos de Paldea - Greavard", "paf-tech-sticker-greavard"),
+    ("(ING) Blister Triplo Tech Sticker Escarlate e Violeta 4.5 - Destinos de Paldea - Maschiff", "paf-tech-sticker-maschiff"),
+])
+def test_paldean_fates_casa_pela_variante(title, expected, registry):
+    assert ids(title, registry) == [expected]
+
+
+@pytest.mark.parametrize("title", [
+    # Sleeve "Shield" do set tem "Coleção Treinador Avançado" no título mas é acessório:
+    "Shield Coleção Treinador Avançado - Destinos de Paldea - Mimikyu (1 unidade)",
+    # Caixa/Lata VAZIA não pode casar (gate looks_used + exclude):
+    "(ING) Caixa Vazia - Coleção Treinador Avançado - Escarlate e Violeta - Destinos de Paldea",
+    # Cópia PT-BR não entra:
+    "(PT-BR) Coleção Treinador Avançado - Escarlate e Violeta - Destinos de Paldea",
+    "(PT-BR) Box Coleção - Destinos de Paldea - Charizard ex Brilhante",
+    # Lata de OUTRO set (sem "Destinos de Paldea") não pode casar a lata do Paldean Fates:
+    "(ING) Lata - Escarlate e Violeta - Charizard ex Brilhante",
+])
+def test_paldean_fates_ruido_nao_casa(title, registry):
+    assert not [s for s in ids(title, registry) if s.startswith("paf-")]
+
+
 # --- GAP 2ª leva: caixas Mega-X-ex e Poster Collections de Ascended Heroes ----
 @pytest.mark.parametrize("title,expected", [
     ("(ING) Caixa - Megaevolução - Ascended Heroes - Mega Emboar ex Box (English)", "ah-megaex-box-emboar"),
