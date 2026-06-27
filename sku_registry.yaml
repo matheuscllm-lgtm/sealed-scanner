@@ -7138,3 +7138,1582 @@ skus:
     - miniatura
     - display
     - set of
+- id: zacian-hop-box
+  name: Hop's Zacian ex Box (English)
+  product_type: Collection Box
+  set: Hop's Zacian ex Box
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 616303
+  match:
+    set_terms:
+    - zacian
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    requires_terms:
+    - lupo
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - premium
+- id: mega-latias-box
+  name: Mega Latias ex Box (English)
+  product_type: Collection Box
+  set: Mega Latias ex Box
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 654188
+  match:
+    set_terms:
+    - latias
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    requires_terms:
+    - mega
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - premium
+    - special
+    - especial
+    - lugia
+- id: pokemon-day-2026-box
+  name: Pokemon Day 2026 Collection (English)
+  product_type: Collection Box
+  set: Pokemon Day 2026 Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 668590
+  match:
+    set_terms:
+    - dia de pokemon
+    - pokemon day
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - dia de pokemon
+    - pokemon day
+    requires_terms:
+    - 2026
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - premium
+    - 2025
+    - 2024
+- id: mega-kangaskhan-box
+  name: Mega Kangaskhan ex Box (English)
+  product_type: Collection Box
+  set: Mega Kangaskhan ex Box
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 654211
+  match:
+    set_terms:
+    - kangaskhan
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    requires_terms:
+    - mega
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - premium
+- id: unova-poster-collection
+  name: Unova Poster Collection (English)
+  product_type: Poster Collection
+  set: Unova Poster Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 24325
+  tcgplayer_product_id: 630612
+  match:
+    set_terms:
+    - fogo branco
+    - raio preto
+    - white flare
+    - black bolt
+    - unova
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - poster
+    - pôster
+    requires_terms:
+    - poster
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - premium
+    - victini
+    - ilustração
+    - ilustracao
+    - illustration
+- id: team-rocket-mewtwo-box
+  name: Team Rocket's Mewtwo ex Box (English)
+  product_type: Collection Box
+  set: Team Rocket's Mewtwo ex Box
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 625695
+  match:
+    set_terms:
+    - equipe rocket
+    - team rocket
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    requires_terms:
+    - mewtwo
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - premium
+- id: iono-bellibolt-premium
+  name: Iono's Bellibolt ex Premium Collection (English)
+  product_type: Premium Collection
+  set: Iono's Bellibolt ex Premium Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 616304
+  match:
+    set_terms:
+    - bellibolt
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - premium
+    requires_terms:
+    - premium
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+- id: first-partner-illustration-s2
+  name: First Partner Illustration Collection Series 2 (English)
+  product_type: Illustration Collection
+  set: First Partner Illustration Collection Series 2
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 24584
+  tcgplayer_product_id: 688712
+  match:
+    set_terms:
+    - parceiro inicial
+    - first partner
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - ilustração
+    - ilustracao
+    - illustration
+    requires_terms:
+    - serie 2
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - premium
+    - serie 1
+- id: charizard-special-box
+  name: Charizard ex Special Collection (English)
+  product_type: Special Collection
+  set: Charizard ex Special Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 616305
+  match:
+    set_terms:
+    - charizard ex
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - especial
+    - special
+    requires_terms:
+    - especial
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - premium
+    - super
+    - ultra
+    - upc
+    - mega
+    - pin
+    - figure
+- id: mega-lucario-figure
+  name: Mega Lucario ex Premium Figure Collection (English)
+  product_type: Figure Collection
+  set: Mega Lucario ex Premium Figure Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 656487
+  match:
+    set_terms:
+    - lucario
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - figure
+    requires_terms:
+    - figure
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - poster
+    - pôster
+    - pin
+- id: cynthia-garchomp-premium
+  name: Cynthia's Garchomp ex Premium Collection (English)
+  product_type: Premium Collection
+  set: Cynthia's Garchomp ex Premium Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 625952
+  match:
+    set_terms:
+    - garchomp
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - premium
+    requires_terms:
+    - premium
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+- id: mega-venusaur-premium
+  name: Mega Venusaur ex Premium Collection (English)
+  product_type: Premium Collection
+  set: Mega Venusaur ex Premium Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 654212
+  match:
+    set_terms:
+    - venusaur
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - premium
+    requires_terms:
+    - mega
+    - premium
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - blastoise
+- id: mega-zygarde-premium
+  name: Mega Zygarde ex Premium Collection (English)
+  product_type: Premium Collection
+  set: Mega Zygarde ex Premium Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 682939
+  match:
+    set_terms:
+    - zygarde
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - premium
+    requires_terms:
+    - premium
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+- id: ascended-heroes-pin-collection
+  name: Ascended Heroes First Partners Deluxe Pin Collection (English)
+  product_type: Pin Collection
+  set: Ascended Heroes First Partners Deluxe Pin Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 672391
+  match:
+    set_terms:
+    - heróis excelsos
+    - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
+    type_terms:
+    - caixa
+    - collection
+    - deluxe
+    - pin
+    requires_terms:
+    - pin
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+- id: unova-victini-illustration
+  name: Unova Victini Illustration Collection (English)
+  product_type: Illustration Collection
+  set: Unova Victini Illustration Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 24325
+  tcgplayer_product_id: 630615
+  match:
+    set_terms:
+    - fogo branco
+    - raio preto
+    - white flare
+    - black bolt
+    - unova
+    type_terms:
+    - coleção
+    - colecao
+    - collection
+    - ilustração
+    - ilustracao
+    - illustration
+    - caixa
+    requires_terms:
+    - victini
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - premium
+    - poster
+    - pôster
+- id: prismatic-accessory-pouch
+  name: Prismatic Evolutions Accessory Pouch Special Collection (English)
+  product_type: Special Collection
+  set: Prismatic Evolutions Accessory Pouch Special Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 23821
+  tcgplayer_product_id: 606881
+  match:
+    set_terms:
+    - prismatic evolutions
+    - evoluções prismáticas
+    - evolucoes prismaticas
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - especial
+    - special
+    requires_terms:
+    - pouch
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+- id: salamence-reshiram-premium
+  name: Salamence ex & Reshiram ex Premium Collection (English)
+  product_type: Premium Collection
+  set: Salamence ex & Reshiram ex Premium Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 653899
+  match:
+    set_terms:
+    - salamence
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - premium
+    requires_terms:
+    - reshiram
+    - premium
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+- id: first-partner-illustration-s1
+  name: First Partner Illustration Collection Series 1 (English)
+  product_type: Illustration Collection
+  set: First Partner Illustration Collection Series 1
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 24584
+  tcgplayer_product_id: 673436
+  match:
+    set_terms:
+    - parceiro inicial
+    - first partner
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - ilustração
+    - ilustracao
+    - illustration
+    requires_terms:
+    - serie 1
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
+    - premium
+    - serie 2
+- id: hydreigon-dragapult-premium
+  name: Hydreigon ex & Dragapult ex Premium Collection (English)
+  product_type: Premium Collection
+  set: Hydreigon ex & Dragapult ex Premium Collection
+  set_code: MISC
+  language: EN
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 653199
+  match:
+    set_terms:
+    - hydreigon
+    type_terms:
+    - collection box
+    - caixa
+    - coleção
+    - colecao
+    - premium
+    requires_terms:
+    - dragapult
+    - premium
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - lata
+    - tin
+    - mini
+    - booster box
+    - caixa de booster
+    - blister
+    - baralho
+    - battle deck
+    - deck
+    - booster pack
+    - booster avulso
+    - combo de pacotes
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - case
+    - display
+    - bundle
+    - sleeve
+    - theme deck
+    - league battle
