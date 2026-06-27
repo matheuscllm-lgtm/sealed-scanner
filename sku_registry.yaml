@@ -8717,3 +8717,238 @@ skus:
     - sleeve
     - theme deck
     - league battle
+- id: astral-radiance-pack
+  name: Astral Radiance Booster Pack (English)
+  product_type: Sleeved Booster
+  set: Astral Radiance
+  set_code: SWSH10
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 3040
+  tcgplayer_product_id: 265521
+  match:
+    set_terms:
+    - estrelas radiantes
+    - astral radiance
+    type_terms:
+    - booster pack
+    - booster avulso
+    - pacote de booster
+    - pacote pokemon
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - blister
+    - tin
+    - lata
+    - box
+    - caixa
+    - collection
+    - display
+    - case
+- id: silver-tempest-pack
+  name: Silver Tempest Booster Pack (English)
+  product_type: Sleeved Booster
+  set: Silver Tempest
+  set_code: SWSH12
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 3170
+  tcgplayer_product_id: 283388
+  match:
+    set_terms:
+    - tempestade prateada
+    - silver tempest
+    type_terms:
+    - booster pack
+    - booster avulso
+    - pacote de booster
+    - pacote pokemon
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - blister
+    - tin
+    - lata
+    - box
+    - caixa
+    - collection
+    - display
+    - case
+- id: phf-blister-3pack-sneasel
+  name: Phantasmal Flames 3-Pack Blister [Sneasel] (English)
+  product_type: Blister
+  set: Phantasmal Flames
+  set_code: PHF
+  language: EN
+  bulk_qty: 3
+  tcgplayer_group_id: 24448
+  tcgplayer_product_id: 654154
+  match:
+    set_terms:
+    - fogo fantasmagórico
+    - fogo fantasmagorico
+    - phantasmal flames
+    type_terms:
+    - blister
+    requires_terms:
+    - sneasel
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+- id: dri-blister-3pack-zebstrika
+  name: Destined Rivals 3-Pack Blister [Zebstrika] (English)
+  product_type: Blister
+  set: Destined Rivals
+  set_code: DRI
+  language: EN
+  bulk_qty: 3
+  tcgplayer_group_id: 24269
+  tcgplayer_product_id: 625684
+  match:
+    set_terms:
+    - rivais predestinados
+    - destined rivals
+    type_terms:
+    - blister
+    requires_terms:
+    - zebstrika
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
