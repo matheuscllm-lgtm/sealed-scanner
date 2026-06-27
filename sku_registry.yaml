@@ -8952,3 +8952,689 @@ skus:
     - protetor
     - storage
     - capa para
+- id: journey-together-build-battle
+  name: Journey Together Build & Battle Box (English)
+  product_type: Build & Battle Box
+  set: Journey Together
+  set_code: JTG
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 24073
+  tcgplayer_product_id: 610954
+  match:
+    set_terms:
+    - amigos de jornada
+    - journey together
+    type_terms:
+    - desafio estratégico
+    - desafio estrategico
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - blister
+    - tin
+    - lata
+    - collection box
+    - caixa
+    - deck
+    - baralho
+    - display
+    - case
+    - mini
+- id: mega-evolution-build-battle
+  name: Mega Evolution Build & Battle Box (English)
+  product_type: Build & Battle Box
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 644363
+  match:
+    set_terms:
+    - megaevolução 1
+    - megaevolucao 1
+    - mega evolution
+    type_terms:
+    - desafio estratégico
+    - desafio estrategico
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - blister
+    - tin
+    - lata
+    - collection box
+    - caixa
+    - deck
+    - baralho
+    - display
+    - case
+    - mini
+- id: phantasmal-flames-build-battle
+  name: Phantasmal Flames Build & Battle Box (English)
+  product_type: Build & Battle Box
+  set: Phantasmal Flames
+  set_code: PHF
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 24448
+  tcgplayer_product_id: 662725
+  match:
+    set_terms:
+    - fogo fantasmagórico
+    - fogo fantasmagorico
+    - phantasmal flames
+    type_terms:
+    - desafio estratégico
+    - desafio estrategico
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - blister
+    - tin
+    - lata
+    - collection box
+    - caixa
+    - deck
+    - baralho
+    - display
+    - case
+    - mini
+- id: perfect-order-build-battle
+  name: Perfect Order Build & Battle Box (English)
+  product_type: Build & Battle Box
+  set: Perfect Order
+  set_code: PO
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 24587
+  tcgplayer_product_id: 672400
+  match:
+    set_terms:
+    - equilíbrio perfeito
+    - equilibrio perfeito
+    - perfect order
+    type_terms:
+    - desafio estratégico
+    - desafio estrategico
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - blister
+    - tin
+    - lata
+    - collection box
+    - caixa
+    - deck
+    - baralho
+    - display
+    - case
+    - mini
+- id: chaos-rising-build-battle
+  name: Chaos Rising Build & Battle Box (English)
+  product_type: Build & Battle Box
+  set: Chaos Rising
+  set_code: CR
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 24655
+  tcgplayer_product_id: 684454
+  match:
+    set_terms:
+    - caos ascendente
+    - chaos rising
+    type_terms:
+    - desafio estratégico
+    - desafio estrategico
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - blister
+    - tin
+    - lata
+    - collection box
+    - caixa
+    - deck
+    - baralho
+    - display
+    - case
+    - mini
+- id: destined-rivals-build-battle
+  name: Destined Rivals Build & Battle Box (English)
+  product_type: Build & Battle Box
+  set: Destined Rivals
+  set_code: DRI
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 24269
+  tcgplayer_product_id: 625677
+  match:
+    set_terms:
+    - rivais predestinados
+    - destined rivals
+    type_terms:
+    - desafio estratégico
+    - desafio estrategico
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - blister
+    - tin
+    - lata
+    - collection box
+    - caixa
+    - deck
+    - baralho
+    - display
+    - case
+    - mini
+- id: pitch-black-build-battle
+  name: Pitch Black Build & Battle Box (English)
+  product_type: Build & Battle Box
+  set: Pitch Black
+  set_code: PB
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 24688
+  tcgplayer_product_id: 692946
+  match:
+    set_terms:
+    - escuridão absoluta
+    - escuridao absoluta
+    - pitch black
+    type_terms:
+    - desafio estratégico
+    - desafio estrategico
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - blister
+    - tin
+    - lata
+    - collection box
+    - caixa
+    - deck
+    - baralho
+    - display
+    - case
+    - mini
+- id: fusion-strike-build-battle
+  name: Fusion Strike Build & Battle Box (English)
+  product_type: Build & Battle Box
+  set: Fusion Strike
+  set_code: SWSH8
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 2906
+  tcgplayer_product_id: 247659
+  match:
+    set_terms:
+    - golpe fusão
+    - golpe fusao
+    - fusion strike
+    type_terms:
+    - desafio estratégico
+    - desafio estrategico
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - blister
+    - tin
+    - lata
+    - collection box
+    - caixa
+    - deck
+    - baralho
+    - display
+    - case
+    - mini
+- id: steam-siege-prerelease-kit
+  name: Steam Siege Build & Battle Box (English)
+  product_type: Build & Battle Box
+  set: Steam Siege
+  set_code: XY11
+  language: EN
+  bulk_qty: 1
+  tcgplayer_group_id: 1815
+  tcgplayer_product_id: 121393
+  match:
+    set_terms:
+    - cerco ao vapor
+    - steam siege
+    type_terms:
+    - desafio estratégico
+    - desafio estrategico
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - elite trainer
+    - treinador avancado
+    - treinador avançado
+    - etb
+    - booster box
+    - caixa de booster
+    - booster bundle
+    - combo de pacotes
+    - bundle
+    - blister
+    - tin
+    - lata
+    - collection box
+    - caixa
+    - deck
+    - baralho
+    - display
+    - case
+    - mini
+- id: vileplume-2pack-blister
+  name: 2-Pack Blister [Oddish Gloom Vileplume] (English)
+  product_type: Blister
+  set: Vileplume
+  set_code: MISC
+  language: EN
+  bulk_qty: 2
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 683264
+  match:
+    set_terms:
+    - vileplume
+    type_terms:
+    - blister
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
+- id: back-to-school-blister-bellibolt
+  name: Back to School 2024 Eraser Blister [Bellibolt] (English)
+  product_type: Blister
+  set: Back to School
+  set_code: MISC
+  language: EN
+  bulk_qty: 2
+  tcgplayer_group_id: 2374
+  tcgplayer_product_id: 549453
+  match:
+    set_terms:
+    - back to school
+    type_terms:
+    - blister
+    requires_terms:
+    - bellibolt
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - premium
+    - pencil
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - capa para
