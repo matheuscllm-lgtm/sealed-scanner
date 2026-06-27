@@ -125,6 +125,7 @@ SET_TRANSLATE_PT_TO_EN = {
     "Evoluções Prismáticas": "Prismatic Evolutions",
     "Amigos de Jornada": "Journey Together",
     "Rivais Predestinados": "Destined Rivals",
+    "Destinos de Paldea": "Paldean Fates",
     # 151 special
     "Pokémon 151": "Pokémon 151",
     "151": "Pokémon 151",

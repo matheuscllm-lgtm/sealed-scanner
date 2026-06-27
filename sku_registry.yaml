@@ -5354,3 +5354,471 @@ skus:
     - booster box
     - bundle
     - blister
+- id: paf-tin-charizard
+  name: Paldean Fates Tin [Charizard ex] (English)
+  product_type: Tin
+  set: Paldean Fates
+  set_code: PAF
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 23353
+  tcgplayer_product_id: 528056
+  match:
+    set_terms:
+    - destinos de paldea
+    - paldean fates
+    type_terms:
+    - tin
+    - lata
+    requires_terms:
+    - charizard
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - dados
+    - mini
+    - pokemon center
+    - premium
+    - booster
+    - bundle
+    - blister
+    - coleção treinador
+    - colecao treinador
+- id: paf-etb-en
+  name: Paldean Fates Elite Trainer Box (English)
+  product_type: Elite Trainer Box
+  set: Paldean Fates
+  set_code: PAF
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 23353
+  tcgplayer_product_id: 528040
+  match:
+    set_terms:
+    - destinos de paldea
+    - paldean fates
+    type_terms:
+    - coleção treinador avançado
+    - colecao treinador avancado
+    - elite trainer box
+    - etb
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - dados
+    - pokemon center
+    - booster box
+    - bundle
+    - blister
+    - lata
+    - tin
+    - mini
+    - premium
+- id: paf-etb-pc-en
+  name: Paldean Fates Pokémon Center Elite Trainer Box (Exclusive) (English)
+  product_type: Elite Trainer Box
+  set: Paldean Fates
+  set_code: PAF
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 23353
+  tcgplayer_product_id: 528039
+  match:
+    set_terms:
+    - destinos de paldea
+    - paldean fates
+    type_terms:
+    - coleção treinador avançado
+    - colecao treinador avancado
+    - elite trainer box
+    - etb
+    requires_terms:
+    - pokemon center
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - dados
+    - booster box
+    - bundle
+    - blister
+    - lata
+    - tin
+    - mini
+    - premium
+- id: paf-sleeved-en
+  name: Paldean Fates Sleeved Booster (English)
+  product_type: Sleeved Booster
+  set: Paldean Fates
+  set_code: PAF
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 23353
+  tcgplayer_product_id: 528038
+  match:
+    set_terms:
+    - destinos de paldea
+    - paldean fates
+    type_terms:
+    - booster avulso
+    - booster pack
+    - blister unitário
+    - blister unitario
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - dados
+    - tech sticker
+    - blister triplo
+    - combo
+    - bundle
+    - lata
+    - tin
+    - coleção treinador
+    - colecao treinador
+    - box
+    - premium
+- id: paf-tech-sticker-fidough
+  name: Paldean Fates Tech Sticker Collection [Fidough] (English)
+  product_type: Tech Sticker
+  set: Paldean Fates
+  set_code: PAF
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 23353
+  tcgplayer_product_id: 528043
+  match:
+    set_terms:
+    - destinos de paldea
+    - paldean fates
+    type_terms:
+    - blister triplo tech sticker
+    - tech sticker
+    requires_terms:
+    - fidough
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - dados
+    - lata
+    - tin
+    - coleção treinador
+    - colecao treinador
+    - booster box
+    - bundle
+    - box coleção
+    - box colecao
+    - premium
+- id: paf-tech-sticker-greavard
+  name: Paldean Fates Tech Sticker Collection [Greavard] (English)
+  product_type: Tech Sticker
+  set: Paldean Fates
+  set_code: PAF
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 23353
+  tcgplayer_product_id: 528045
+  match:
+    set_terms:
+    - destinos de paldea
+    - paldean fates
+    type_terms:
+    - blister triplo tech sticker
+    - tech sticker
+    requires_terms:
+    - greavard
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - dados
+    - lata
+    - tin
+    - coleção treinador
+    - colecao treinador
+    - booster box
+    - bundle
+    - box coleção
+    - box colecao
+    - premium
+- id: paf-tech-sticker-maschiff
+  name: Paldean Fates Tech Sticker Collection [Maschiff] (English)
+  product_type: Tech Sticker
+  set: Paldean Fates
+  set_code: PAF
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 23353
+  tcgplayer_product_id: 528044
+  match:
+    set_terms:
+    - destinos de paldea
+    - paldean fates
+    type_terms:
+    - blister triplo tech sticker
+    - tech sticker
+    requires_terms:
+    - maschiff
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - shield
+    - vazia
+    - vazio
+    - miniatura
+    - dados
+    - lata
+    - tin
+    - coleção treinador
+    - colecao treinador
+    - booster box
+    - bundle
+    - box coleção
+    - box colecao
+    - premium
