@@ -3,6 +3,32 @@
 Registro datado de mudanças relevantes. O repo não usa versionamento semântico
 (SemVer); as entradas são por data. Fonte única de estado segue o `README.md`.
 
+## 2026-06-27 — Gap 3ª leva: +4 ETBs por personagem do ME01 (Mega Lucario/Gardevoir)
+
+Mapeamento per-produto no tcgcsv das "collection boxes de personagem" do gap
+(handoff §5c). Resultado honesto da varredura:
+
+- **Adicionados (refs limpas no tcgcsv, group 24380 = ME01 Mega Evolution):**
+  `meg-etb-lucario` (pid 648394, $123,46), `meg-etb-gardevoir` (644279, $119,44),
+  `meg-etb-pc-lucario` (644282, $322,09 — Pokémon Center exclusiva),
+  `meg-etb-pc-gardevoir` (648415, $223,41). O Mega Lucario ETB ($123) era
+  citado no handoff como gap conhecido. **Não havia meg-etb genérico → sem
+  colisão.** Cada um fixado pelo personagem em `requires_terms`; a variante PC
+  separa por `requires "pokemon center"` (padrão pre-etb-en vs pre-etb-pc-en).
+  Preços dentro da sanity-band ETB (25–950). 122 SKUs (era 118); 201 testes (+5).
+- **Confirmado FORA do tcgcsv (não adicionados — `nunca inventar preço`):** as
+  caixas de personagem nomeadas no gap (Mewtwo Rocket, Garchomp Cynthia,
+  Charizard Especial, Dia de Pokémon 2026, Zacian Lupo, Bellibolt Kissera,
+  Salamence/Reshiram) **não existem como produto SELADO no tcgcsv** — só como
+  cartas avulsas promo (fora do escopo selado). Sem referência limpa → sem SKU.
+- **Cobertos pela SKU genérica (sem novo SKU):** Mega Heroes Mini Tin por
+  personagem (Lucario/Gardevoir/Kangaskhan/Latias/Venusaur, ~$20 uniforme) — o
+  `meg-mini-tin` genérico já casa e o preço não varia por personagem.
+- **Achados mas adiados (ref. existe, faltam títulos reais da Liga p/ confirmar
+  match):** Destined Rivals 3-Pack Blister [Kangaskhan] (625683, $45,21);
+  Paldean Fates Tin [Charizard ex] (528056, $188,38 / Intl 528063, $132,05 —
+  Paldean Fates ainda não tem nenhum SKU). Documentados no handoff §5c.
+
 ## 2026-06-27 — Gap de produtos EXISTENTES: nomes PT de set faltando nos `set_terms`
 
 Auditoria de cobertura PT em TODO o registry (a Liga/OLX/ML são marketplaces BR →

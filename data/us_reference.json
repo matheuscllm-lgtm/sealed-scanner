@@ -2,7 +2,7 @@
   "_comment": "Gerado por build_us_reference.py a partir de tcgcsv.com (espelho da API do TCGPlayer). NÃO editar à mão — rode o script para refrescar.",
   "reference": "TCGPlayer marketPrice via tcgcsv.com",
   "currency": "USD",
-  "captured_at": "2026-06-26T23:11:23Z",
+  "captured_at": "2026-06-27T07:03:52Z",
   "prices": {
     "ssp-booster-box-en": 298.96,
     "ssp-etb-en": 135.77,
@@ -120,6 +120,10 @@
     "ah-megaex-box-feraligatr": 55.5,
     "ah-megaex-box-meganium": 54.16,
     "ah-poster-lucario": 168.84,
-    "ah-poster-gardevoir": 163.96
+    "ah-poster-gardevoir": 163.96,
+    "meg-etb-lucario": 123.46,
+    "meg-etb-gardevoir": 119.44,
+    "meg-etb-pc-lucario": 322.09,
+    "meg-etb-pc-gardevoir": 223.41
   }
 }

@@ -33,6 +33,9 @@ def test_meg_skus_flagged_umbrella(registry):
         "meg-mini-tin", "meg-mini-tin-display",
         # blisters 3-pack do ME01 (gap 2026-06-26) — mesmo set-base da era Mega
         "meg-blister-3pack-golduck", "meg-blister-3pack-psyduck",
+        # ETBs por personagem do ME01 (gap 2026-06-27) — base da era Mega
+        "meg-etb-lucario", "meg-etb-gardevoir",
+        "meg-etb-pc-lucario", "meg-etb-pc-gardevoir",
     }
 
 
@@ -256,3 +259,32 @@ def test_phantasmal_me2_nao_rouba_ascended_heroes_2_5(registry):
     got = ids(ah_25, registry)
     assert got == ["ah-bundle-en"]
     assert not any(s.startswith("phf") for s in got)
+
+
+# --- GAP 3ª leva (2026-06-27): ETBs por personagem do ME01 (Mega Evolution) ---
+# Produtos selados reais no tcgcsv (group 24380): Mega Lucario/Gardevoir ETB +
+# variante Pokémon Center exclusiva. Não havia meg-etb genérico → sem colisão.
+# Cada um é fixado pelo personagem em requires_terms; a variante PC se separa por
+# requires "pokemon center" (padrão pre-etb-en vs pre-etb-pc-en).
+@pytest.mark.parametrize("title,expected", [
+    ("(ING) Elite Trainer Box - Megaevolução 1 - Mega Lucario (English)", "meg-etb-lucario"),
+    ("Mega Evolution Elite Trainer Box Mega Gardevoir (English)", "meg-etb-gardevoir"),
+    # variante Pokémon Center exclusiva (preço de ref. diferente) → SKU próprio:
+    ("Mega Evolution Pokemon Center Elite Trainer Box Mega Lucario (English)", "meg-etb-pc-lucario"),
+    ("Mega Evolution Pokémon Center Elite Trainer Box Mega Gardevoir (English)", "meg-etb-pc-gardevoir"),
+])
+def test_meg_character_etb_casa_pela_variante(title, expected, registry):
+    assert ids(title, registry) == [expected]
+
+
+def test_meg_etb_nao_colide_com_poster_nem_variante_errada(registry):
+    # O pôster Mega Lucario (set Ascended Heroes) NÃO pode ser roubado pelo ETB
+    # (set Mega Evolution) — set_terms diferentes.
+    assert ids("(ING) Caixa - Megaevolução - Ascended Heroes - Coleção Pôster Premium - Mega Lucario (English)",
+               registry) == ["ah-poster-lucario"]
+    # ETB do personagem ERRADO (sem SKU) e o booster box não devem casar meg-etb-*:
+    assert not any(s.startswith("meg-etb") for s in
+                   S.match_listing("Mega Evolution Elite Trainer Box Mega Charizard (English)", registry))
+    assert "meg-etb-lucario" not in ids("Mega Evolution Booster Box (English)", registry)
+    # ETB regular (sem "pokemon center") não casa o SKU PC e vice-versa:
+    assert ids("Mega Evolution Elite Trainer Box Mega Lucario (English)", registry) == ["meg-etb-lucario"]

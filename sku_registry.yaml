@@ -5060,3 +5060,243 @@ skus:
     - booster bundle
     - blister
     - build
+- id: meg-etb-lucario
+  name: Mega Evolution Elite Trainer Box [Mega Lucario] (English)
+  product_type: Elite Trainer Box
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 648394
+  bulk_qty: 1
+  era_umbrella: true
+  match:
+    set_terms:
+    - megaevolução 1
+    - megaevolucao 1
+    - mega evolution
+    type_terms:
+    - elite trainer box
+    - etb
+    requires_terms:
+    - mega lucario
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+    - booster box
+    - bundle
+    - blister
+    - pokemon center
+- id: meg-etb-gardevoir
+  name: Mega Evolution Elite Trainer Box [Mega Gardevoir] (English)
+  product_type: Elite Trainer Box
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 644279
+  bulk_qty: 1
+  era_umbrella: true
+  match:
+    set_terms:
+    - megaevolução 1
+    - megaevolucao 1
+    - mega evolution
+    type_terms:
+    - elite trainer box
+    - etb
+    requires_terms:
+    - mega gardevoir
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+    - booster box
+    - bundle
+    - blister
+    - pokemon center
+- id: meg-etb-pc-lucario
+  name: Mega Evolution Pokémon Center Elite Trainer Box [Mega Lucario] (English)
+  product_type: Elite Trainer Box
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 644282
+  bulk_qty: 1
+  era_umbrella: true
+  match:
+    set_terms:
+    - megaevolução 1
+    - megaevolucao 1
+    - mega evolution
+    type_terms:
+    - elite trainer box
+    - etb
+    requires_terms:
+    - pokemon center
+    - mega lucario
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+    - booster box
+    - bundle
+    - blister
+- id: meg-etb-pc-gardevoir
+  name: Mega Evolution Pokémon Center Elite Trainer Box [Mega Gardevoir] (English)
+  product_type: Elite Trainer Box
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 648415
+  bulk_qty: 1
+  era_umbrella: true
+  match:
+    set_terms:
+    - megaevolução 1
+    - megaevolucao 1
+    - mega evolution
+    type_terms:
+    - elite trainer box
+    - etb
+    requires_terms:
+    - pokemon center
+    - mega gardevoir
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+    - booster box
+    - bundle
+    - blister

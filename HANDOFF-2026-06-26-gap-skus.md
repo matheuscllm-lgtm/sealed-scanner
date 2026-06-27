@@ -145,13 +145,21 @@ Adicionados 5 SKUs AH (cobertura; todos RED hoje, viram GREEN se BR cair):
 
 ### 5c. ⏳ FALTA (3ª leva)
 
-- **Collection Boxes de personagem de OUTROS sets**: Mewtwo Rocket Ex, Garchomp
-  Cynthia Premium, Charizard Ex Especial, Mega Zygarde/Venusaur/Kangaskhan/Latias,
-  Dia de Pokémon 2026, Zacian Lupo, Bellibolt Kissera, Salamence/Reshiram. **Não
-  localizados em grupos tcgcsv limpos no passo de 2026-06-26** (não aparecem nos
-  grupos dos sets nem em promos com nome casável) — precisam de mapeamento
-  per-produto (achar o group_id/pid certo de cada um; cuidado FP do tipo Collection
-  Box). Usar sanity-band + requires=personagem.
+- **Collection Boxes de personagem de OUTROS sets** — ⚙️ **MAPEADO em 2026-06-27**
+  (varredura tcgcsv categoria 3, grupos recentes). Resultado:
+  - ✅ **ADICIONADOS** (refs limpas, group 24380 ME01): `meg-etb-lucario` (648394),
+    `meg-etb-gardevoir` (644279), `meg-etb-pc-lucario` (644282), `meg-etb-pc-gardevoir`
+    (648415). Fixados por personagem + variante PC separada. Ver CHANGELOG 2026-06-27.
+  - ❌ **NÃO existem como SELADO no tcgcsv** (só cartas avulsas promo → fora de
+    escopo; `nunca inventar preço`): Mewtwo Rocket, Garchomp Cynthia Premium,
+    Charizard Ex Especial, Dia de Pokémon 2026, Zacian Lupo, Bellibolt Kissera,
+    Salamence/Reshiram. Re-checar se/quando a TCGplayer publicar o selado.
+  - 🟰 **Já cobertos pelo genérico**: Mega Heroes Mini Tin por personagem
+    (Lucario/Gardevoir/Kangaskhan/Latias/Venusaur, pids 649394-649401, ~$20
+    uniforme) → `meg-mini-tin` já casa; sem SKU novo.
+  - ⏳ **Achados, adiados p/ confirmar com título real da Liga**: Destined Rivals
+    3-Pack Blister [Kangaskhan] (625683, $45,21); Paldean Fates Tin [Charizard ex]
+    (528056, $188,38 / Intl 528063, $132,05 — Paldean Fates sem nenhum SKU ainda).
 - **Blister Duplo Ascended Heroes (Komala/Tangela)**: grupo AH (24541) **não tem
   blisters no tcgcsv** → sem referência → RED honesto; não adicionar até haver ref.
 - **Decisão pendente do operador:** Battle Decks / Baralhos entram no escopo?
