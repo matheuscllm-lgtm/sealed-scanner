@@ -62,6 +62,7 @@ CATEGORY_PRODUCT_TYPE = {
     "baralho pré construído": "Battle Deck",
     "kit": "Kit",
     "deck selado": "Theme Deck",
+    "lata": "Tin",
 }
 
 # Categories to scrape. Numbers come from the categ= URL param in
@@ -70,6 +71,7 @@ DEFAULT_CATEGORIES = {
     10: "Caixas de Boosters",
     14: "Pacotes / Fat Packs",
     21: "Boosters Avulsos",
+    24: "Latas",
     25: "Blisters",
     26: "Decks Selados",
     27: "Coleção Treinador Avançado",
