@@ -2,7 +2,7 @@
   "_comment": "Gerado por build_us_reference.py a partir de tcgcsv.com (espelho da API do TCGPlayer). NÃO editar à mão — rode o script para refrescar.",
   "reference": "TCGPlayer marketPrice via tcgcsv.com",
   "currency": "USD",
-  "captured_at": "2026-06-27T07:03:52Z",
+  "captured_at": "2026-06-27T11:37:15Z",
   "prices": {
     "ssp-booster-box-en": 298.96,
     "ssp-etb-en": 135.77,
@@ -42,6 +42,7 @@
     "dri-etb-en": 205.85,
     "dri-etb-pc-en": 545.96,
     "dri-bundle-en": 86.86,
+    "dri-blister-3pack-kangaskhan": 45.21,
     "jtg-box-en": 280.97,
     "jtg-etb-en": 132.47,
     "jtg-etb-pc-en": 206.14,

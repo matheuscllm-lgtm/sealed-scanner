@@ -174,6 +174,7 @@ def test_me05_pt_name_escuridao_absoluta(title, expected, registry):
     ("(ING) Blister Megaevolução 1 - Megaevolução - Psyduck (English)", "meg-blister-3pack-psyduck"),
     ("(ING) Blister Megaevolução 2 - Phantasmal Flames - Weavile (English)", "phf-blister-3pack-weavile"),
     ("(ING) Blister Megaevolução 5 - Escuridão Absoluta - Binacle (English)", "pb-blister-3pack-binacle"),
+    ("(ING) Blister Rivais Predestinados - Destined Rivals - Kangaskhan (English)", "dri-blister-3pack-kangaskhan"),
 ])
 def test_blister_3pack_casa_pela_variante(title, expected, registry):
     # Cada blister 3-pack é fixado pelo NOME do Pokémon (requires_terms) — sem isso
