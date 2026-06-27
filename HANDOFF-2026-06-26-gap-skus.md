@@ -158,10 +158,18 @@ Adicionados 5 SKUs AH (cobertura; todos RED hoje, viram GREEN se BR cair):
   (default histórico: fora).
 - **Blisters genéricos sem Pokémon** ("Blister - <set>") e **Checklane/Single**:
   precisam de variante identificável; pular enquanto ambíguos (precisão primeiro).
-- **Side-finding:** os SKUs `ah-*` existentes (etb/bundle/pack) só têm set_term
-  "ascended heroes" — listings ML em PT ("Heróis Excelsos") são perdidos. Adicionar
-  "herois excelsos" aos set_terms deles recuperaria essas ofertas (mesma classe de
-  bug do ME05/Escuridão Absoluta).
+- ~~**Side-finding:** os SKUs `ah-*` existentes (etb/bundle/pack) só têm set_term
+  "ascended heroes" — listings ML em PT ("Heróis Excelsos") são perdidos.~~
+  **✅ RESOLVIDO (2026-06-27) — e generalizado.** Auditoria de cobertura PT em
+  TODO o registry: 8 sets estavam SEM nenhum nome PT (Surging Sparks, Perfect
+  Order, Chaos Rising, Phantasmal Flames, Destined Rivals, Journey Together,
+  Temporal Forces, Twilight Masquerade) e 4 estavam parciais (Ascended Heroes,
+  Prismatic Evolutions, Stellar Crown, + SV151 redundante). Adicionados os nomes
+  PT (fonte: `scripts/expand_registry_modern.py`, a mesma que já validou AH/Pitch
+  Black) a todos eles. Freios de precisão: `megaevolução 2` (PFL) ficou de fora
+  (colide com `megaevolução 2.5` de AH no match por palavra-inteira); `unova`/`mega
+  heroes` não propagados (branding de mini-tin, não nome de set). 196 testes;
+  só `set_terms`, `us_reference` intacto. Ver CHANGELOG 2026-06-27.
 
 ### Passos para a próxima sessão (2ª leva)
 

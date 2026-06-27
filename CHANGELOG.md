@@ -3,6 +3,42 @@
 Registro datado de mudanças relevantes. O repo não usa versionamento semântico
 (SemVer); as entradas são por data. Fonte única de estado segue o `README.md`.
 
+## 2026-06-27 — Gap de produtos EXISTENTES: nomes PT de set faltando nos `set_terms`
+
+Auditoria de cobertura PT em TODO o registry (a Liga/OLX/ML são marketplaces BR →
+muitos títulos usam o nome PT do set; SKU só com nome EN perdia essas ofertas em
+silêncio — mesma classe de bug do ME05/"Escuridão Absoluta" e do side-finding
+`ah-*` do handoff de 2026-06-26). **Só `set_terms`; nenhum product_id/preço novo
+→ `us_reference` intacto.**
+
+- **8 sets que estavam SEM nenhum alias PT (NONE) → agora cobertos:** Surging Sparks
+  (`fagulhas impetuosas`), Perfect Order (`equilíbrio perfeito` + `megaevolução 3`),
+  Chaos Rising (`caos ascendente` + `megaevolução 4`), Phantasmal Flames
+  (`fogo fantasmagórico`), Destined Rivals (`rivais predestinados`), Journey Together
+  (`amigos de jornada`), Temporal Forces (`forças temporais`), Twilight Masquerade
+  (`máscaras do crepúsculo`).
+- **4 sets PARCIAIS → consistência interna:** o alias PT já vivo em alguns SKUs do
+  set foi propagado aos irmãos que faltavam — Ascended Heroes (`heróis excelsos`
+  + `megaevolução 2.5` nos etb/bundle/pack/mini-tin/megaex/poster), Prismatic
+  Evolutions (`evoluções prismáticas`), Stellar Crown (`coroa estelar` no box/pack).
+- **Fonte dos nomes PT:** mapa curado de `scripts/expand_registry_modern.py` — a
+  MESMA fonte cujos termos de Ascended Heroes/Pitch Black já estavam vivos e
+  validados no registry. **Nada deduzido por LLM** (regra anti-alucinação).
+- **Precisão > cobertura, decisões de freio:**
+  - `megaevolução 2` (Phantasmal Flames) **NÃO** entrou: no match por palavra-inteira
+    `megaevolução 2` é sub-string de um título `Megaevolução 2.5` (Ascended Heroes)
+    → roubaria a oferta AH. PFL casa pelo nome PT; a numeração ME2 fica pra quando o
+    matcher distinguir 2 de 2.5. Travado em teste.
+  - SV 151 **não** ganhou `escarlate e violeta 151`: o set_term `151` já casa todo
+    título do set (o número está sempre presente) → zero ganho de cobertura.
+  - `unova` (Black Bolt) / `mega heroes` (Mega Evolution) **não** propagados: são
+    branding de PRODUTO ("Unova Mini Tin"/"Mega Heroes Mini Tin"), não nome de set —
+    propagá-los a box/bundle casaria errado.
+- **Garantias:** varredura de colisão cross-set em TODO o registry = limpa (nenhum
+  set_term é sub-string de palavra-inteira de outro set). +16 testes
+  (`tests/test_matching.py`): cada nome PT recupera o SKU certo, nome EN sem
+  regressão, e o guard AH-2.5 × PFL. **196 testes** (era 180).
+
 ## 2026-06-21 — Gate de CONDIÇÃO (selado vs aberto/usado) + análise de fontes BR
 
 Fecha uma lacuna LATENTE achada na auditoria das fontes BR (eu + agente revisor):
