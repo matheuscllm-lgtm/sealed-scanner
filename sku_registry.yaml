@@ -2231,6 +2231,60 @@ skus:
     - elite trainer
     - etb
     - blister
+- id: dri-blister-3pack-kangaskhan
+  name: Destined Rivals 3-Pack Blister [Kangaskhan] (English)
+  product_type: Blister
+  set: Destined Rivals
+  set_code: DRI
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24269
+  tcgplayer_product_id: 625683
+  match:
+    set_terms:
+    - rivais predestinados
+    - destined rivals
+    type_terms:
+    - blister
+    requires_terms:
+    - kangaskhan
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - case for
+    - case
+    - acrylic
+    - acrilico
+    - protector
+    - protetor
+    - storage
+    - capa para
 - id: jtg-box-en
   name: Journey Together Booster Box (English)
   product_type: Booster Box
