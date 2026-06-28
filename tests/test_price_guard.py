@@ -1,8 +1,11 @@
 """Regressão (PR #22): preço malformado não vira falso GREEN nem derruba o run.
 
-`run()` guarda o parse de `price_brl` (try/except -> 0.0). Um preço 0.0 cai no
-filtro de preço mínimo -> RED, então um anúncio com preço lixo ("R$ 100", None,
-"") nunca é GREEN — preço 0 daria margem infinita se não fosse barrado.
+`run()` guarda o parse de `price_brl` (try/except -> 0.0). Com a política SEM
+PISO (min_brazil_price_brl=0, decisão do operador 2026-06-27) o preço 0.0 não é
+mais barrado pelo filtro de preço mínimo; quem barra é o zero-guard de
+compute_margin (`/ price_brl if price_brl else 0.0`) -> margem 0% < 30% -> RED.
+Invariante preservado: anúncio com preço lixo ("R$ 100", None, "") NUNCA é GREEN
+— preço 0 daria margem infinita se não fosse barrado em camadas.
 """
 import argparse
 import csv
@@ -39,7 +42,7 @@ def test_classify_zero_price_is_red_not_green(registry, config):
     assert out.match_confidence == "HIGH"
     assert out.deal_confidence == "RED"
     assert out.deal_confidence != "GREEN"
-    assert out.reject_reason == "abaixo_do_preco_minimo"
+    assert out.reject_reason == "margem_total_abaixo_do_minimo"
 
 
 def _read_bucket(out_dir, name):

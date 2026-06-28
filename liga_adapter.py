@@ -291,7 +291,22 @@ class _LocalChromeFetcher(_Fetcher):
     def get(self, url, *, render=False, wait_for_selector=None, timeout=180):
         self._ensure()
         page = self._page
-        page.goto(url, wait_until="domcontentloaded", timeout=timeout * 1000)
+        try:
+            page.goto(url, wait_until="domcontentloaded", timeout=timeout * 1000)
+        except Exception:
+            # Uma navegação que falha (ERR_HTTP_RESPONSE_CODE_FAILURE, timeout)
+            # dispara uma navegação de erro (chrome-error://) que ainda está
+            # assentando quando o próximo goto dispara -> "interrupted by another
+            # navigation", que cascateia e derruba a listagem de categorias
+            # inteiras (visto 2026-06-27: 1 blister ruim na categ 25 derrubou
+            # 26/27/28/38/57). Deixa a página de erro assentar antes de re-erguer
+            # pra o próximo get() começar limpo. NÃO fechar a page (fecha o
+            # contexto inteiro e mata os cookies CF).
+            try:
+                page.wait_for_load_state("domcontentloaded", timeout=8000)
+            except Exception:
+                pass
+            raise
         # Espera o Cloudflare clear (titulo deixa de ser "Just a moment...")
         deadline = time.time() + 60
         while time.time() < deadline:

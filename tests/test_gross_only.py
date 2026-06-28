@@ -168,10 +168,15 @@ def test_parse_price_defensive():
 
 
 def test_invalid_price_is_red_never_false_green(registry, config):
-    # Preço malformado vira 0.0 (via _parse_price) e 0.0 < preço mínimo -> RED.
-    # NUNCA vira GREEN (preço 0 daria margem infinita se não fosse barrado).
+    # Preço malformado vira 0.0 (via _parse_price). Com a política SEM PISO
+    # (min_brazil_price_brl=0, decisão do operador 2026-06-27), o guard de preço
+    # mínimo não pega mais o 0.0; quem barra agora é o zero-guard de
+    # compute_margin (`/ price_brl if price_brl else 0.0`) -> margem 0% < 30%
+    # -> RED `margem_total_abaixo_do_minimo`. O INVARIANTE permanece: preço 0
+    # NUNCA é GREEN (daria margem infinita se não fosse barrado em camadas).
     price = S._parse_price("R$ 100")  # -> 0.0
     row = S.classify(_row("Surging Sparks Booster Box (English)", price),
                      registry, US_REF, config)
     assert row.deal_confidence == "RED"
-    assert row.reject_reason == "abaixo_do_preco_minimo"
+    assert row.deal_confidence != "GREEN"
+    assert row.reject_reason == "margem_total_abaixo_do_minimo"
