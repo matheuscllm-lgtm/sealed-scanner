@@ -470,9 +470,11 @@ def match_listing(title: str, registry: list[Sku], sealed_only: bool = False) ->
 # Cálculo de margem (convenção ROI: lucro sobre o capital investido)
 # --------------------------------------------------------------------------
 def _parse_price(raw) -> float:
-    """Preço malformado de UM anúncio não derruba o run: vira 0.0 e cai no filtro
-    de preço mínimo -> RED (preço inválido). Mesma degradação graciosa do qty e
-    do SourceBlockedError."""
+    """Preço malformado de UM anúncio não derruba o run: vira 0.0 e é barrado como
+    RED. Selado roda SEM piso (filters.min_brazil_price_brl: 0), então quem pega o
+    0.0 é o zero-guard de compute_margin (`/ price_brl if price_brl else 0.0`) ->
+    margem 0% < 30% -> RED `margem_total_abaixo_do_minimo` (nunca GREEN). Mesma
+    degradação graciosa do qty e do SourceBlockedError."""
     try:
         return float(raw)
     except (TypeError, ValueError):
@@ -569,7 +571,12 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
     row.product_type = sku.product_type
     row.set_name = sku.set_name
 
-    if row.price_brl < min_price:
+    # Piso de preço configurável. SELADO roda SEM piso (min_price=0, decisão do
+    # operador 2026-06-27), então este ramo fica INATIVO por política — preço
+    # 0/malformado é barrado adiante pelo zero-guard de compute_margin (margem 0%
+    # < 30% -> RED). O ramo segue aqui de propósito: é o mecanismo genérico de
+    # piso; NÃO reintroduzir o piso R$50 das cartas avulsas (vale só p/ singles).
+    if min_price > 0 and row.price_brl < min_price:
         row.deal_confidence = "RED"
         row.bucket = "rejected"
         row.reject_reason = "abaixo_do_preco_minimo"
