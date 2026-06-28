@@ -20,10 +20,11 @@ currency:
 # cartão, IOF e qualquer custo são calculados POR FORA, na mão. (README invariante #1)
 
 filters:
-  # Filtros mínimos. Antes 150 (era p/ boxes). Baixado pra 25 com a chegada
-  # dos booster packs (~R$30-100). Items abaixo de 25 quase sempre são parts
-  # ou itens incompletos.
-  min_brazil_price_brl: 25
+  # SEM PISO (decisão do operador 2026-06-27): selado não tem piso de preço — o
+  # ÚNICO critério é margem bruta >= 30% (deal_criteria.min_total_margin_pct).
+  # Histórico: 150 (boxes) -> 25 (booster packs ~R$30-100) -> 0 (sem piso).
+  # `0` = nenhum item é cortado por preço; `price_brl < 0` nunca é verdade.
+  min_brazil_price_brl: 0
 
 deal_criteria:
   # "Margem total" do negócio = (preço_US − preço_BR) / preço_BR
