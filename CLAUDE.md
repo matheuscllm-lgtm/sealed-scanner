@@ -20,3 +20,21 @@ Erros recorrentes (3 famílias — detalhe no manual):
 
 **Este scanner (SELADOS):** referência de preço = TCGplayer US (preço Market do selado, via espelho `tcgcsv.com`); chaves = `FIRECRAWL_API_KEY` (no PC; rota Firecrawl fura o WAF da OLX).
 - **SEM PISO DE PREÇO** (`config.yaml: filters.min_brazil_price_brl: 0`, decisão do operador 2026-06-27): selado não tem piso; o único critério de GREEN é margem bruta ≥30% (`deal_criteria.min_total_margin_pct`). NÃO reintroduzir o piso R$50 das cartas avulsas aqui — ele vale só para singles. Preço 0/malformado continua RED via o zero-guard de `compute_margin` (margem 0% < 30%), nunca GREEN.
+
+## 📤 Como rodar e entregar resultados (skill `liga-sealed-scan` — MANDATÓRIO)
+
+> Caminho único, detalhado na skill do repo
+> `.claude/skills/liga-sealed-scan/SKILL.md`. Resumo:
+
+- **Rodar (local-only, PC do operador):** `python run_liga_local.py` — já gera as
+  notas markdown no fim (snapshot é default; `--no-snapshot` só para debug).
+  Multi-fonte: `run_all_sources.py` → `scripts/snapshot.py`.
+- **Entrega = colar VERBATIM o markdown do `scripts/snapshot.py` no chat.**
+  NUNCA montar tabela à mão, nunca XLSX/CSV por padrão, mostrar TODAS as linhas
+  (acionáveis GREEN+YELLOW **e** o ranking completo com os RED). Formato = modelo
+  MYP adaptado a selados (agrupado por produto/SKU, coluna
+  `Links` = `[oferta](url) · [TCG](url)`), travado em `tests/test_snapshot_*`.
+- **⚠️ Piso de preço: selado NÃO tem** (`config.yaml: filters.min_brazil_price_brl: 0`,
+  operador 2026-06-27). O piso R$50 da frota vale **só para cartas avulsas
+  (singles)**. Não reintroduzir aqui; único critério de GREEN é margem bruta ≥30%
+  (fração `0.30` em `deal_criteria.min_total_margin_pct`).

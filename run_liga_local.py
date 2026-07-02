@@ -12,7 +12,8 @@ Configuração via flags (todas opcionais):
     --categorias 10,27          # só Booster Box + ETB (default: todas)
     --max-por-categoria 10      # 30 por padrão
     --janela                    # mostra a janela do Chrome (default: headless)
-    --snapshot                  # gera nota Markdown em sealed/snapshots/
+    --no-snapshot               # NÃO gerar as notas Markdown (snapshot é default:
+                                # a entrega canônica é a tabela do snapshot.py)
 """
 from __future__ import annotations
 
@@ -80,8 +81,10 @@ def main() -> int:
     p.add_argument("--categorias", default="", help="Lista CSV de IDs de categoria (ex: 10,14,21,27).")
     p.add_argument("--max-por-categoria", type=int, default=None, help="Teto de produtos por categoria.")
     p.add_argument("--janela", action="store_true", help="Mostrar a janela do Chrome durante o scan.")
-    p.add_argument("--snapshot", action="store_true",
-                   help="Gerar 2 notas Markdown em sealed/snapshots/: técnica + didática.")
+    p.add_argument("--snapshot", action=argparse.BooleanOptionalAction, default=True,
+                   help="Gerar 2 notas Markdown em snapshots/ (técnica + didática). "
+                        "LIGADO por default — é a entrega canônica (skill liga-sealed-scan); "
+                        "use --no-snapshot só para debug do coletor.")
     p.add_argument("--skip-check", action="store_true", help="Pular verificação de dependências.")
     args = p.parse_args()
 

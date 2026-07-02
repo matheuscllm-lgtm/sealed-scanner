@@ -566,7 +566,7 @@ def main() -> None:
     lines.append("- **Margem bruta %** = (Ref. TCG − Ref. Nacional) / Ref. Nacional × 100 — só preço vs preço, SEM taxas/frete. Custos operacionais ficam fora do scanner (o operador calcula por fora).")
     lines.append("- **Δ R$/unid** = Ref. TCG R$ − Ref. Nacional R$, em reais por unidade do produto.")
     lines.append("- **⚠️** = produto com alguma oferta que precisa de conferência manual (match ambíguo YELLOW ou margem/variante suspeita) — o motivo está listado acima.")
-    lines.append("- **GREEN** = margem bruta ≥ 30% · **YELLOW** = match ambíguo (1 anúncio casa com 2+ SKUs) · **RED** = < 30%, sem match, sem referência US ou preço inválido/baixo.")
+    lines.append("- **GREEN** = margem bruta ≥ 30% · **YELLOW** = match ambíguo (1 anúncio casa com 2+ SKUs) · **RED** = < 30%, sem match, sem referência US ou preço inválido. (Selado NÃO tem piso de preço — o piso R$50 vale só para cartas avulsas.)")
     lines.append("- Sem recomendação de compra — o operador decide capital.")
     lines.append("")
     lines.append(f"Gerado em {datetime.now(timezone.utc).isoformat(timespec='seconds')} via `scripts/snapshot.py`")
