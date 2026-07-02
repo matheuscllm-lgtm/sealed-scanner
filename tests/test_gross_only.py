@@ -180,3 +180,27 @@ def test_invalid_price_is_red_never_false_green(registry, config):
     assert row.deal_confidence == "RED"
     assert row.deal_confidence != "GREEN"
     assert row.reject_reason == "margem_total_abaixo_do_minimo"
+
+
+# --- política SEM PISO de preço (selado, decisão do operador 2026-06-27) ------
+def test_no_price_floor_in_shipped_config(config):
+    # Selado NÃO tem piso (o piso R$50 é só p/ cartas avulsas). O config shippado
+    # tem de manter 0; reintroduzir piso aqui é regressão de política.
+    assert config["filters"]["min_brazil_price_brl"] == 0
+
+
+def test_sub_floor_price_classified_by_margin_not_floor(registry, config):
+    # Com SEM PISO, um anúncio BARATO (abaixo do antigo piso R$25) que casa um SKU
+    # e cai na banda 30%–200% vira GREEN — antes o piso o derrubava como RED. Usa
+    # uma ref US baixa controlada pra a margem cair DENTRO da banda mesmo com preço
+    # baixo (com a US_REF=100 do módulo, preço baixo estouraria margem_anomala).
+    fx = config["currency"]["usd_brl"]
+    us_brl = 5.0 * fx                 # ref US baixa (ex.: booster pack barato)
+    price = round(us_brl / 1.39, 2)   # margem ~39%: dentro de 30%–200%
+    assert price < 25                 # abaixo do antigo piso -> teria sido RED
+    row = S.classify(_row("Surging Sparks Booster Box (English)", price),
+                     registry, {"ssp-booster-box-en": 5.0}, config)
+    assert row.match_confidence == "HIGH"
+    assert row.deal_confidence == "GREEN"          # sem piso: classifica por margem
+    assert row.reject_reason != "abaixo_do_preco_minimo"  # ramo do piso inativo
+    assert row.total_margin_pct >= 0.30
