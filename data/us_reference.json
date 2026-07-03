@@ -2,7 +2,7 @@
   "_comment": "Gerado por build_us_reference.py a partir de tcgcsv.com (espelho da API do TCGPlayer). NÃO editar à mão — rode o script para refrescar.",
   "reference": "TCGPlayer marketPrice via tcgcsv.com",
   "currency": "USD",
-  "captured_at": "2026-07-03T03:10:01Z",
+  "captured_at": "2026-07-03T04:40:54Z",
   "prices": {
     "ssp-booster-box-en": 304.8,
     "ssp-etb-en": 134.67,
@@ -33,6 +33,7 @@
     "tef-box-en": 329.1,
     "tef-etb-ww-en": 132.36,
     "tef-etb-il-en": 131.24,
+    "tef-etb-en": 131.24,
     "tef-bundle-en": 85.47,
     "twm-box-en": 368.23,
     "twm-etb-en": 108.35,
