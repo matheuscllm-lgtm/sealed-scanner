@@ -275,18 +275,33 @@ class _LocalChromeFetcher(_Fetcher):
                 "Alternativa: use mode=scraperapi (config.liga.mode)."
             ) from exc
         Path(self.profile_dir).mkdir(exist_ok=True)
-        self._pw = sync_playwright().start()
-        self._ctx = self._pw.chromium.launch_persistent_context(
-            user_data_dir=self.profile_dir,
-            channel="chrome",
-            headless=self.headless,
-            no_viewport=True,
-            args=[
-                "--disable-blink-features=AutomationControlled",
-                "--disable-quic",  # evita ERR_QUIC_PROTOCOL_ERROR com CF
-            ],
-        )
-        self._page = self._ctx.pages[0] if self._ctx.pages else self._ctx.new_page()
+        if self._pw is None:
+            self._pw = sync_playwright().start()
+        try:
+            self._ctx = self._pw.chromium.launch_persistent_context(
+                user_data_dir=self.profile_dir,
+                channel="chrome",
+                headless=self.headless,
+                no_viewport=True,
+                args=[
+                    "--disable-blink-features=AutomationControlled",
+                    "--disable-quic",  # evita ERR_QUIC_PROTOCOL_ERROR com CF
+                ],
+            )
+            self._page = self._ctx.pages[0] if self._ctx.pages else self._ctx.new_page()
+        except Exception:
+            # Launch falhou (ex.: Chrome zumbi segurando o perfil → exit 21).
+            # NÃO deixar o sync_playwright "started" pendurado: um segundo
+            # sync_playwright().start() na mesma thread levanta o erro enganoso
+            # "Sync API inside the asyncio loop" e queima TODAS as categorias
+            # seguintes mascarando a causa real (visto 2026-07-02).
+            try:
+                self._pw.stop()
+            except Exception:
+                pass
+            self._pw = None
+            self._ctx = self._page = None
+            raise
 
     def get(self, url, *, render=False, wait_for_selector=None, timeout=180):
         self._ensure()
