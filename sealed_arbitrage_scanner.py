@@ -8,21 +8,21 @@ Pergunta que o scanner responde:
   "Esse produto selado comprado no Brasil, por esse preço, ainda dá lucro
    se revendido nos EUA pelo preço do TCGPlayer, depois de taxas conservadoras?"
 
-PRIMEIRA VERSÃO — mock-first
-  O pipeline completo (carregar anúncios -> casar com SKU -> calcular margem
-  -> classificar -> relatórios) roda sobre dados MOCKADOS. O adapter da Liga
-  Pokémon (`--source liga`, em liga_adapter.py) é um esboço: o fetch via
-  patchright já está pronto, mas o parsing das páginas de selado aguarda a
-  investigação com probe_liga_sealed.py (a Liga responde 403 a IP de
-  datacenter; o mapeamento roda local, como os probe_liga_*.py da raiz).
+Módulo core (matcher + margem + classificação) e runner single-source.
+  Todos os adapters são operacionais: liga (liga_adapter.py, Chrome real via
+  patchright — a Liga responde 403 a IP de datacenter, então roda LOCAL),
+  olx, mercadolivre e amazon. O fluxo de PRODUÇÃO é o orquestrador
+  run_all_sources.py (saída canônica results/unified_<stamp>/, lida por
+  scripts/snapshot.py); este standalone serve para debug de uma fonte
+  isolada ou para o mock.
 
 Uso:
   python sealed_arbitrage_scanner.py                 # roda sobre mock_data/
   python sealed_arbitrage_scanner.py --source mock
-  python sealed_arbitrage_scanner.py --source liga   # NotImplementedError
+  python sealed_arbitrage_scanner.py --source liga   # 1 fonte, debug local
 
-Saída:
-  sealed/results/<timestamp>/
+Saída (por-bucket; NÃO é a saída canônica — snapshot.py não a lê por default):
+  results/<timestamp>/
     real_opportunities.csv   oportunidades GREEN
     review_required.csv      YELLOW + matches ambíguos
     rejected.csv             sem match / sem referência / margem ruim

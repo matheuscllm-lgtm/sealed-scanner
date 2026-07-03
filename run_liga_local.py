@@ -11,9 +11,16 @@ Uso:
 Configuração via flags (todas opcionais):
     --categorias 10,27          # só Booster Box + ETB (default: todas)
     --max-por-categoria 10      # 30 por padrão
-    --janela                    # mostra a janela do Chrome (default: headless)
+    --no-janela                 # esconde a janela do Chrome — SÓ para debug do
+                                # coletor: o Cloudflare da Liga não clareia em
+                                # headless (0 produtos; validado 2026-05-29)
     --no-snapshot               # NÃO gerar as notas Markdown (snapshot é default:
                                 # a entrega canônica é a tabela do snapshot.py)
+
+O scan roda via run_all_sources.py (fonte liga) e grava a saída canônica
+results/unified_<stamp>/unified_deals.csv — exatamente o que scripts/snapshot.py
+lê por default. Não usa mais o scanner standalone (que grava results/<stamp>/
+por-bucket, invisível pro snapshot).
 """
 from __future__ import annotations
 
@@ -80,10 +87,13 @@ def main() -> int:
     p = argparse.ArgumentParser(description="Scanner da Liga Pokémon — modo local (Chrome real).")
     p.add_argument("--categorias", default="", help="Lista CSV de IDs de categoria (ex: 10,14,21,27).")
     p.add_argument("--max-por-categoria", type=int, default=None, help="Teto de produtos por categoria.")
-    p.add_argument("--janela", action="store_true", help="Mostrar a janela do Chrome durante o scan.")
+    p.add_argument("--janela", action=argparse.BooleanOptionalAction, default=True,
+                   help="Janela do Chrome visível. LIGADA por default — o Cloudflare da Liga "
+                        "não clareia em headless (0 produtos; validado 2026-05-29). "
+                        "--no-janela só para debug do coletor.")
     p.add_argument("--snapshot", action=argparse.BooleanOptionalAction, default=True,
                    help="Gerar 2 notas Markdown em snapshots/ (técnica + didática). "
-                        "LIGADO por default — é a entrega canônica (skill liga-sealed-scan); "
+                        "LIGADO por default — é a entrega canônica (skill sealed-scan); "
                         "use --no-snapshot só para debug do coletor.")
     p.add_argument("--skip-check", action="store_true", help="Pular verificação de dependências.")
     args = p.parse_args()
@@ -112,9 +122,12 @@ def main() -> int:
     print(f"  Janela visível   : {args.janela}")
     print()
 
+    # run_all_sources grava a saída canônica results/unified_<stamp>/ — é o que
+    # snapshot.py lê por default. O standalone (results/<stamp>/ por-bucket) faria
+    # o snapshot entregar a run unified_* ANTERIOR como se fosse o scan fresco.
     rc = subprocess.call(
-        [sys.executable, str(SEALED / "sealed_arbitrage_scanner.py"),
-         "--source", "liga", "--config", str(tmp_cfg)],
+        [sys.executable, str(SEALED / "run_all_sources.py"),
+         "--sources", "liga", "--config", str(tmp_cfg)],
         cwd=ROOT,
     )
     if rc != 0:
