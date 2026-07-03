@@ -1,5 +1,11 @@
 # HANDOFF — Sealed Scanner — 2026-06-27 (cobertura EN ≤R$1200)
 
+> **⚠️ Nota posterior (2026-06-28, PR #64):** as menções a "piso R$50" abaixo
+> ficaram DESATUALIZADAS — o piso foi **removido** para selados (decisão do
+> operador 2026-06-27/28). Vigente: `config.yaml → filters.min_brazil_price_brl: 0`;
+> único critério de GREEN é margem bruta ≥ 30%. O piso R$50 vale só para
+> **singles**. Ver `CLAUDE.md` e a skill `sealed-scan`.
+
 > Documento de passagem de contexto para **assumir este trabalho em outra sessão**
 > (inclusive uma sessão da nuvem que só clonou o GitHub e não tem memória local).
 > Linguagem direta para o operador (Matheus, médico, não-programador): cada termo

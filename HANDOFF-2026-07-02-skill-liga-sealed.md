@@ -1,5 +1,16 @@
 # HANDOFF — Sealed Scanner — 2026-07-02 (skill liga-sealed-scan + sem piso)
 
+> **⚠️ Adendo da sessão LOCAL (2026-07-02, mesmo dia):** este handoff saiu da
+> nuvem com 3 defeitos, já corrigidos no repo: (a) o path local é
+> `C:\Users\mathe\sealed-arbitrage-scanner` (não `sealed-scanner`); (b) o
+> `run_liga_local.py` defaultava **headless**, que dá 0 produtos no CF da Liga —
+> agora a janela é default (`--no-janela` só p/ debug); (c) ele rodava o scanner
+> standalone (`results/<stamp>/` por-bucket), que o `snapshot.py` não lê — o
+> snapshot entregaria a run `unified_*` ANTIGA como se fosse fresca. Agora roda
+> via `run_all_sources.py --sources liga` (saída canônica `unified_*`). A skill
+> foi generalizada para **`sealed-scan`** (multi-fonte, menu) — substitui a
+> `liga-sealed-scan`.
+
 > Documento de passagem de contexto para **assumir este trabalho em outra sessão**
 > — em especial a **sessão LOCAL no terminal do PC do operador**, que é onde o
 > próximo passo (o scan de produção) precisa rodar. Linguagem direta para o
@@ -51,12 +62,12 @@ Sessão de hoje (nuvem, 2026-07-02) foi de **revisão + skill**, não de scan:
 ## 2. ⏳ PENDÊNCIAS para a sessão local (ordem de prioridade)
 
 1. **Atualizar o clone local**: `git pull origin main` em
-   `C:\Users\mathe\sealed-scanner` (traz a skill, o snapshot default e a política
-   sem piso).
+   `C:\Users\mathe\sealed-arbitrage-scanner` (traz a skill, o snapshot default e a
+   política sem piso).
 2. **Rodar o SCAN DE PRODUÇÃO completo** (herdada do handoff 06-27 — as margens ao
    vivo dos ~50 SKUs novos de latas/boxes/prerelease nunca foram vistas):
    ```powershell
-   cd C:\Users\mathe\sealed-scanner
+   cd C:\Users\mathe\sealed-arbitrage-scanner
    .venv\Scripts\python.exe run_liga_local.py
    ```
    O run já imprime e salva a entrega no fim (`snapshots\scan-<data>.md`, técnica +
@@ -79,5 +90,5 @@ Sessão de hoje (nuvem, 2026-07-02) foi de **revisão + skill**, não de scan:
   produto, `Links` = `[oferta](url) · [TCG](url)`), todas as linhas.
 - **Nunca inventar preço; nunca recomendar compra** — capital é decisão do operador.
 
-Detalhe completo: `.claude/skills/liga-sealed-scan/SKILL.md` e a seção "📤" do
-`CLAUDE.md`.
+Detalhe completo: `.claude/skills/sealed-scan/SKILL.md` (ex-`liga-sealed-scan`,
+ver adendo no topo) e a seção "📤" do `CLAUDE.md`.
