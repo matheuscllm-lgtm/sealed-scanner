@@ -20,6 +20,7 @@ Erros recorrentes (3 famílias — detalhe no manual):
 
 **Este scanner (SELADOS):** referência de preço = TCGplayer US (preço Market do selado, via espelho `tcgcsv.com`); chaves = `FIRECRAWL_API_KEY` (no PC; rota Firecrawl fura o WAF da OLX).
 - **SEM PISO DE PREÇO** (`config.yaml: filters.min_brazil_price_brl: 0`, decisão do operador 2026-06-27): selado não tem piso; o único critério de GREEN é margem bruta ≥30% (`deal_criteria.min_total_margin_pct`). NÃO reintroduzir o piso R$50 das cartas avulsas aqui — ele vale só para singles. Preço 0/malformado continua RED via o zero-guard de `compute_margin` (margem 0% < 30%), nunca GREEN.
+- **Exclusões documentadas do registry** (decisão do operador 2026-07-03, não re-perguntar): **Blister Duplo Heróis Excelsos [Tangela] e [Komala]** ficam FORA — o set ASC (group tcgcsv 24541) não tem NENHUM blister selado no TCGplayer, logo não há referência US possível e o invariante "nunca inventar preço" ganha. Se o tcgcsv um dia listar, cadastrar. Battle Decks/Baralhos também seguem fora (decisão 2026-07-02). A cobertura do catálogo de selados da Liga é travada por `tests/test_gap_loose_packs.py` (127 títulos reais do operador → match único, exceto essa lista fechada).
 
 ## 📤 Como rodar e entregar resultados (skill `sealed-scan` — MANDATÓRIO)
 

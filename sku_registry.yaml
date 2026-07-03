@@ -75,6 +75,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     exclude_terms:
     - japones
     - japonesa
@@ -132,6 +134,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     exclude_terms:
     - japones
     - japonesa
@@ -189,6 +193,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     exclude_terms:
@@ -247,6 +253,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -362,6 +369,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -420,6 +428,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     exclude_terms:
     - japones
     - japonesa
@@ -480,6 +490,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     exclude_terms:
@@ -541,6 +553,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -663,6 +676,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     exclude_terms:
     - japones
     - japonesa
@@ -723,6 +738,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     exclude_terms:
@@ -784,6 +801,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -904,6 +922,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     exclude_terms:
     - japones
     - japonesa
@@ -963,6 +983,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     exclude_terms:
@@ -1023,6 +1045,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -1141,6 +1164,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     exclude_terms:
     - japones
     - japonesa
@@ -1199,6 +1224,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     exclude_terms:
@@ -1258,6 +1285,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -1376,6 +1404,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     exclude_terms:
     - japones
     - japonesa
@@ -1434,6 +1464,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     exclude_terms:
@@ -1493,6 +1525,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -1725,6 +1758,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -1843,6 +1877,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     exclude_terms:
     - japones
     - japonesa
@@ -1901,6 +1937,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     exclude_terms:
@@ -1960,6 +1998,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -2076,6 +2115,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     exclude_terms:
     - japones
     - japonesa
@@ -2133,6 +2174,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     exclude_terms:
@@ -2191,6 +2234,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -2346,6 +2390,7 @@ skus:
     - lata
     - build
     - battle
+    - enhanced        # Enhanced Booster Box é produto próprio (jtg-enhanced-box-en, pid 623628)
 - id: jtg-etb-en
   name: Journey Together Elite Trainer Box (English)
   product_type: Elite Trainer Box
@@ -2361,6 +2406,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     exclude_terms:
     - japones
     - japonesa
@@ -2418,6 +2465,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     exclude_terms:
@@ -2476,6 +2525,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -3581,6 +3631,61 @@ skus:
     - caixa de booster
     - booster box
     - booster display
+    exclude_terms:
+    # inline (não usa &id002): precisa excluir "enhanced" só aqui — Enhanced
+    # Booster Box é produto próprio (meg-enhanced-box-en, pid 644300)
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+    - enhanced
+- id: meg-sleeved-booster
+  name: Mega Evolution Sleeved Booster (English)
+  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
+  product_type: Sleeved Booster
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 644352
+  match:
+    set_terms: *id001
+    type_terms: &id005
+    - booster avulso
+    - booster pack
+    - blister unitário
+    - blister unitario
     exclude_terms: &id002
     - japones
     - japonesa
@@ -3616,24 +3721,6 @@ skus:
     - capa para
     - protector
     - protetor
-- id: meg-sleeved-booster
-  name: Mega Evolution Sleeved Booster (English)
-  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
-  product_type: Sleeved Booster
-  set: Mega Evolution
-  set_code: MEG
-  language: EN
-  pack_count: 1
-  tcgplayer_group_id: 24380
-  tcgplayer_product_id: 644352
-  match:
-    set_terms: *id001
-    type_terms: &id005
-    - booster avulso
-    - booster pack
-    - blister unitário
-    - blister unitario
-    exclude_terms: *id002
 - id: meg-booster-bundle
   name: Mega Evolution Booster Bundle (English)
   era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
@@ -3669,6 +3756,84 @@ skus:
     type_terms: &id006
     - blister triplo tech sticker
     - tech sticker
+    exclude_terms:
+    # inline: fallback genérico — título COM Pokémon cai na variante (conjunto
+    # fechado: só existem Charmander/Gastly no tcgcsv, group 24541)
+    - charmander
+    - gastly
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - capa para
+    - protector
+    - protetor
+- id: asc-tech-sticker-charmander
+  name: 'Mega Evolution: Ascended Heroes Tech Sticker Collection - Charmander (English)'
+  product_type: Tech Sticker
+  set: Ascended Heroes
+  set_code: ASC
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 666908
+  match:
+    set_terms:
+    - heróis excelsos
+    - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
+    type_terms: *id006
+    requires_terms:
+    - charmander
+    exclude_terms: *id002
+- id: asc-tech-sticker-gastly
+  name: 'Mega Evolution: Ascended Heroes Tech Sticker Collection - Gastly (English)'
+  product_type: Tech Sticker
+  set: Ascended Heroes
+  set_code: ASC
+  language: EN
+  pack_count: 3
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 666909
+  match:
+    set_terms:
+    - heróis excelsos
+    - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
+    type_terms: *id006
+    requires_terms:
+    - gastly
     exclude_terms: *id002
 - id: blk-collection-box
   name: Black Bolt Collection Box (English)
@@ -4304,6 +4469,153 @@ skus:
   language: EN
   pack_count: 2
   tcgplayer_group_id: 24541
+  tcgplayer_product_id: 668533   # Zorua = variante mais barata com preço (fallback p/ título sem Pokémon)
+  match:
+    set_terms:
+    - heróis excelsos
+    - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
+    type_terms: *tin_type
+    exclude_terms:
+    # inline: fallback genérico — título COM Pokémon cai na variante asc-mini-tin-*
+    # (conjunto fechado: 5 variantes no tcgcsv, group 24541; dispersão >15% -> split)
+    - zorua
+    - riolu
+    - pikachu
+    - togepi
+    - clefairy
+    - display
+    - case
+    - caixa
+    - 5 pack
+    - 5-pack
+    - 5pack
+    - set of
+    - vazia
+    - vazio
+    - lote
+    - booster box
+    - box
+    - elite trainer
+    - elite trainer box
+    - etb
+    - bundle
+    - booster bundle
+    - blister
+    - collection
+    - collection box
+    - premium collection
+    - tech sticker
+    - build
+    - battle
+    - sleeved
+    - sleeve
+    - pokemon center
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+- id: asc-mini-tin-zorua
+  name: 'Mega Evolution: Ascended Heroes Mini Tin [Zorua] (English)'
+  product_type: Mini Tin
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 668533
+  match:
+    set_terms:
+    - heróis excelsos
+    - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
+    type_terms: *tin_type
+    requires_terms:
+    - zorua
+    exclude_terms: *tin_excl_single
+- id: asc-mini-tin-riolu
+  name: 'Mega Evolution: Ascended Heroes Mini Tin [Riolu] (English)'
+  product_type: Mini Tin
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 668532
+  match:
+    set_terms:
+    - heróis excelsos
+    - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
+    type_terms: *tin_type
+    requires_terms:
+    - riolu
+    exclude_terms: *tin_excl_single
+- id: asc-mini-tin-pikachu
+  name: 'Mega Evolution: Ascended Heroes Mini Tin [Pikachu] (English)'
+  product_type: Mini Tin
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 668531
+  match:
+    set_terms:
+    - heróis excelsos
+    - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
+    type_terms: *tin_type
+    requires_terms:
+    - pikachu
+    exclude_terms: *tin_excl_single
+- id: asc-mini-tin-togepi
+  name: 'Mega Evolution: Ascended Heroes Mini Tin [Togepi] (English)'
+  product_type: Mini Tin
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 24541
   tcgplayer_product_id: 668534
   match:
     set_terms:
@@ -4313,6 +4625,28 @@ skus:
     - megaevolução 2.5
     - megaevolucao 2.5
     type_terms: *tin_type
+    requires_terms:
+    - togepi
+    exclude_terms: *tin_excl_single
+- id: asc-mini-tin-clefairy
+  name: 'Mega Evolution: Ascended Heroes Mini Tin [Clefairy] (English)'
+  product_type: Mini Tin
+  set: Ascended Heroes
+  set_code: AH
+  language: EN
+  pack_count: 2
+  tcgplayer_group_id: 24541
+  tcgplayer_product_id: 668535
+  match:
+    set_terms:
+    - heróis excelsos
+    - herois excelsos
+    - ascended heroes
+    - megaevolução 2.5
+    - megaevolucao 2.5
+    type_terms: *tin_type
+    requires_terms:
+    - clefairy
     exclude_terms: *tin_excl_single
 - id: asc-mini-tin-display
   name: Ascended Heroes Mini Tin Display (English)
@@ -4477,6 +4811,7 @@ skus:
     type_terms:
     - booster bundle
     - bundle
+    - combo de pacotes
     exclude_terms:
     - japones
     - japonesa
@@ -5308,6 +5643,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - mega lucario
     exclude_terms:
@@ -5368,6 +5705,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - mega gardevoir
     exclude_terms:
@@ -5428,6 +5767,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     - mega lucario
@@ -5488,6 +5829,8 @@ skus:
     type_terms:
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
     requires_terms:
     - pokemon center
     - mega gardevoir
@@ -9814,3 +10157,381 @@ skus:
     - protector
     - protetor
     - capa para
+- id: jtg-blister-1pack
+  name: Journey Together Single Pack Blister (English)
+  product_type: Blister
+  set: Journey Together
+  set_code: JTG
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24073
+  tcgplayer_product_id: 610949   # variante mais barata com preço (Scraggy)
+  match:
+    set_terms:
+    - amigos de jornada
+    - journey together
+    type_terms: &blister1_type
+    - blister unitário
+    - blister unitario
+    - single pack blister
+    - checklane
+    exclude_terms: &blister1_excl
+    # premium checklane é produto próprio (~2x o preço) — nunca cair no genérico
+    - premium
+    - triplo
+    - 3 pack
+    - 3pack
+    - duplo
+    - 2 pack
+    - 2pack
+    - tech sticker
+    - enhanced
+    - display
+    - lote
+    - vazia
+    - vazio
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - case
+    - capa para
+    - protector
+    - protetor
+    - storage
+- id: po-blister-1pack
+  name: Perfect Order Single Pack Blister (English)
+  product_type: Blister
+  set: Perfect Order
+  set_code: PO
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24587
+  tcgplayer_product_id: 672410   # única variante com preço (Makuhita)
+  match:
+    set_terms:
+    - equilíbrio perfeito
+    - equilibrio perfeito
+    - perfect order
+    - megaevolução 3
+    - megaevolucao 3
+    type_terms: *blister1_type
+    exclude_terms: *blister1_excl
+- id: cr-blister-1pack
+  name: Chaos Rising Single Pack Blister (English)
+  product_type: Blister
+  set: Chaos Rising
+  set_code: CR
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24655
+  tcgplayer_product_id: 684457   # variante mais barata com preço (Toxel — bate o título checklane da Liga)
+  match:
+    set_terms:
+    - caos ascendente
+    - chaos rising
+    - megaevolução 4
+    - megaevolucao 4
+    type_terms: *blister1_type
+    exclude_terms: *blister1_excl
+- id: pb-blister-1pack
+  name: Pitch Black Single Pack Blister (English)
+  product_type: Blister
+  set: Pitch Black
+  set_code: PB
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24688
+  tcgplayer_product_id: 692955   # única variante comum com preço (Slowpoke — bate o título checklane da Liga)
+  match:
+    set_terms:
+    - pitch black
+    - escuridao absoluta
+    - megaevolucao 5
+    type_terms: *blister1_type
+    exclude_terms: *blister1_excl
+- id: phf-blister-1pack
+  name: Phantasmal Flames Single Pack Blister (English)
+  product_type: Blister
+  set: Phantasmal Flames
+  set_code: PHF
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24448
+  tcgplayer_product_id: 654151   # variante mais barata com preço (Cottonee)
+  match:
+    set_terms:
+    - fogo fantasmagórico
+    - fogo fantasmagorico
+    - phantasmal flames
+    type_terms: *blister1_type
+    exclude_terms: *blister1_excl
+- id: dri-blister-1pack
+  name: Destined Rivals Single Pack Blister (English)
+  product_type: Blister
+  set: Destined Rivals
+  set_code: DRI
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24269
+  tcgplayer_product_id: 633106   # variante mais barata com preço (Zarude)
+  match:
+    set_terms:
+    - rivais predestinados
+    - destined rivals
+    type_terms: *blister1_type
+    exclude_terms: *blister1_excl
+- id: pb-checklane-premium-luxray
+  name: Pitch Black Premium Checklane Blister [Luxray Line] (English)
+  product_type: Blister
+  set: Pitch Black
+  set_code: PB
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24688
+  tcgplayer_product_id: 692952   # SEM marketPrice no tcgcsv hoje -> sem ref (RED honesto)
+  match:
+    set_terms: &pbprem_set
+    - pitch black
+    - escuridao absoluta
+    - megaevolucao 5
+    type_terms: &pbprem_type
+    - checklane
+    - blister unitário
+    - blister unitario
+    - premium checklane blister
+    requires_terms:
+    - premium
+    - luxray
+    exclude_terms: *id002
+- id: pb-checklane-premium-gengar
+  name: Pitch Black Premium Checklane Blister [Gengar Line] (English)
+  product_type: Blister
+  set: Pitch Black
+  set_code: PB
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24688
+  tcgplayer_product_id: 692951   # SEM marketPrice no tcgcsv hoje -> sem ref (RED honesto)
+  match:
+    set_terms: *pbprem_set
+    type_terms: *pbprem_type
+    requires_terms:
+    - premium
+    - gengar
+    exclude_terms: *id002
+- id: pb-checklane-premium-tyrunt
+  name: Pitch Black Premium Checklane Blister [Tyrunt, Tyrantrum] (English)
+  product_type: Blister
+  set: Pitch Black
+  set_code: PB
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24688
+  tcgplayer_product_id: 692953   # SEM marketPrice no tcgcsv hoje (Target exclusive) -> sem ref (RED honesto)
+  match:
+    set_terms: *pbprem_set
+    type_terms: *pbprem_type
+    requires_terms:
+    - premium
+    - tyrunt
+    exclude_terms: *id002
+- id: pb-checklane-premium-amaura
+  name: Pitch Black Premium Checklane Blister [Amaura, Aurorus] (English)
+  product_type: Blister
+  set: Pitch Black
+  set_code: PB
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 24688
+  tcgplayer_product_id: 692954   # SEM marketPrice no tcgcsv hoje (Target exclusive) -> sem ref (RED honesto)
+  match:
+    set_terms: *pbprem_set
+    type_terms: *pbprem_type
+    requires_terms:
+    - premium
+    - amaura
+    exclude_terms: *id002
+- id: pop1-pack
+  name: POP Series 1 Booster Pack (English)
+  product_type: Vintage Pack
+  set: POP Series 1
+  set_code: POP1
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 1422
+  tcgplayer_product_id: 141227
+  match:
+    set_terms:
+    - pop series 1
+    - pop serie 1
+    - pop série 1
+    type_terms: &pop_type
+    - booster avulso
+    - booster pack
+    - pacote de booster
+    exclude_terms: &pop_excl
+    - display
+    - box
+    - booster box
+    - caixa
+    - lote
+    - vazia
+    - vazio
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - code card
+    - acrylic
+    - acrilico
+    - case for
+    - case
+    - capa para
+    - protector
+    - protetor
+    - storage
+- id: pop6-pack
+  name: POP Series 6 Booster Pack (English)
+  product_type: Vintage Pack
+  set: POP Series 6
+  set_code: POP6
+  language: EN
+  pack_count: 1
+  tcgplayer_group_id: 1432
+  tcgplayer_product_id: 141229   # SEM marketPrice no tcgcsv hoje -> sem ref (RED honesto)
+  match:
+    set_terms:
+    - pop series 6
+    - pop serie 6
+    - pop série 6
+    type_terms: *pop_type
+    exclude_terms: *pop_excl
+- id: jtg-enhanced-box-en
+  name: Journey Together Enhanced Booster Box (English)
+  product_type: Booster Box
+  set: Journey Together
+  set_code: JTG
+  language: EN
+  tcgplayer_group_id: 24073
+  tcgplayer_product_id: 623628
+  match:
+    set_terms:
+    - amigos de jornada
+    - journey together
+    type_terms:
+    - booster box
+    - caixa de booster
+    - display de booster
+    - booster display
+    requires_terms:
+    - enhanced
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+    - etb
+    - elite trainer
+    - bundle
+    - blister
+    - tin
+    - lata
+    - build
+    - battle
+- id: meg-enhanced-box-en
+  name: Mega Evolution Enhanced Booster Box (English)
+  era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
+  product_type: Booster Box
+  set: Mega Evolution
+  set_code: MEG
+  language: EN
+  tcgplayer_group_id: 24380
+  tcgplayer_product_id: 644300
+  match:
+    set_terms: *id001
+    type_terms: *id015
+    requires_terms:
+    - enhanced
+    exclude_terms: *id002
