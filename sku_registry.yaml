@@ -1642,9 +1642,12 @@ skus:
     - forcas temporais
     - temporal forces
     type_terms:
-    - walking wake
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
+    requires_terms:
+    - walking wake
     exclude_terms:
     - japones
     - japonesa
@@ -1699,9 +1702,12 @@ skus:
     - forcas temporais
     - temporal forces
     type_terms:
-    - iron leaves
     - elite trainer box
     - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
+    requires_terms:
+    - iron leaves
     exclude_terms:
     - japones
     - japonesa
@@ -1742,6 +1748,66 @@ skus:
     - bundle
     - blister
     - walking wake
+- id: tef-etb-en
+  name: Temporal Forces Elite Trainer Box (English)
+  product_type: Elite Trainer Box
+  set: Temporal Forces
+  set_code: TEF
+  language: EN
+  tcgplayer_group_id: 23381
+  tcgplayer_product_id: 532848   # Iron Leaves = variante mais barata com preço (fallback p/ título sem variante; dispersão 0.9%)
+  match:
+    set_terms:
+    - forças temporais
+    - forcas temporais
+    - temporal forces
+    type_terms:
+    - elite trainer box
+    - etb
+    - coleção treinador avançado
+    - colecao treinador avancado
+    exclude_terms:
+    # fallback genérico — título COM variante cai no SKU da variante (conjunto fechado)
+    - walking wake
+    - iron leaves
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+    - booster box
+    - bundle
+    - blister
 - id: tef-bundle-en
   name: Temporal Forces Booster Bundle (English)
   product_type: Booster Bundle
