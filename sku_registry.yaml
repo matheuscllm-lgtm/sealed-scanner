@@ -2582,6 +2582,182 @@ skus:
     - tin
     - lata
     - display
+- id: svi-pack-en
+  name: Scarlet & Violet Booster Pack (English)
+  product_type: Sleeved Booster
+  set: Scarlet & Violet
+  set_code: SVI
+  language: EN
+  tcgplayer_group_id: 22873
+  tcgplayer_product_id: 476451
+  bulk_qty: 36
+  match:
+    # set-base SVI: NUNCA usar "escarlate e violeta" puro (prefixa todo sub-set
+    # SV). O matcher casa por palavra inteira, então "escarlate e violeta 1"
+    # não colide com "escarlate e violeta 10" (travado em teste adversarial).
+    set_terms:
+    - escarlate e violeta 1
+    - scarlet violet base
+    type_terms:
+    - booster pack
+    - booster avulso
+    - pacote de booster
+    - pacote pokemon
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - acrylic
+    - acrilico
+    - magnetic
+    - protector
+    - protetor
+    - storage
+    - case for
+    - capa para
+    - box
+    - bundle
+    - elite trainer
+    - etb
+    - blister
+    - sleeved
+    - build
+    - battle
+    - case
+    - tin
+    - lata
+    - display
+    - art bundle
+    - fun pack
+    - code card
+- id: tot-2023-pack
+  name: Trick or Trade BOOster 2023 Mini Pack (English)
+  product_type: Sleeved Booster
+  set: Trick or Trade 2023
+  set_code: TOT23
+  language: EN
+  tcgplayer_group_id: 23266
+  tcgplayer_product_id: 505945
+  bulk_qty: 50
+  match:
+    set_terms:
+    - trick or trade 2023
+    type_terms:
+    - booster pack
+    - booster avulso
+    - pacote de booster
+    - mini pack
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - '2024'
+    - bundle
+    - ct
+    - case
+    - box
+    - display
+    - lote
+- id: tot-2024-pack
+  name: Trick or Trade BOOster 2024 Mini Pack (English)
+  product_type: Sleeved Booster
+  set: Trick or Trade 2024
+  set_code: TOT24
+  language: EN
+  tcgplayer_group_id: 23561
+  tcgplayer_product_id: 579930
+  bulk_qty: 35
+  match:
+    set_terms:
+    - trick or trade 2024
+    type_terms:
+    - booster pack
+    - booster avulso
+    - pacote de booster
+    - mini pack
+    exclude_terms:
+    - japones
+    - japonesa
+    - japanese
+    - portugues
+    - portuguesa
+    - portuguese
+    - pt br
+    - ptbr
+    - copag
+    - chines
+    - chinesa
+    - chinese
+    - coreano
+    - coreana
+    - korean
+    - espanhol
+    - espanhola
+    - spanish
+    - frances
+    - francesa
+    - french
+    - alemao
+    - alema
+    - german
+    - italiano
+    - italiana
+    - italian
+    - '2023'
+    - bundle
+    - ct
+    - case
+    - box
+    - display
+    - lote
 - id: ssp-pack-en
   name: Surging Sparks Booster Pack (English)
   product_type: Sleeved Booster

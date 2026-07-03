@@ -41,6 +41,10 @@ GROUPS = {
     23237: ("Scarlet & Violet 151", "MEW", ["escarlate e violeta - 151", "151", "scarlet & violet 151"]),
     23228: ("Obsidian Flames", "OBF", ["obsidiana em chamas", "obsidian flames"]),
     23120: ("Paldea Evolved", "PAL", ["evoluções em paldea", "evolucoes em paldea", "paldea evolved"]),
+    # Set-base SVI faltava desde a criação do dict (gap achado 2026-07-02: pack
+    # avulso "Escarlate e Violeta 1" caía sem_match). NUNCA usar "escarlate e
+    # violeta" puro como termo — prefixa TODO sub-set SV.
+    22873: ("Scarlet & Violet", "SVI", ["escarlate e violeta 1", "scarlet violet base"]),
 }
 
 # (regex no nome TCGPlayer, product_type canônico, [type_terms PT/EN], pack_count)
