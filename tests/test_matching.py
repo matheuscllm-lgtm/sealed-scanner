@@ -36,6 +36,8 @@ def test_meg_skus_flagged_umbrella(registry):
         # ETBs por personagem do ME01 (gap 2026-06-27) — base da era Mega
         "meg-etb-lucario", "meg-etb-gardevoir",
         "meg-etb-pc-lucario", "meg-etb-pc-gardevoir",
+        # Enhanced Booster Box do ME01 (gap 2026-07-03) — base da era Mega
+        "meg-enhanced-box-en",
     }
 
 
