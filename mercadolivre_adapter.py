@@ -52,6 +52,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
+from lib.env import load_dotenv_if_present
 from lib.errors import SourceBlockedError
 from lib.firecrawl import FirecrawlFetcher  # transporte /scrape compartilhado (Issue #13)
 
@@ -93,18 +94,10 @@ _USED_TOKENS = (
 )
 
 
-def _load_dotenv_if_present() -> None:
-    """Carrega .env da raiz do repo se existir, sem sobrescrever env já setado.
-    (mode=firecrawl lê FIRECRAWL_API_KEY do ambiente; .env é só fallback.)"""
-    env_path = Path(__file__).parent / ".env"
-    if not env_path.exists():
-        return
-    for line in env_path.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, _, v = line.partition("=")
-        os.environ.setdefault(k.strip(), v.strip().strip('"\''))
+# Compartilhado em lib/env.py (dedup 2026-07-06); alias módulo-local preservado
+# porque os testes o monkeypatcham por módulo. (mode=firecrawl lê
+# FIRECRAWL_API_KEY do ambiente; .env é só fallback.)
+_load_dotenv_if_present = load_dotenv_if_present
 
 
 def _is_block_page(body: str) -> bool:

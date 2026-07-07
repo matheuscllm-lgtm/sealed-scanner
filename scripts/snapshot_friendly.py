@@ -46,15 +46,16 @@ def collect_rows() -> list[dict]:
             p = d / fn
             if not p.exists():
                 continue
-            for r in csv.DictReader(open(p, encoding="utf-8")):
-                r["_bucket"] = fn.replace(".csv", "")
-                r["_total"] = _f(r.get("Margem total %"))        # margem BRUTA
-                r["_gross_brl"] = _f(r.get("Lucro bruto (R$)"))   # lucro BRUTO
-                r["_price"] = _f(r.get("Preço BR (R$)"))
-                r["_us_brl"] = _f(r.get("Preço US (R$)"))
-                if r["_price"] is None:
-                    continue
-                rows.append(r)
+            with p.open(encoding="utf-8", newline="") as fh:
+                for r in csv.DictReader(fh):
+                    r["_bucket"] = fn.replace(".csv", "")
+                    r["_total"] = _f(r.get("Margem total %"))        # margem BRUTA
+                    r["_gross_brl"] = _f(r.get("Lucro bruto (R$)"))   # lucro BRUTO
+                    r["_price"] = _f(r.get("Preço BR (R$)"))
+                    r["_us_brl"] = _f(r.get("Preço US (R$)"))
+                    if r["_price"] is None:
+                        continue
+                    rows.append(r)
     return rows
 
 

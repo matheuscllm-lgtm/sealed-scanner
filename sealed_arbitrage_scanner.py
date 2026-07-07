@@ -765,8 +765,6 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path) -> boo
     ws.append(["TOTAL", sum(len(v) for v in buckets.values())])
     ws.column_dimensions["A"].width = 42
     ws.column_dimensions["B"].width = 14
-    ws.column_dimensions["C"].width = 20
-    ws.column_dimensions["D"].width = 14
 
     wb.save(path)
     return True

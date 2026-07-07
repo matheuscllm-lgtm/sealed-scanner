@@ -43,6 +43,8 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
+from lib.env import load_dotenv_if_present
+
 SCRAPERAPI_BASE = "http://api.scraperapi.com/"
 LIGA_BASE = "https://www.ligapokemon.com.br"
 
@@ -177,17 +179,9 @@ def _translate_title(name: str) -> str:
 # --------------------------------------------------------------------------
 # Configuração / helpers
 # --------------------------------------------------------------------------
-def _load_dotenv_if_present() -> None:
-    """Carrega .env da raiz do repo se existir. Não sobrescreve env vars já setadas."""
-    env_path = Path(__file__).parent / ".env"
-    if not env_path.exists():
-        return
-    for line in env_path.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, _, v = line.partition("=")
-        os.environ.setdefault(k.strip(), v.strip().strip('"\''))
+# Compartilhado em lib/env.py (dedup 2026-07-06); alias módulo-local preservado
+# porque testes/monkeypatch referenciam `<adapter>._load_dotenv_if_present`.
+_load_dotenv_if_present = load_dotenv_if_present
 
 
 def _get_api_key(liga_cfg: dict) -> str:
