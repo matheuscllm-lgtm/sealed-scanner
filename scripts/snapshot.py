@@ -89,15 +89,16 @@ def collect_rows_unified(scan_dir: Path) -> list[dict]:
     if not p.exists():
         return []
     rows: list[dict] = []
-    for r in csv.DictReader(open(p, encoding="utf-8")):
-        r["_bucket"] = _bucket_from_confidence(r.get("Confiança do deal"))
-        try:
-            r["_total"] = float(r["Margem total %"]) if r.get("Margem total %") else None
-        except ValueError:
-            r["_total"] = None
-        if r["_total"] is None:
-            continue
-        rows.append(r)
+    with p.open(encoding="utf-8", newline="") as fh:
+        for r in csv.DictReader(fh):
+            r["_bucket"] = _bucket_from_confidence(r.get("Confiança do deal"))
+            try:
+                r["_total"] = float(r["Margem total %"]) if r.get("Margem total %") else None
+            except ValueError:
+                r["_total"] = None
+            if r["_total"] is None:
+                continue
+            rows.append(r)
     rows.sort(key=lambda r: r["_total"], reverse=True)
     return rows
 
@@ -114,30 +115,18 @@ def collect_rows_legacy(latest_only: bool = False) -> list[dict]:
             p = d / fn
             if not p.exists():
                 continue
-            for r in csv.DictReader(open(p, encoding="utf-8")):
-                r["_bucket"] = fn.replace(".csv", "")
-                try:
-                    r["_total"] = float(r["Margem total %"]) if r.get("Margem total %") else None
-                except ValueError:
-                    r["_total"] = None
-                if r["_total"] is None:
-                    continue
-                rows.append(r)
+            with p.open(encoding="utf-8", newline="") as fh:
+                for r in csv.DictReader(fh):
+                    r["_bucket"] = fn.replace(".csv", "")
+                    try:
+                        r["_total"] = float(r["Margem total %"]) if r.get("Margem total %") else None
+                    except ValueError:
+                        r["_total"] = None
+                    if r["_total"] is None:
+                        continue
+                    rows.append(r)
     rows.sort(key=lambda r: r["_total"], reverse=True)
     return rows
-
-
-def status_label(r: dict) -> str:
-    b = r["_bucket"]
-    if b == "real_opportunities":
-        return "🟢 GREEN"
-    if b == "review_required":
-        return "🟡 YELLOW"
-    if (r["_total"] or 0) >= 30:
-        return "🟠 RED+"
-    if (r["_total"] or 0) >= 0:
-        return "🔴 RED"
-    return "⚫ RED–"
 
 
 def _bucket_label(bucket: str, margin: float | None) -> str:
@@ -219,13 +208,6 @@ def is_suspect(r: dict) -> bool:
         return True
     risco = (r.get("Risco principal") or "").lower()
     return any(t in risco for t in ("anômal", "anomal", "trocad", "variante", "verifique", "confirm"))
-
-
-def delta_unit(tcg_brl, liga_brl) -> str:
-    try:
-        return fmt_brl(float(tcg_brl) - float(liga_brl))
-    except (TypeError, ValueError):
-        return "-"
 
 
 def md_link(label: str, url: str) -> str:
