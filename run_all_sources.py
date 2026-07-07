@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """run_all_sources.py — orquestrador multi-fonte do TCG Sealed Arbitrage Scanner.
 
-Roda as 3 fontes BR (Amazon, Liga, OLX) numa execução e consolida TUDO numa
-tabela única interpretável (`unified_deals.csv` + `unified_deals.xlsx`), com
+Roda as fontes BR pedidas (default: Liga + OLX + Mercado Livre; Amazon é
+opt-in — ver DEFAULT_SOURCES) numa execução e consolida TUDO numa tabela
+única interpretável (`unified_deals.csv` + `unified_sealed_<stamp>.xlsx`), com
 coluna Fonte e ordenada por bucket (GREEN → YELLOW → RED) e margem desc.
 
 Comportamento robusto (autonomia / keep-alive):
@@ -14,7 +15,7 @@ Comportamento robusto (autonomia / keep-alive):
 - Cada fonte logada com status, contagem e tempo. Tudo auditável.
 
 Uso:
-    python run_all_sources.py                 # amazon + liga + olx
+    python run_all_sources.py                 # liga + olx + mercadolivre
     python run_all_sources.py --sources amazon,liga
 """
 from __future__ import annotations
@@ -220,7 +221,7 @@ def run(args: argparse.Namespace) -> int:
     yellow = sum(s_["yellow"] for s_ in summaries)
     red = sum(s_["red"] for s_ in summaries)
     print("\n" + "=" * 64)
-    print("  TCG SEALED — SCAN UNIFICADO (Amazon + Liga + OLX)")
+    print(f"  TCG SEALED — SCAN UNIFICADO ({' + '.join(sources)})")
     print("=" * 64)
     print(f"  Câmbio USD/BRL : {config['currency']['usd_brl']:.4f}  [{fx_source}]")
     for info in summaries:
