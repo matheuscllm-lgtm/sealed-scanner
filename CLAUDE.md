@@ -65,8 +65,9 @@ Erros recorrentes (3 famílias — detalhe no manual):
    (`deal_criteria.max_reference_age_days: 14`). O fluxo canônico refresca a
    referência antes do scan (tcgcsv atualiza diário), então só dispara em scan
    sem refresh.
-5. **YELLOW é EXCLUSIVAMENTE match ambíguo** (1 anúncio casa 2+ SKUs) — nunca por
-   faixa de margem. A classificação é SÓ por margem bruta.
+5. **YELLOW nunca é faixa de margem** — vem de match ambíguo (1 anúncio casa
+   2+ SKUs) ou do rebaixamento GREEN→YELLOW por referência velha (regra 4).
+   A classificação por margem é só GREEN/RED.
 6. **Exclusões documentadas do registry** (decisões do operador, não re-perguntar):
    - **Blister Duplo Heróis Excelsos [Tangela] e [Komala]** ficam FORA (decisão
      2026-07-03) — o set ASC (group tcgcsv 24541) não tem NENHUM blister selado
@@ -153,10 +154,10 @@ liga_adapter.py              Liga Pokémon (patchright + Chrome headful; modo sc
 olx_adapter.py               OLX (rota Firecrawl fura o WAF)
 mercadolivre_adapter.py      MercadoLivre
 amazon_adapter.py            Amazon BR (urllib + fallback browser $0 default desde 2026-06-10; Firecrawl legado opt-in pago)
-build_us_reference.py        gera/refresca a referência US (TCGplayer via tcgcsv.com)
-sku_registry.yaml            catálogo canônico de SKUs (~10,6k linhas: product_id tcgcsv, set_terms EN+PT, requires_terms, sanity bands)
+build_us_reference.py        gera/refresca a referência US (TCGplayer via tcgcsv.com) + sanity bands por tipo de produto (SANITY_BANDS_USD)
+sku_registry.yaml            catálogo canônico de SKUs (~10,6k linhas: product_id tcgcsv, set_terms EN+PT, requires_terms)
 config.yaml                  premissas auditáveis: câmbio (fetch/manual), filtros (SEM piso), deal_criteria (0.30 / teto 200% / ref. 14d), fontes
-lib/                         browser.py (patchright), console.py, errors.py, firecrawl.py
+lib/                         browser.py (patchright), console.py, env.py, errors.py, firecrawl.py
 scripts/snapshot.py          ⭐ GERADOR CANÔNICO da entrega (tabela markdown agrupada por produto)
 scripts/snapshot_friendly.py variante de leitura; build_delivery_xlsx.py (XLSX de apoio sob pedido)
 scripts/expand_registry_modern.py / readd_tins_split.py   manutenção do registry
@@ -215,9 +216,10 @@ Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no
   eles registram o que foi feito e os gaps adiados (ex.: SKUs com referência
   achada mas sem título real da Liga p/ confirmar match).
 - **`CHANGELOG.md`**: o repo NÃO usa versionamento semântico — entradas por
-  data. Última entrada: 2026-06-27; mudanças posteriores (até o PR #72,
-  2026-07-03 — fix registry TEF ETB) estão só no git log de `main`, que é a
-  fonte de verdade do estado atual junto com o código mergeado.
+  data. Última entrada: 2026-06-27; mudanças posteriores (até o PR #74,
+  2026-07-06 — dedup de env em `lib/env.py`, fechamento de CSVs, banner; antes
+  dele o #72, 2026-07-03 — fix registry TEF ETB) estão só no git log de `main`,
+  que é a fonte de verdade do estado atual junto com o código mergeado.
 - Marcos preservados: gate de condição selado-vs-aberto (2026-06-21) · modelo de
   entrega agrupado por produto padrão MYP (2026-06-20) · fallback browser $0 da
   Amazon (2026-06-10) · SEM piso (2026-06-27) · cobertura total do catálogo Liga,
