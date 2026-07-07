@@ -130,7 +130,7 @@ Erros recorrentes (3 famílias — detalhe no manual):
 ## Testes
 
 ```bash
-python -m pytest -q     # 351 testes (verificado 2026-07-06), 100% offline
+python -m pytest -q     # 354 testes (verificado 2026-07-07), 100% offline
 ```
 
 - A suíte roda inteira sem rede/credencial/browser: adapters testados contra
@@ -163,7 +163,7 @@ scripts/expand_registry_modern.py / readd_tins_split.py   manutenção do regist
 watchdog.py, register_task.ps1                            apoio de execução no PC do operador
 probe_liga_sealed.py / probe_olx_local.py                 sondas manuais de coleta
 mock_data/                   fixtures de listing p/ rodar o pipeline sem rede (--mock)
-tests/                       351 testes offline (gaps de cobertura, matcher, gates, snapshot, adapters)
+tests/                       354 testes offline (gaps de cobertura, matcher, gates, snapshot, adapters)
 ```
 
 Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no
