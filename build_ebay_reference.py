@@ -170,8 +170,16 @@ def build_reference(skus: list, us_prices: dict, client, game_word: str,
     for i, sku in enumerate(todo, start=1):
         query = sku_query(sku, game_word)
         ref_usd = us_prices.get(sku.id)
+        # Piso da BUSCA = o mesmo piso do junk-guard (50% da ref TCG): a busca
+        # ordena por preço e devolve só `limit` itens — em SKU popular a janela
+        # saturava de lixo sub-US$20 (sleeves, code cards) antes de alcançar o
+        # produto real (observado ao vivo em 2026-08-03: ssp-booster-box "sem
+        # anúncio plausível" com boxes reais a US$180+ fora da janela). Tudo
+        # abaixo do piso já seria descartado pelo guard de qualquer forma.
+        min_price = round(SUSPECT_RATIO * ref_usd, 2) if ref_usd else None
         try:
-            items = client.search(query, category_ids=category_ids, limit=limit)
+            items = client.search(query, category_ids=category_ids, limit=limit,
+                                  min_price=min_price)
             entry = select_lowest(sku, items, ref_usd)
         except Exception as exc:  # rede/HTTP após retries — status explícito
             entry = {"status": f"erro: {type(exc).__name__}: {exc}"}

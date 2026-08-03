@@ -151,6 +151,7 @@ class _FakeClient:
 
     def search(self, query, **kw):
         self.queries.append(query)
+        self.kwargs = kw
         if self._raise:
             raise self._raise
         return self._items
@@ -168,6 +169,20 @@ def test_build_reference_ok_and_error_paths():
     entries, counts = B.build_reference([SKU_BOX], {}, err_client, "pokemon")
     assert counts["erro"] == 1
     assert entries["ssp-booster-box-en"]["status"].startswith("erro: RuntimeError")
+
+
+def test_build_reference_floors_search_at_junk_ratio():
+    # Piso da busca = 50% da ref TCG (mesmo corte do junk-guard): sem ele, a
+    # janela de 50 itens ordenada por preço satura de lixo sub-US$20 em SKU
+    # popular (observado ao vivo 2026-08-03: box real a US$180+ fora da janela).
+    client = _FakeClient([_item("Pokemon Surging Sparks Booster Box Sealed", "289.99")])
+    B.build_reference([SKU_BOX], {"ssp-booster-box-en": 300.0}, client, "pokemon")
+    assert client.kwargs["min_price"] == 150.0
+
+    # Sem referência TCG não há piso (não inventamos corte).
+    client2 = _FakeClient([_item("Pokemon Surging Sparks Booster Box Sealed", "289.99")])
+    B.build_reference([SKU_BOX], {}, client2, "pokemon")
+    assert client2.kwargs["min_price"] is None
 
 
 # ── escrita/schema ──────────────────────────────────────────────────────────

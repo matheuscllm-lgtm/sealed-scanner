@@ -49,7 +49,12 @@ piso, classificação 100% TCGplayer, nunca inventar preço/URL, entrega via
   set+tipo, ex. "Surging Sparks Elite Trainer Box Code Card E-Delivery"), que
   em SKU barato ou sem referência TCG escapariam do junk-ratio. Gate ganhou
   `DIGITAL_TOKENS` (code card/online code/digital/e-delivery/ptcgo/ptcgl/tcg
-  live…), travado em `test_gate_rejects_digital_code_cards`.
+  live…), travado em `test_gate_rejects_digital_code_cards`. Segunda lição do
+  mesmo probe: a busca ordenada por preço saturava a janela de 50 itens com
+  lixo sub-US$20 (sleeves de ETB, code cards) e SKUs populares saíam "sem
+  anúncio plausível" com o produto real a US$180+ fora da janela → o builder
+  agora usa **piso de busca = 50% da ref TCG** (o mesmo corte do junk-guard;
+  sem ref, sem piso), travado em `test_build_reference_floors_search_at_junk_ratio`.
   Suíte: 354 → **436 testes**, 100% offline.
 - **Backlog registrado:** PriceCharting (vendas realizadas) como 2ª referência
   de venda; join do score de longo prazo do pokemon-longterm-outlook por
