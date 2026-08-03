@@ -160,6 +160,7 @@ def _write_unified(all_rows: list, summaries: list[dict], out_dir: Path, stamp: 
 
 def run(args: argparse.Namespace) -> int:
     config = s.load_yaml(Path(args.config), "config.yaml")
+    game = s.resolve_game(args, config)
     fx_source = s.resolve_fx_rate(config)
     config["currency"]["_source"] = fx_source
     print(f"  [fx] cambio USD/BRL: {fx_source}")
@@ -171,8 +172,15 @@ def run(args: argparse.Namespace) -> int:
     us_reference = ref_data.get("prices", {})
     mock_path = Path(args.mock)
 
-    sources = [x.strip() for x in args.sources.split(",") if x.strip()]
-    print(f"  [orq] fontes: {sources}")
+    # Fontes: --sources explícito > default_sources do PERFIL > default Pokémon.
+    # (O perfil One Piece roda só [liga]: OLX/ML/Amazon têm queries Pokémon
+    # hardcoded — cobertura OP dessas fontes é backlog, não silêncio.)
+    sources_arg = getattr(args, "sources", None)
+    if sources_arg:
+        sources = [x.strip() for x in sources_arg.split(",") if x.strip()]
+    else:
+        sources = [str(x) for x in (config.get("default_sources") or DEFAULT_SOURCES)]
+    print(f"  [orq] jogo: {game} · fontes: {sources}")
 
     all_rows: list = []
     pending: list[tuple[dict, list]] = []
@@ -214,7 +222,9 @@ def run(args: argparse.Namespace) -> int:
               f"{info['elapsed_s']}s")
 
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_dir = SCRIPT_DIR / "results" / f"unified_{stamp}"
+    sub = s.GAME_PROFILES[game]["results_subdir"]
+    results_base = (SCRIPT_DIR / "results" / sub) if sub else (SCRIPT_DIR / "results")
+    out_dir = results_base / f"unified_{stamp}"
     out_dir.mkdir(parents=True, exist_ok=True)
     # Marcador parseável pelo watchdog (grava run.log no dir CERTO, sem
     # heurística de "dir mais novo" que erra sob escrita concorrente).
@@ -229,7 +239,7 @@ def run(args: argparse.Namespace) -> int:
     try:
         meta = {
             "schema": 1,
-            "game": getattr(args, "game", "pokemon"),
+            "game": game,
             "route_name": route.get("name", ""),
             "route_label": route.get("label", ""),
             "sell_reference": route.get("sell_reference", ""),
@@ -284,12 +294,20 @@ def main() -> None:
     from lib.console import harden_stdout
     harden_stdout()  # console Windows cp1252 quebra em títulos Liga/PT-BR
     p = argparse.ArgumentParser(description="Scan unificado multi-fonte (sealed BR -> US)")
-    p.add_argument("--sources", default=",".join(DEFAULT_SOURCES),
-                   help=f"fontes separadas por vírgula (default: {','.join(DEFAULT_SOURCES)})")
-    p.add_argument("--config", default=str(SCRIPT_DIR / "config.yaml"))
-    p.add_argument("--registry", default=str(SCRIPT_DIR / "sku_registry.yaml"))
+    p.add_argument("--game", default="pokemon", choices=sorted(s.GAME_PROFILES),
+                   help="perfil de jogo (define config/registry/fontes/results default)")
+    p.add_argument("--sources", default=None,
+                   help="fontes separadas por vírgula (default: default_sources do perfil; "
+                        f"Pokémon = {','.join(DEFAULT_SOURCES)})")
+    p.add_argument("--config", default=None, help="config.yaml (default: do --game)")
+    p.add_argument("--registry", default=None, help="sku_registry.yaml (default: do --game)")
     p.add_argument("--mock", default=str(SCRIPT_DIR / "mock_data" / "liga_listings.json"))
     args = p.parse_args()
+    profile = s.GAME_PROFILES[args.game]
+    if not args.config:
+        args.config = str(SCRIPT_DIR / profile["config"])
+    if not args.registry:
+        args.registry = str(SCRIPT_DIR / profile["registry"])
     sys.exit(run(args))
 
 

@@ -52,11 +52,23 @@ RESULTS = ROOT / "results"
 OUT_DIR = ROOT / "snapshots"
 REGISTRY = ROOT / "sku_registry.yaml"
 
+# Perfis por jogo (espelho do GAME_PROFILES do scanner — o snapshot é
+# standalone de propósito): raiz de resultados própria por jogo, registry
+# próprio (links TCG), tag/título próprios. Pokémon = paths históricos.
+GAME_PROFILES = {
+    "pokemon": {"results_subdir": "", "registry": "sku_registry.yaml",
+                "tag": "pokemon", "title_suffix": "", "file_infix": ""},
+    "onepiece": {"results_subdir": "onepiece", "registry": "sku_registry_onepiece.yaml",
+                 "tag": "onepiece", "title_suffix": " — One Piece",
+                 "file_infix": "onepiece-"},
+}
 
-def load_tcg_product_ids() -> dict[str, int]:
-    if not REGISTRY.exists():
+
+def load_tcg_product_ids(registry_path: Path | None = None) -> dict[str, int]:
+    path = registry_path or REGISTRY
+    if not path.exists():
         return {}
-    data = yaml.safe_load(REGISTRY.read_text(encoding="utf-8"))
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
     out: dict[str, int] = {}
     for sku in data.get("skus", []) or []:
         sid = sku.get("id")
@@ -69,8 +81,14 @@ def load_tcg_product_ids() -> dict[str, int]:
 TCG_PRODUCT_IDS = load_tcg_product_ids()
 
 
-def latest_unified_dir() -> Path | None:
-    dirs = sorted(RESULTS.glob("unified_*"), key=lambda d: d.stat().st_mtime, reverse=True)
+def results_root_for(game: str) -> Path:
+    sub = GAME_PROFILES[game]["results_subdir"]
+    return RESULTS / sub if sub else RESULTS
+
+
+def latest_unified_dir(results_root: Path | None = None) -> Path | None:
+    root = results_root if results_root is not None else RESULTS
+    dirs = sorted(root.glob("unified_*"), key=lambda d: d.stat().st_mtime, reverse=True)
     return dirs[0] if dirs else None
 
 
@@ -127,11 +145,13 @@ def collect_rows_unified(scan_dir: Path) -> list[dict]:
     return rows
 
 
-def collect_rows_legacy(latest_only: bool = False) -> list[dict]:
+def collect_rows_legacy(latest_only: bool = False,
+                        results_root: Path | None = None) -> list[dict]:
     """Modo legado: agrega os CSVs por bucket (real_opportunities.csv etc.)
     produzidos pelo `sealed_arbitrage_scanner.py` (1 fonte por vez)."""
     rows: list[dict] = []
-    dirs = sorted(RESULTS.glob("*/"))
+    root = results_root if results_root is not None else RESULTS
+    dirs = sorted(root.glob("*/"))
     if latest_only and dirs:
         dirs = [dirs[-1]]
     for d in dirs:
@@ -440,19 +460,35 @@ def main() -> None:
         action="store_true",
         help="(legado, com --all) só a run mais recente por bucket.",
     )
+    ap.add_argument(
+        "--game",
+        default="pokemon",
+        choices=sorted(GAME_PROFILES),
+        help="perfil de jogo: define a raiz de resultados (results/ vs "
+             "results/onepiece/), o registry dos links TCG e a tag/título.",
+    )
     args = ap.parse_args()
+
+    game = args.game
+    profile = GAME_PROFILES[game]
+    global TCG_PRODUCT_IDS
+    if game != "pokemon":
+        # Links TCG do registry do jogo. Só dentro do main(): o dict módulo-level
+        # continua o Pokémon default (testes o monkeypatcham via setitem).
+        TCG_PRODUCT_IDS = load_tcg_product_ids(ROOT / profile["registry"])
+    results_root = results_root_for(game)
 
     legacy = False
     scan_dir_used: Path | None = None
     if args.all:
-        rows = collect_rows_legacy(latest_only=args.latest)
+        rows = collect_rows_legacy(latest_only=args.latest, results_root=results_root)
         legacy = True
         scope = "última run (legado)" if args.latest else "todas as runs em `results/` (legado)"
     else:
-        scan_dir = Path(args.scan_dir) if args.scan_dir else latest_unified_dir()
+        scan_dir = Path(args.scan_dir) if args.scan_dir else latest_unified_dir(results_root)
         if scan_dir is None:
             # Sem unified_* — cai pro legado por-bucket pra não falhar silenciosamente.
-            rows = collect_rows_legacy(latest_only=True)
+            rows = collect_rows_legacy(latest_only=True, results_root=results_root)
             legacy = True
             scope = "última run (legado — sem unified_deals.csv)"
         else:
@@ -468,7 +504,7 @@ def main() -> None:
 
     OUT_DIR.mkdir(exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d-%H%M")
-    out = OUT_DIR / f"scan-{stamp}.md"
+    out = OUT_DIR / f"scan-{profile['file_infix']}{stamp}.md"
 
     groups = group_products(rows)
 
@@ -485,7 +521,7 @@ def main() -> None:
     lines.append("tags:")
     lines.append("  - tcg")
     lines.append("  - arbitragem")
-    lines.append("  - pokemon")
+    lines.append(f"  - {profile['tag']}")
     lines.append("  - selado")
     lines.append("  - scan")
     lines.append(f"date: {datetime.now(timezone.utc).strftime('%Y-%m-%d')}")
@@ -495,7 +531,7 @@ def main() -> None:
     lines.append(f"red: {g_red}")
     lines.append("---")
     lines.append("")
-    lines.append(f"# Scan TCG Sealed — {stamp}")
+    lines.append(f"# Scan TCG Sealed{profile['title_suffix']} — {stamp}")
     lines.append("")
     sources_seen = sorted({src(r) for r in rows})
     lines.append(

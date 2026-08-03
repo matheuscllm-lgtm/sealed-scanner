@@ -62,6 +62,43 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from lib.errors import SourceBlockedError
 
+# ── Perfis por JOGO ─────────────────────────────────────────────────────────
+# Um perfil = arquivos de DADOS (config + registry + referências) + raiz de
+# resultados própria. O pipeline (matcher/margem/classificação) é o MESMO para
+# todos os jogos — zero condicional de jogo na lógica (precedente da frota:
+# isolamento por dados, não por fork de código). Pokémon = arquivos históricos
+# na raiz de sempre; jogo novo = subpasta própria em results/ (o snapshot de um
+# jogo NUNCA pega run do outro).
+GAME_PROFILES: dict[str, dict] = {
+    "pokemon": {
+        "config": "config.yaml",
+        "registry": "sku_registry.yaml",
+        "results_subdir": "",          # results/ (histórico, inalterado)
+        "tag": "pokemon",
+        "label": "Pokémon",
+    },
+    "onepiece": {
+        "config": "config_onepiece.yaml",
+        "registry": "sku_registry_onepiece.yaml",
+        "results_subdir": "onepiece",  # results/onepiece/
+        "tag": "onepiece",
+        "label": "One Piece",
+    },
+}
+
+
+def resolve_game(args, config: dict | None = None) -> str:
+    """Jogo do run: --game > config['game'] > 'pokemon'. `getattr` defensivo —
+    Namespaces antigos (testes/chamadas programáticas) não têm o atributo."""
+    game = getattr(args, "game", None) or (config or {}).get("game") or "pokemon"
+    return game if game in GAME_PROFILES else "pokemon"
+
+
+def results_root_for(game: str, script_dir: Path) -> Path:
+    sub = GAME_PROFILES[game]["results_subdir"]
+    return script_dir / "results" / sub if sub else script_dir / "results"
+
+
 # Idiomas não-ingleses que invalidam o match (vendemos EN no TCGPlayer).
 NON_EN_LANGUAGE_TOKENS = ("japones", "japonesa", "coreano", "coreana", "chines", "chinesa")
 # Padrão de numeração de carta avulsa, ex.: "238/191".
@@ -954,6 +991,7 @@ def load_and_apply_ebay(rows: list, config: dict, script_dir: Path) -> tuple[dic
 
 def run(args: argparse.Namespace) -> int:
     config = load_yaml(Path(args.config), "config.yaml")
+    game = resolve_game(args, config)
     fx_source = resolve_fx_rate(config)
     config["currency"]["_source"] = fx_source
     print(f"  [fx] cambio USD/BRL: {fx_source}")
@@ -1041,8 +1079,9 @@ def run(args: argparse.Namespace) -> int:
         )
 
     # Diretório novo por run — cada scan é fresco, nada de misturar resultados.
+    # Raiz por JOGO (Pokémon = results/ histórico; One Piece = results/onepiece/).
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_dir = SCRIPT_DIR / "results" / stamp
+    out_dir = results_root_for(game, SCRIPT_DIR) / stamp
     out_dir.mkdir(parents=True, exist_ok=True)
 
     for key in buckets:
@@ -1097,16 +1136,23 @@ def main() -> None:
     from lib.console import harden_stdout
     harden_stdout()  # console Windows cp1252 quebra em títulos Liga/PT-BR
     parser = argparse.ArgumentParser(description="TCG Sealed Arbitrage Scanner (Brasil -> EUA)")
+    parser.add_argument("--game", default="pokemon", choices=sorted(GAME_PROFILES),
+                        help="perfil de jogo (define config/registry/results default)")
     parser.add_argument("--source", default="mock",
                         choices=["mock", "amazon", "olx", "mercadolivre", "liga"],
                         help="fonte dos anúncios (default: mock)")
-    parser.add_argument("--config", default=str(SCRIPT_DIR / "config.yaml"),
-                        help="caminho do config.yaml")
-    parser.add_argument("--registry", default=str(SCRIPT_DIR / "sku_registry.yaml"),
-                        help="caminho do sku_registry.yaml")
+    parser.add_argument("--config", default=None,
+                        help="caminho do config.yaml (default: do --game)")
+    parser.add_argument("--registry", default=None,
+                        help="caminho do sku_registry.yaml (default: do --game)")
     parser.add_argument("--mock", default=str(SCRIPT_DIR / "mock_data" / "liga_listings.json"),
                         help="caminho do JSON de anúncios mockados")
     args = parser.parse_args()
+    profile = GAME_PROFILES[args.game]
+    if not args.config:
+        args.config = str(SCRIPT_DIR / profile["config"])
+    if not args.registry:
+        args.registry = str(SCRIPT_DIR / profile["registry"])
     sys.exit(run(args))
 
 
