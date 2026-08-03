@@ -2,7 +2,7 @@
   "_comment": "Gerado por build_us_reference.py a partir de tcgcsv.com (espelho da API do TCGPlayer). NÃO editar à mão — rode o script para refrescar.",
   "reference": "TCGPlayer marketPrice via tcgcsv.com",
   "currency": "USD",
-  "captured_at": "2026-08-03T14:45:07Z",
+  "captured_at": "2026-08-03T19:40:46Z",
   "prices": {
     "op17-booster-box-en": 339.26,
     "op17-booster-pack-en": 24.92,
