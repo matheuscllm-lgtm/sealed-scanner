@@ -60,6 +60,34 @@ sources:
   usa:
     - TCGPlayer
 
+# ── ROTA (onde comprar → para onde vender) ────────────────────────────────
+# Rota = descrição auditável do fluxo real de capital do operador. É DADO de
+# configuração (labels + quais referências carregar), não comportamento: nada
+# aqui muda matching, margem oficial ou classificação (100% TCGplayer).
+# Aparece no banner do scan, no run_meta.json do run e no cabeçalho da entrega.
+route:
+  name: liga_to_ebay_us
+  label: "BR (Liga/OLX/ML/Amazon) → venda eBay US via Probstein · classificação vs TCGplayer"
+  # A referência que CLASSIFICA (GREEN/YELLOW/RED) — não mudar sem decisão do operador.
+  sell_reference: "TCGplayer Market via tcgcsv.com"
+  # Referências EXTRAS do lado de venda — INFORMATIVAS (colunas/links a mais na
+  # entrega; nunca entram na margem oficial nem na classificação).
+  extra_sell_references:
+    ebay:
+      enabled: true
+      # Rótulo honesto: menor anúncio ATIVO é PEDIDA, não venda realizada
+      # (a API de vendidos do eBay é restrita). Sem frete.
+      label: "menor anúncio ativo eBay US (pedida, não venda realizada)"
+      # Gerado por build_ebay_reference.py (gitignored; exige EBAY_CLIENT_ID/
+      # SECRET). AUSENTE = scan roda normal com colunas eBay vazias.
+      reference_file: data/ebay_reference.json
+      # Idade máxima ANTES DE AVISAR (só aviso — informativa, nunca rebaixa).
+      max_age_days: 7
+
+# Caminhos das referências de preço (permite perfis por jogo; ausente = default).
+references:
+  us_file: data/us_reference.json
+
 liga:
   # Usado por --source liga (liga_adapter.py). A Liga bloqueia IP de
   # datacenter no Cloudflare; o adapter tem dois modos para furar isso:

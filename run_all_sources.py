@@ -21,6 +21,7 @@ Uso:
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import time
 import traceback
@@ -165,7 +166,8 @@ def run(args: argparse.Namespace) -> int:
     registry_data = s.load_yaml(Path(args.registry), "sku_registry.yaml")
     registry = s.build_registry(registry_data)
     registry_raw = registry_data.get("skus", [])
-    ref_data = s.load_json(SCRIPT_DIR / "data" / "us_reference.json", "data/us_reference.json")
+    us_ref_rel = (config.get("references") or {}).get("us_file") or "data/us_reference.json"
+    ref_data = s.load_json(SCRIPT_DIR / us_ref_rel, us_ref_rel)
     us_reference = ref_data.get("prices", {})
     mock_path = Path(args.mock)
 
@@ -195,6 +197,10 @@ def run(args: argparse.Namespace) -> int:
             f"GREEN rebaixados p/ YELLOW (conferência). Rode build_us_reference.py p/ refrescar."
         )
 
+    # Lado de VENDA (eBay US via Probstein) — enriquecimento INFORMATIVO, mesmo
+    # caminho único do single-source: preenche colunas ebay_* sem reclassificar.
+    ebay_data, ebay_stats = s.load_and_apply_ebay(all_rows, config, SCRIPT_DIR)
+
     # Conta buckets DEPOIS do rebaixamento (reflete o downgrade no banner/summary).
     summaries: list[dict] = []
     for info, rows in pending:
@@ -216,6 +222,31 @@ def run(args: argparse.Namespace) -> int:
 
     xlsx_path = _write_unified(all_rows, summaries, out_dir, stamp)
 
+    # Sidecar run_meta.json — a ROTA e as referências deste run, legíveis por
+    # snapshot.py (cabeçalho) e pelo painel local. Best-effort: falha aqui não
+    # derruba a entrega (consumidores toleram a ausência em runs antigos).
+    route = config.get("route") or {}
+    try:
+        meta = {
+            "schema": 1,
+            "game": getattr(args, "game", "pokemon"),
+            "route_name": route.get("name", ""),
+            "route_label": route.get("label", ""),
+            "sell_reference": route.get("sell_reference", ""),
+            "sources": sources,
+            "fx": config["currency"]["usd_brl"],
+            "fx_source": fx_source,
+            "us_ref_captured_at": ref_data.get("captured_at", ""),
+            "ebay_ref_captured_at": (ebay_data or {}).get("captured_at", ""),
+            "ebay_stats": {k: v for k, v in ebay_stats.items() if k != "loaded"},
+            "stamp": stamp,
+        }
+        (out_dir / "run_meta.json").write_text(
+            json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+    except Exception as exc:
+        print(f"  [orq] aviso: run_meta.json falhou ({exc}); entrega segue normal.")
+
     # Banner final
     green = sum(s_["green"] for s_ in summaries)
     yellow = sum(s_["yellow"] for s_ in summaries)
@@ -223,6 +254,8 @@ def run(args: argparse.Namespace) -> int:
     print("\n" + "=" * 64)
     print(f"  TCG SEALED — SCAN UNIFICADO ({' + '.join(sources)})")
     print("=" * 64)
+    if route.get("label"):
+        print(f"  Rota           : {route['label']}")
     print(f"  Câmbio USD/BRL : {config['currency']['usd_brl']:.4f}  [{fx_source}]")
     for info in summaries:
         tag = {"ok": "OK", "blocked": "BLOQUEADA", "failed": "FALHOU"}.get(info["status"], info["status"])
