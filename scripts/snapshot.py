@@ -44,6 +44,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 from statistics import median
+from urllib.parse import quote
 
 import yaml
 
@@ -262,9 +263,16 @@ def is_suspect(r: dict) -> bool:
 
 
 def md_link(label: str, url: str) -> str:
+    """Link markdown clicável. Percent-encoda chars inválidos (espaço, aspas,
+    apóstrofo) sem re-encodar %XX existentes — o site Liga One Piece emite URLs
+    com espaço cru no `prod=` e link com espaço não abre a página na entrega
+    (mesmo entre <>, vários renderizadores cortam no espaço). O adapter já
+    sanitiza na coleta (liga_adapter._sanitize_product_url); aqui é a mesma
+    defesa pra CSVs antigos re-snapshotados."""
     if not url:
         return label
-    if any(c in url for c in " ()<>"):
+    url = quote(url, safe="%/?&=:+(),*")
+    if any(c in url for c in "()<>"):
         return f"[{label}](<{url}>)"
     return f"[{label}]({url})"
 

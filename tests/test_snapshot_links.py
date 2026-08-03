@@ -54,3 +54,23 @@ def test_links_cell_only_offer_when_no_tcg():
 
 def test_links_cell_dash_when_empty():
     assert snapshot.links_cell({"URL": "", "SKU": ""}) == "—"
+
+
+def test_md_link_encodes_raw_spaces_and_apostrophe():
+    # Site Liga One Piece emite URL com espaço CRU e apóstrofo no prod=
+    # (visto no 1º scan OP real, 2026-08-03) — link com espaço não abre a
+    # página na entrega. Encodamos sem re-encodar %XX existentes.
+    url = ("https://www.ligaonepiece.com.br/?view=prod/view&pcode=136997"
+           "&prod=(ING) Booster Avulso - OP-17 - The World's Strongest Warriors")
+    cell = snapshot.md_link("oferta", url)
+    assert " " not in cell.split("](")[1]
+    assert "%20" in cell
+    assert "%27" in cell  # apóstrofo
+    assert "pcode=136997" in cell
+
+
+def test_md_link_does_not_double_encode_existing_percent():
+    url = "https://www.ligapokemon.com.br/?view=prod/view&pcode=1&prod=Caixa%20X"
+    cell = snapshot.md_link("oferta", url)
+    assert "%2520" not in cell
+    assert cell == "[oferta](https://www.ligapokemon.com.br/?view=prod/view&pcode=1&prod=Caixa%20X)"

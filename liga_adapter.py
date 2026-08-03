@@ -560,6 +560,15 @@ def _product_url(pcode: int | str, base: str = LIGA_BASE) -> str:
     return f"{base}/?view=prod/view&pcode={pcode}"
 
 
+def _sanitize_product_url(url: str) -> str:
+    """Percent-encoda chars inválidos (espaço, aspas, apóstrofo) sem re-encodar
+    %XX já existentes. O site Liga One Piece emite hrefs com espaços CRUS no
+    `prod=` ("...&prod=(ING) Caixa de Booster - OP-17 - The World's...") — o
+    site Pokémon manda %20 — e URL com espaço quebra o link clicável na entrega
+    (markdown/celular cortam no espaço). `%` fica no safe pra não re-encodar."""
+    return urllib.parse.quote(url, safe="%/?&=:+(),*")
+
+
 def parse_category_products(html_text: str, base: str = LIGA_BASE) -> list[dict]:
     """Extrai (pcode, nome) dos produtos listados numa página de categoria.
 
@@ -580,7 +589,7 @@ def parse_category_products(html_text: str, base: str = LIGA_BASE) -> list[dict]
         out.append({
             "pcode": int(pcode),
             "name": name,
-            "url": base + href_decoded,
+            "url": _sanitize_product_url(base + href_decoded),
         })
     return out
 

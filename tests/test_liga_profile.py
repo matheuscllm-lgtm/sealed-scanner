@@ -37,6 +37,21 @@ def test_parse_category_products_builds_urls_on_profile_base():
     assert out_default[0]["url"].startswith("https://www.ligapokemon.com.br/")
 
 
+def test_parse_category_products_sanitizes_raw_spaces_in_href():
+    # O site OP emite href com espaços/apóstrofo CRUS no prod= (o site Pokémon
+    # manda %20) — URL com espaço quebra o link clicável na entrega (2026-08-03).
+    html = ('<a href="/?view=prod/view&amp;pcode=136997&amp;prod=(ING) Booster '
+            "Avulso - OP-17 - The World's Strongest Warriors\">x</a>")
+    out = L.parse_category_products(html, base="https://www.ligaonepiece.com.br")
+    url = out[0]["url"]
+    assert " " not in url
+    assert "%20" in url and "%27" in url
+    assert url.startswith("https://www.ligaonepiece.com.br/?view=prod/view&pcode=136997")
+    # href já percent-encodado NÃO é re-encodado
+    html_ok = '<a href="/?view=prod/view&amp;pcode=1&amp;prod=Caixa%20X">x</a>'
+    assert "%2520" not in L.parse_category_products(html_ok)[0]["url"]
+
+
 # ── tradução por perfil ─────────────────────────────────────────────────────
 def test_translate_title_default_maps_unchanged():
     t = L._translate_title("(ING) Coleção Treinador Avançado - Fagulhas Impetuosas")
