@@ -55,6 +55,9 @@ piso, classificação 100% TCGplayer, nunca inventar preço/URL, entrega via
   anúncio plausível" com o produto real a US$180+ fora da janela → o builder
   agora usa **piso de busca = 50% da ref TCG** (o mesmo corte do junk-guard;
   sem ref, sem piso), travado em `test_build_reference_floors_search_at_junk_ratio`.
+  Cobertura real medida na validação (2026-08-03, Browse API produção): Pokémon
+  152/205 → **182/205 SKUs ok** · One Piece 48/83 → **55/83** · 0 erro e 0
+  lixo-vencedor em todas as rodadas (resto = "sem anúncio plausível", honesto).
   Suíte: 354 → **436 testes**, 100% offline.
 - **Backlog registrado:** PriceCharting (vendas realizadas) como 2ª referência
   de venda; join do score de longo prazo do pokemon-longterm-outlook por
