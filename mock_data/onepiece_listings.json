@@ -1,0 +1,11 @@
+{
+  "_comment": "Fixture de smoke do PERFIL ONE PIECE (títulos com a forma real dos nomes tcgcsv/Liga). Preços BRL fictícios só p/ exercitar o pipeline offline: python run_all_sources.py --game onepiece --sources mock --mock mock_data/onepiece_listings.json",
+  "scanned_at": "2026-08-03",
+  "listings": [
+    {"id": "OPMOCK-1", "title": "The Time of Battle Booster Box (English) OP-16", "price_brl": 700.0, "seller": "loja#101", "url": "https://www.ligaonepiece.com.br/?view=prod/view&pcode=1", "source": "mock", "qty_avail": 3},
+    {"id": "OPMOCK-2", "title": "Starter Deck 31: RED Monkey.D.Luffy", "price_brl": 120.0, "seller": "loja#102", "url": "https://www.ligaonepiece.com.br/?view=prod/view&pcode=2", "source": "mock", "qty_avail": 8},
+    {"id": "OPMOCK-3", "title": "Double Pack Set Vol. 11", "price_brl": 80.0, "seller": "loja#103", "url": "https://www.ligaonepiece.com.br/?view=prod/view&pcode=3", "source": "mock", "qty_avail": 5},
+    {"id": "OPMOCK-4", "title": "The Time of Battle Booster Box Case (6 caixas)", "price_brl": 4000.0, "seller": "loja#104", "url": "https://www.ligaonepiece.com.br/?view=prod/view&pcode=4", "source": "mock", "qty_avail": 1},
+    {"id": "OPMOCK-5", "title": "Booster Box One Piece Japanese The Time of Battle", "price_brl": 500.0, "seller": "loja#105", "url": "https://www.ligaonepiece.com.br/?view=prod/view&pcode=5", "source": "mock", "qty_avail": 2}
+  ]
+}
