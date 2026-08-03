@@ -155,18 +155,25 @@ TYPE_TRANSLATE_PT_TO_EN = {
 }
 
 
-def _translate_title(name: str) -> str:
+def _translate_title(name: str, set_map: dict | None = None,
+                     type_map: dict | None = None) -> str:
     """Enriquece o título PT da Liga com termos EN para o matcher casar.
 
     '(ING) Coleção Treinador Avançado - Megaevolução 4 - Caos Ascendente'
       -> 'Chaos Rising Elite Trainer Box (English) — original: (ING) ...'
+
+    `set_map`/`type_map` = dicionários PT→EN do PERFIL do jogo (site irmão da
+    plataforma LigaMagic, ex.: Liga One Piece). None (default) = dicionários
+    Pokémon deste módulo — comportamento byte-idêntico ao histórico.
     """
+    set_map = SET_TRANSLATE_PT_TO_EN if set_map is None else set_map
+    type_map = TYPE_TRANSLATE_PT_TO_EN if type_map is None else type_map
     out = name
-    for pt, en in TYPE_TRANSLATE_PT_TO_EN.items():
+    for pt, en in type_map.items():
         if pt.lower() in name.lower():
             out = out.replace(pt, en) if pt in out else out + f" [{en}]"
             break
-    for pt, en in SET_TRANSLATE_PT_TO_EN.items():
+    for pt, en in set_map.items():
         if pt.lower() in name.lower():
             out = out.replace(pt, en) if pt in out else out + f" [{en}]"
             break
@@ -545,16 +552,19 @@ def _decode_price_block(price_div, class_to_digit: dict[str, str]) -> float | No
 # --------------------------------------------------------------------------
 # Parse: listagem de categoria + página de produto
 # --------------------------------------------------------------------------
-def _category_url(categ: int) -> str:
-    return f"{LIGA_BASE}/?view=cards/search&tipo=1&card=categ%3D{categ}+searchprod%3D1"
+def _category_url(categ: int, base: str = LIGA_BASE) -> str:
+    return f"{base}/?view=cards/search&tipo=1&card=categ%3D{categ}+searchprod%3D1"
 
 
-def _product_url(pcode: int | str) -> str:
-    return f"{LIGA_BASE}/?view=prod/view&pcode={pcode}"
+def _product_url(pcode: int | str, base: str = LIGA_BASE) -> str:
+    return f"{base}/?view=prod/view&pcode={pcode}"
 
 
-def parse_category_products(html_text: str) -> list[dict]:
-    """Extrai (pcode, nome) dos produtos listados numa página de categoria."""
+def parse_category_products(html_text: str, base: str = LIGA_BASE) -> list[dict]:
+    """Extrai (pcode, nome) dos produtos listados numa página de categoria.
+
+    `base` = domínio do site LigaMagic do perfil (default: Liga Pokémon) —
+    a URL do produto é montada sobre ele."""
     out: list[dict] = []
     seen = set()
     # href="/?view=prod/view&amp;pcode=NNNN&amp;prod=NAME"
@@ -570,7 +580,7 @@ def parse_category_products(html_text: str) -> list[dict]:
         out.append({
             "pcode": int(pcode),
             "name": name,
-            "url": LIGA_BASE + href_decoded,
+            "url": base + href_decoded,
         })
     return out
 
@@ -594,8 +604,12 @@ def _name_product_type(name: str) -> str:
     return ""
 
 
-def parse_product_page(html_text: str, product_url: str, fetcher: _Fetcher) -> list[dict]:
-    """Extrai todas as ofertas (vendedor/preço/idioma/condição) de uma página de produto."""
+def parse_product_page(html_text: str, product_url: str, fetcher: _Fetcher,
+                       set_map: dict | None = None,
+                       type_map: dict | None = None) -> list[dict]:
+    """Extrai todas as ofertas (vendedor/preço/idioma/condição) de uma página de produto.
+
+    `set_map`/`type_map` = traduções PT→EN do perfil do jogo (None = Pokémon)."""
     from bs4 import BeautifulSoup
 
     soup = BeautifulSoup(html_text, "lxml")
@@ -608,7 +622,7 @@ def parse_product_page(html_text: str, product_url: str, fetcher: _Fetcher) -> l
         product_title_raw = title_tag["content"].split("|")[0].strip()
     elif soup.title:
         product_title_raw = soup.title.get_text().split("|")[0].strip()
-    product_title = _translate_title(product_title_raw)
+    product_title = _translate_title(product_title_raw, set_map=set_map, type_map=type_map)
 
     # Decoder das classes ofuscadas (sprite específico desta página)
     class_to_digit = _build_class_digit_map(html_text, fetcher)
@@ -650,35 +664,55 @@ def parse_product_page(html_text: str, product_url: str, fetcher: _Fetcher) -> l
 # Orquestração
 # --------------------------------------------------------------------------
 def fetch_listings(config: dict) -> list[dict]:
-    """Coleta anúncios de selado da Liga Pokémon.
+    """Coleta anúncios de selado de um site da plataforma LigaMagic.
 
-    Itera pelas categorias em config['liga']['categorias'] (default: todas em
-    DEFAULT_CATEGORIES). Pra cada produto inglês, busca a página e extrai as
-    ofertas de vendedores.
+    Default (config sem overrides) = Liga Pokémon, comportamento histórico
+    byte-idêntico. Um PERFIL de jogo (ex.: config_onepiece.yaml) aponta o site
+    irmão via config['liga']: `base_url` (ex.: ligaonepiece.com.br),
+    `categorias` (IDs categ=N DESSE site), `categorias_nomes` (id→nome p/ log)
+    e `set_translate`/`type_translate` (dicionários PT→EN do jogo).
+
+    ⚠️ `categorias: []` EXPLÍCITO = "IDs deste site ainda não validados":
+    falha honesta (imprime instrução e retorna vazio — a fonte sai como vazia
+    no orquestrador). Chave AUSENTE = default Pokémon de sempre.
     """
     liga_cfg = config.get("liga", {}) or {}
     delay = liga_cfg.get("delay_seconds", 1.0)
     max_products_per_cat = liga_cfg.get("max_products_per_category", 30)
     keep_langs = set(liga_cfg.get("keep_languages") or ["EN"])
-    categories = liga_cfg.get("categorias") or list(DEFAULT_CATEGORIES.keys())
+    base = (liga_cfg.get("base_url") or LIGA_BASE).rstrip("/")
+    cat_names = liga_cfg.get("categorias_nomes") or DEFAULT_CATEGORIES
+    set_map = liga_cfg.get("set_translate")      # None = dicionário Pokémon do módulo
+    type_map = liga_cfg.get("type_translate")    # idem
+
+    categories = liga_cfg.get("categorias")
+    if categories is None:
+        categories = list(DEFAULT_CATEGORIES.keys())
+    if not categories:
+        print(
+            "  [liga] config.liga.categorias está VAZIO — os IDs de categoria "
+            f"de {base} ainda não foram validados (runbook SETUP-VALIDACAO.md §B). "
+            "Nada a coletar (falha honesta, sem chute de categoria)."
+        )
+        return []
 
     fetcher = _make_fetcher(liga_cfg)
     out: list[dict] = []
     seen_pcodes: set[int] = set()
     try:
         for categ in categories:
-            cat_name = DEFAULT_CATEGORIES.get(categ, f"categ={categ}")
+            cat_name = cat_names.get(categ, f"categ={categ}")
             print(f"  [liga] categoria {categ} ({cat_name}) — listando produtos...")
             try:
                 raw = fetcher.get(
-                    _category_url(categ),
+                    _category_url(categ, base=base),
                     render=True, wait_for_selector='a[href*="prod/view"]',
                 )
                 cat_html = raw.decode("utf-8", errors="replace")
             except Exception as exc:
                 print(f"    [aviso] falha ao listar categoria {categ}: {exc}")
                 continue
-            products = parse_category_products(cat_html)
+            products = parse_category_products(cat_html, base=base)
             filtered = [p for p in products if _name_lang(p["name"]) in keep_langs]
             print(f"    produtos: {len(products)} ({len(filtered)} {sorted(keep_langs)})")
             for prod in filtered[:max_products_per_cat]:
@@ -694,7 +728,8 @@ def fetch_listings(config: dict) -> list[dict]:
                 except Exception as exc:
                     print(f"      [aviso] pcode={prod['pcode']} falhou: {exc}")
                     continue
-                listings = parse_product_page(page_html, prod["url"], fetcher)
+                listings = parse_product_page(page_html, prod["url"], fetcher,
+                                              set_map=set_map, type_map=type_map)
                 ptype = _name_product_type(prod["name"])
                 for i, lst in enumerate(listings, 1):
                     lst["id"] = f"LIGA-{prod['pcode']}-{i}"

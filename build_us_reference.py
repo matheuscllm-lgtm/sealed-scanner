@@ -16,8 +16,12 @@ Uso:
     python build_us_reference.py --price-field marketPrice   # default
     python build_us_reference.py --price-field lowPrice
     python build_us_reference.py --price-field midPrice
+    python build_us_reference.py --game onepiece             # perfil One Piece
 
-Categoria Pokémon no TCGPlayer = 3 (constante).
+Categorias tcgcsv/TCGplayer por jogo: Pokémon = 3, One Piece = 68 (catálogo
+EN — mesma categoria usada pelo op_scanner da frota). ⚠️ NÃO confundir com os
+IDs `categ=N` do site da Liga (namespace próprio do site: lá 27 = ETB; no
+tcgcsv 27 = Dragon Ball Masters).
 """
 from __future__ import annotations
 
@@ -60,6 +64,45 @@ SANITY_BANDS_USD: dict[str, tuple[float, float]] = {
     "Tin": (6.0, 200.0),
     "Mini Tin Display": (70.0, 750.0),
 }
+
+# Faixas do perfil ONE PIECE (tcgcsv categoria 68; tipos do registry OP).
+# Mesma filosofia FP-safe: generosas, só pegam pid trocado/variante errada.
+# Conferidas contra os preços reais do tcgcsv na criação do perfil (2026-08)
+# — ex.: OP16 Booster Box market US$204,70.
+SANITY_BANDS_USD_ONEPIECE: dict[str, tuple[float, float]] = {
+    "Booster Box": (40.0, 1500.0),
+    "Booster Pack": (2.0, 80.0),
+    "Sleeved Booster Pack": (2.0, 150.0),
+    "Double Pack Set": (4.0, 150.0),
+    "Double Pack Set Display": (30.0, 900.0),
+    "Starter Deck": (5.0, 500.0),
+    "Starter Deck Display": (30.0, 1500.0),
+    "Extra Booster Box": (40.0, 1500.0),
+    "Extra Booster Pack": (2.0, 80.0),
+}
+
+# Seleção de banda por nome (--bands) — o objeto Pokémon é o MESMO de sempre
+# (conteúdo travado em tests/test_reference_guards.py; não mexer).
+BANDS_BY_GAME: dict[str, dict[str, tuple[float, float]]] = {
+    "pokemon": SANITY_BANDS_USD,
+    "onepiece": SANITY_BANDS_USD_ONEPIECE,
+}
+
+# Perfis por jogo: defaults de registry/saída/categoria/bandas do --game.
+GAME_PROFILES: dict[str, dict] = {
+    "pokemon": {
+        "registry": "sku_registry.yaml",
+        "output": "data/us_reference.json",
+        "category_id": POKEMON_CATEGORY_ID,
+        "bands": "pokemon",
+    },
+    "onepiece": {
+        "registry": "sku_registry_onepiece.yaml",
+        "output": "data/us_reference_onepiece.json",
+        "category_id": 68,   # One Piece Card Game (catálogo EN do TCGplayer)
+        "bands": "onepiece",
+    },
+}
 UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
@@ -72,18 +115,32 @@ def fetch_json(url: str) -> dict:
         return json.loads(resp.read())
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    parser.add_argument("--registry", default=str(SCRIPT_DIR / "sku_registry.yaml"))
-    parser.add_argument("--output", default=str(SCRIPT_DIR / "data" / "us_reference.json"))
+    parser.add_argument("--game", default="pokemon", choices=sorted(GAME_PROFILES),
+                        help="perfil de jogo (define registry/saída/categoria/bandas default)")
+    parser.add_argument("--registry", default=None,
+                        help="caminho do sku_registry (default: do --game)")
+    parser.add_argument("--output", default=None,
+                        help="JSON de saída (default: do --game)")
+    parser.add_argument("--category-id", type=int, default=None,
+                        help="categoria tcgcsv/TCGplayer (default: do --game; Pokémon=3, One Piece=68)")
+    parser.add_argument("--bands", default=None, choices=sorted(BANDS_BY_GAME),
+                        help="conjunto de sanity bands (default: do --game)")
     parser.add_argument(
         "--price-field",
         default="marketPrice",
         choices=["marketPrice", "lowPrice", "midPrice", "highPrice"],
     )
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
-    registry = yaml.safe_load(Path(args.registry).read_text(encoding="utf-8"))
+    profile = GAME_PROFILES[args.game]
+    registry_path = Path(args.registry) if args.registry else SCRIPT_DIR / profile["registry"]
+    output_path = Path(args.output) if args.output else SCRIPT_DIR / profile["output"]
+    category_id = args.category_id if args.category_id is not None else profile["category_id"]
+    bands = BANDS_BY_GAME[args.bands or profile["bands"]]
+
+    registry = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
     skus = registry.get("skus", [])
 
     targets: list[tuple[str, int, int, str]] = []
@@ -103,7 +160,7 @@ def main() -> int:
     # (fail-open). Avisa pra que uma grafia divergente/tipo novo não passe sem
     # sanity-band em silêncio.
     types_seen = {t[3] for t in targets if t[3]}
-    no_band = sorted(t for t in types_seen if t not in SANITY_BANDS_USD)
+    no_band = sorted(t for t in types_seen if t not in bands)
     if no_band:
         print(f"  [aviso] product_type sem sanity-band (não checado): {', '.join(no_band)}")
 
@@ -113,7 +170,7 @@ def main() -> int:
 
     for sku_id, gid, pid, product_type in targets:
         if gid not in prices_cache:
-            url = f"https://tcgcsv.com/tcgplayer/{POKEMON_CATEGORY_ID}/{gid}/prices"
+            url = f"https://tcgcsv.com/tcgplayer/{category_id}/{gid}/prices"
             print(f"  fetch group {gid} ...")
             prices_cache[gid] = fetch_json(url)["results"]
         match = next(
@@ -134,7 +191,7 @@ def main() -> int:
         price = float(price)
         # Guard FP-safe: preço fora da faixa plausível do tipo = pid errado/
         # variante trocada -> NÃO grava (SKU fica sem referência -> RED honesto).
-        band = SANITY_BANDS_USD.get(product_type)
+        band = bands.get(product_type)
         if band is not None and not (band[0] <= price <= band[1]):
             n_out_of_band += 1
             print(
@@ -155,7 +212,7 @@ def main() -> int:
         "captured_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "prices": out,
     }
-    out_path = Path(args.output)
+    out_path = output_path
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(
         json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
