@@ -43,6 +43,13 @@ piso, classificação 100% TCGplayer, nunca inventar preço/URL, entrega via
 - Extras: refresh da `us_reference.json` (estava 31d vencida; 202/205),
   fix da bomba-relógio de data no `test_price_guard`, runbook
   `SETUP-VALIDACAO.md` (chaves eBay §A · Liga OP §B/§C · painel §D).
+- **Validação ao vivo do §A (chaves eBay, mesmo dia):** o primeiro probe real
+  da Browse API revelou uma classe de lixo que o gate não barrava por título —
+  **code cards digitais** (códigos do TCG Online/Live a ~US$0,99 citando
+  set+tipo, ex. "Surging Sparks Elite Trainer Box Code Card E-Delivery"), que
+  em SKU barato ou sem referência TCG escapariam do junk-ratio. Gate ganhou
+  `DIGITAL_TOKENS` (code card/online code/digital/e-delivery/ptcgo/ptcgl/tcg
+  live…), travado em `test_gate_rejects_digital_code_cards`.
   Suíte: 354 → **436 testes**, 100% offline.
 - **Backlog registrado:** PriceCharting (vendas realizadas) como 2ª referência
   de venda; join do score de longo prazo do pokemon-longterm-outlook por

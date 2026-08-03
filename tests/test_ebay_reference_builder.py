@@ -79,6 +79,22 @@ def test_lot_regex_does_not_hit_plain_bundle():
     assert B.LOT_CASE_RE.search("bundle of 3 surging sparks") is not None
 
 
+def test_gate_rejects_digital_code_cards():
+    # Classe observada AO VIVO (validação 2026-08-03): code cards digitais a
+    # US$0,99 citam set+tipo no título e NÃO podem virar referência de venda.
+    assert not B.title_passes_gate(
+        "Pokemon Surging Sparks Booster Box Code Card E-Delivery!", SKU_BOX)
+    assert not B.title_passes_gate(
+        "Pokemon TCG Online Code Card Surging Sparks Booster Box", SKU_BOX)
+    assert not B.title_passes_gate(
+        "Surging Sparks Booster Box code cards digital delivery", SKU_BOX)
+    assert not B.title_passes_gate(
+        "Surging Sparks Booster Box PTCGL online code instant", SKU_BOX)
+    # Título físico limpo continua passando (guard não pode custar cobertura).
+    assert B.title_passes_gate(
+        "Pokemon Surging Sparks Booster Box Factory Sealed", SKU_BOX)
+
+
 # ── seleção do vencedor ─────────────────────────────────────────────────────
 def test_select_lowest_junk_is_counted_never_winner():
     items = [

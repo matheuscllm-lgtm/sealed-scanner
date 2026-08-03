@@ -66,6 +66,16 @@ USED_TOKENS_EN = (
     "opened", "empty", "no packs", "no cards", "no boosters",
     "box only", "resealed", "damaged",
 )
+# Produto DIGITAL (code cards do Pokémon TCG Online/Live etc.): observado AO
+# VIVO na validação de 2026-08-03 — "Surging Sparks Elite Trainer Box Code
+# Card E-Delivery" a US$0,99 passa o gate de set+tipo e, em SKU barato ou sem
+# referência TCG, escaparia do junk-ratio. Nenhum selado físico usa estes
+# termos no nome → substring no título minúsculo é seguro.
+DIGITAL_TOKENS = (
+    "code card", "code cards", "online code", "digital", "e-delivery",
+    "email delivery", "ptcgo", "ptcgl", "tcg live", "tcg online",
+    "no physical", "in-game",
+)
 # Lote/case/multi-unidade: "Lot of 4", "2x", "x2", "Booster Box Case",
 # "Set of 6", "Bundle of 3". NB: "bundle" sozinho é tipo de produto legítimo
 # (Booster Bundle) — só "bundle of" conta. Aplicado no título minúsculo CRU.
@@ -97,6 +107,8 @@ def title_passes_gate(title: str, sku) -> bool:
     if any(m in low for m in NON_EN_MARKERS):
         return False
     if any(m in low for m in GRADED_MARKERS):
+        return False
+    if any(m in low for m in DIGITAL_TOKENS):
         return False
     if LOT_CASE_RE.search(low):
         return False
