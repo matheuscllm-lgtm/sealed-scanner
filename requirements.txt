@@ -18,3 +18,11 @@ numpy>=1.24.0
 # baixar Chromium em ambientes que vão usar só mode=scraperapi/olx/amazon.
 # Pra ativar o modo local:  pip install patchright
 #patchright>=1.40
+
+# Painel local read-only (panel.py) + TestClient da suíte de testes.
+# httpx2 (não httpx): o TestClient do Starlette atual DEPRECIA httpx e pede
+# httpx2 — mesma troca já feita no integrated-scanner da frota (o aviso de
+# deprecação aparece na suíte se instalar httpx no lugar).
+fastapi>=0.110
+uvicorn>=0.29
+httpx2
