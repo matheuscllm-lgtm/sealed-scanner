@@ -3,6 +3,53 @@
 Registro datado de mudanças relevantes. O repo não usa versionamento semântico
 (SemVer); as entradas são por data. Fonte única de estado segue o `README.md`.
 
+## 2026-08-03 — Plataforma de colecionáveis: rotas + referência de VENDA (eBay), perfil One Piece e painel local
+
+Evolução pedida pelo operador ("aplicar a ideia da Skip": scanners → plataforma
+integrada de arbitragem de selados, informando onde comprar E para onde vender).
+Três frentes, todas preservando os invariantes (margem BRUTA fração 0.30, SEM
+piso, classificação 100% TCGplayer, nunca inventar preço/URL, entrega via
+`scripts/snapshot.py`):
+
+- **Rotas + lado de VENDA (eBay US via Probstein):** `lib/ebay_client.py`
+  (Browse API stdlib, category_ids opcional, throttle/retry) +
+  `build_ebay_reference.py` (menor anúncio ATIVO plausível por SKU; gate de
+  título com os termos do registry + guards não-EN/graded/aberto/lote; lixo
+  <50% da ref contado, nunca vencedor; run sem chaves preserva o arquivo
+  anterior intacto). Pipeline ganha 5 colunas eBay INFORMATIVAS (CSV 22→27;
+  `compute_margin` intocado — margem eBay em função separada;
+  `apply_ebay_reference` NUNCA muda classificação, travado em teste). Config
+  ganha bloco `route:` (compra → venda, auditável no banner/run_meta.json/
+  cabeçalho da entrega). Snapshot: 3º link `[eBay]`, colunas `Ref. eBay (R$)`
+  e `Margem vs eBay %`, cabeçalho com Rota + idade/cobertura da referência
+  (contrato de `test_snapshot_links` atualizado de propósito). Rótulo duro:
+  **pedida, não venda realizada; sem frete; nunca classifica**.
+- **Perfil ONE PIECE (expansão de nicho nº 1):** `sku_registry_onepiece.yaml`
+  com 83 SKUs 100% de dados reais do tcgcsv cat 68 (gerados por
+  `scripts/gen_onepiece_registry.py`, rerunnável; Case/DON!!/Dash/Bonus/lotes
+  FORA e contados; autoconsistência 83/83 + anti-contaminação cross-game
+  travadas em teste; colisão PRB-01/PRB-02 achada e corrigida). `--game
+  {pokemon,onepiece}` nos 2 runners + `run_liga_local` + snapshot; resultados
+  em `results/onepiece/`; `config_onepiece.yaml` com `liga.categorias` VAZIO
+  de propósito (falha honesta até validar o site OP — `SETUP-VALIDACAO.md §B`);
+  `data/us_reference_onepiece.json` commitada (83/83 nas bandas OP novas).
+  liga_adapter parametrizado por perfil (base_url/categorias/traduções) com
+  defaults Pokémon byte-idênticos.
+- **Painel local read-only (`panel.py`, FastAPI :8078):** explorar os deals do
+  último scan de cada jogo no navegador (filtros + 3 links por produto), com
+  `/api/products` servido pelo MESMO `group_products` da entrega (fonte
+  única). Nenhum endpoint de escrita; POST /scan é backlog declarado. Deps:
+  fastapi/uvicorn/httpx2.
+- Extras: refresh da `us_reference.json` (estava 31d vencida; 202/205),
+  fix da bomba-relógio de data no `test_price_guard`, runbook
+  `SETUP-VALIDACAO.md` (chaves eBay §A · Liga OP §B/§C · painel §D).
+  Suíte: 354 → **436 testes**, 100% offline.
+- **Backlog registrado:** PriceCharting (vendas realizadas) como 2ª referência
+  de venda; join do score de longo prazo do pokemon-longterm-outlook por
+  productId; selados como 5ª fonte do integrated-scanner; pinagem de categoria
+  eBay via Taxonomy API; cobertura OP em OLX/ML/Amazon; perfis Dragon Ball/
+  Lorcana; POST /scan no painel.
+
 ## 2026-06-27 — Gap 3ª leva: +4 ETBs por personagem do ME01 (Mega Lucario/Gardevoir)
 
 Mapeamento per-produto no tcgcsv das "collection boxes de personagem" do gap
