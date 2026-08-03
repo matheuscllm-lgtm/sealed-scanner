@@ -74,17 +74,23 @@ sessão — funcionou e ainda rendeu 2 endurecimentos de guard (ver abaixo).
 
 ## Pendências (em ordem)
 
-1. **CI do PR #75 nos 2 commits novos** — conferir verde (a suíte local passou:
-   438/438).
-2. **§B — validar a Liga One Piece no PC do operador** (headful; é O bloqueio
-   do scan OP real): descobrir os `categ=N` do site OP, rodar a sonda, colar
-   títulos reais no chat → aí os aliases PT entram no registry. Roteiro
-   completo: `SETUP-VALIDACAO.md §B`. Até lá `config_onepiece.yaml →
-   liga.categorias` fica `[]` de propósito e o scan OP falha honesto.
+1. ~~CI do PR #75~~ ✅ verde (pytest pass nos 3 commits, conferido 2026-08-03
+   na sessão do PC; suíte local também: 438/438).
+2. ~~§B — validar a Liga One Piece no PC do operador~~ ✅ FEITO 2026-08-03 na
+   sessão do PC: categorias `10/21/28/36` validadas no site real (38 Kits e
+   24 Latas fora — sem SKU no registry), `type_translate` ganhou
+   `"Deck Inicial" → "Starter Deck"`, smoke headful ok (preços decodificaram
+   com os templates existentes) e **primeiro scan OP real completo**: 504
+   anúncios → 38 produtos (15 GREEN), com lado de venda eBay (329/340). §A
+   regenerado no PC (182/205) e §C feito (55/83). Tabela de estado atualizada
+   no `SETUP-VALIDACAO.md`.
 3. **Revisar e mergear o PR #75** (decisão do operador; está draft).
 4. Backlog registrado no CLAUDE.md (PriceCharting, score de longo prazo por
    productId, 5ª fonte do integrado, categoria eBay via Taxonomy API, OP em
-   OLX/ML/Amazon, perfis DBZ/Lorcana, POST /scan no painel).
+   OLX/ML/Amazon, perfis DBZ/Lorcana, POST /scan no painel). Novo item vindo
+   do 1º scan OP real: avaliar SKUs para "Kit Colecionável"/"Illustration
+   Box"/"Gift Collection" (aparecem na categ 28/38 e hoje ficam sem match de
+   propósito — só entram com product_id real no tcgcsv).
 
 ## Próximos passos sugeridos para a PRÓXIMA sessão
 

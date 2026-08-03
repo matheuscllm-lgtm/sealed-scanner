@@ -58,22 +58,36 @@ liga:
   mode: local            # Chrome real headful (mesma plataforma LigaMagic)
   headless: false        # Cloudflare da plataforma NÃO clareia em headless
   base_url: https://www.ligaonepiece.com.br
-  # ⚠️ VAZIO DE PROPÓSITO: os IDs `categ=N` do site OP NÃO foram validados
-  # (namespace próprio do site; os IDs do site Pokémon NÃO valem aqui).
-  # Preencher via runbook SETUP-VALIDACAO.md §B; com a lista vazia o adapter
-  # imprime a instrução e a fonte sai vazia (falha honesta, exit 1).
-  categorias: []
-  categorias_nomes: {}
+  # IDs `categ=N` VALIDADOS no site OP em 2026-08-03 (runbook §B, navegação
+  # real no menu Produtos de ligaonepiece.com.br — namespace é POR SITE).
+  # Entram só as categorias com tipo correspondente no registry:
+  #   10 Caixas de Pacotes      → Booster Box / Extra Booster Box
+  #   21 Pacotes Avulsos        → Booster Pack / Extra Booster Pack
+  #   28 Caixas Colecionáveis   → Double Pack Set (DP-xx; divide espaço com
+  #                               Illustration Box/Gift Collection, fora do registry)
+  #   36 Decks Iniciais         → Starter Deck (ST-xx, inclui "Deck Inicial EX")
+  # Descobertas e deixadas FORA (nenhum SKU no registry — não coletar ruído):
+  #   38 Kits Colecionáveis (anniversary/premium sets) · 24 Latas
+  categorias: [10, 21, 28, 36]
+  categorias_nomes:
+    10: "Caixas de Pacotes"
+    21: "Pacotes Avulsos"
+    28: "Caixas Colecionáveis"
+    36: "Decks Iniciais"
   keep_languages: ["EN"]
   max_products_per_category: 30
   delay_seconds: 1.0
   # Traduções PT->EN DESTE jogo (a Bandai não localiza nome de set — set_translate
-  # fica vazio; tipos abaixo = vocabulário da plataforma LigaMagic, validado no
-  # site Pokémon da plataforma, PENDENTE confirmação no site OP):
+  # fica vazio; tipos abaixo = vocabulário CONFIRMADO no site OP em 2026-08-03:
+  # títulos reais "(ING) Caixa de Booster - OP-17 - ...", "(ING) Booster Avulso -
+  # OP-16 - ...", "(ING) Deck Inicial - ST-31 - ...". "Caixa Colecionável" fica
+  # SEM mapa de propósito: o título dos DP já traz "Double Pack Set Vol.N" em EN
+  # e a categoria mistura Illustration Box/Gift Collection — mapear geraria FP.
   set_translate: {}
   type_translate:
     "Caixa de Booster": "Booster Box"
     "Booster Avulso": "Booster Pack"
+    "Deck Inicial": "Starter Deck"
 
 scope:
   include:

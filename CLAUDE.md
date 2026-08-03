@@ -205,11 +205,15 @@ Erros recorrentes (3 famílias — detalhe no manual):
   (a Bandai não localiza nomes; aliases PT só entram com títulos reais da Liga
   OP — nunca deduzidos, lição ASI-Evolve). Autoconsistência 83/83 + anti-
   contaminação cross-game travadas em `tests/test_onepiece_registry.py`.
-- ⚠️ **Estado do coletor OP:** `config_onepiece.yaml → liga.categorias` está
-  **VAZIO de propósito** — os IDs `categ=N` do site OP não foram validados (o
-  namespace é POR SITE: no site Pokémon 27=ETB; no tcgcsv 27=Dragon Ball
-  Masters — nunca confundir os dois). Scan OP real falha HONESTO com instrução
-  até a validação local (`SETUP-VALIDACAO.md §B`). Smoke offline:
+- ✅ **Coletor OP VALIDADO no PC do operador (2026-08-03, §B):** categorias do
+  site OP = `10` Caixas de Pacotes (Booster Box/EB Box), `21` Pacotes Avulsos,
+  `28` Caixas Colecionáveis (é onde vivem os **Double Pack DP-xx**, junto de
+  Illustration Box/Gift Collection que ficam sem match de propósito), `36`
+  Decks Iniciais; `38` Kits Colecionáveis e `24` Latas ficaram FORA (nenhum SKU
+  no registry). Lembrete permanente: o namespace `categ=N` é POR SITE (no site
+  Pokémon 27=ETB; no tcgcsv 27=Dragon Ball Masters — nunca confundir). Os
+  templates de preço do site Pokémon funcionaram inalterados no site OP, e
+  `type_translate` ganhou `"Deck Inicial" → "Starter Deck"`. Smoke offline:
   `python run_all_sources.py --game onepiece --sources mock --mock
   mock_data/onepiece_listings.json`.
 
@@ -267,7 +271,7 @@ panel.py                     🖥️ painel web LOCAL read-only (FastAPI :8078; 
 sku_registry.yaml            catálogo Pokémon (205 SKUs: product_id tcgcsv, set_terms EN+PT, requires_terms)
 sku_registry_onepiece.yaml   catálogo One Piece (83 SKUs seed, 100% dados reais tcgcsv cat 68)
 config.yaml                  perfil Pokémon: câmbio, filtros (SEM piso), deal_criteria, ROTA (route:), referências
-config_onepiece.yaml         perfil One Piece (liga.categorias VAZIO até validação local — falha honesta)
+config_onepiece.yaml         perfil One Piece (categorias 10/21/28/36 validadas no site OP — 2026-08-03, §B)
 lib/                         browser.py (patchright), console.py, env.py, errors.py, firecrawl.py,
                              ebay_client.py (Browse API stdlib, copiado/adaptado da frota)
 scripts/snapshot.py          ⭐ GERADOR CANÔNICO da entrega (--game; tabela agrupada por produto, 3 links)
@@ -341,10 +345,10 @@ Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no
   Duplo Heróis Excelsos Tangela/Komala (2026-07-03) · **plataforma: rotas +
   referência de venda eBay + perfil One Piece + painel local (2026-08-03 —
   entrada detalhada no CHANGELOG)**.
-- **Validações pendentes do operador** (destravam features já prontas —
-  runbook `SETUP-VALIDACAO.md`): §A chaves eBay → colunas de venda; §B Liga
-  One Piece (categorias/sonda/títulos reais → aliases PT no registry OP) →
-  scan OP real; §C referência eBay OP.
+- **Validações §A–§C CONCLUÍDAS em 2026-08-03** (tabela de estado no
+  `SETUP-VALIDACAO.md`): §A chaves eBay (nuvem + PC), §B Liga One Piece
+  (categorias 10/21/28/36 + smoke headful no PC do operador), §C referência
+  eBay OP (55/83). O scan OP real está destravado.
 - **Backlog registrado da plataforma:** PriceCharting (vendas realizadas) como
   2ª referência de venda (campo `pc_url` no registry; parser da frota já provou
   páginas de selado); join do score de longo prazo do `pokemon-longterm-outlook

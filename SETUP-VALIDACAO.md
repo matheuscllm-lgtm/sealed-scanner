@@ -104,7 +104,7 @@ continua sendo a tabela do `scripts/snapshot.py` colada no chat).
 
 | Passo | Estado |
 |---|---|
-| §A chaves eBay + referência Pokémon | ⏳ pendente |
-| §B Liga One Piece (categorias/sonda/títulos reais) | ⏳ pendente |
-| §C referência eBay One Piece | ⏳ pendente (depende de §A) |
+| §A chaves eBay + referência Pokémon | ✅ 2026-08-03 — validado ao vivo na nuvem (182/205 ok, 0 erros) e regenerado no PC (env vars User já existiam) |
+| §B Liga One Piece (categorias/sonda/títulos reais) | ✅ 2026-08-03 — categorias 10/21/28/36 validadas no site real (38 Kits e 24 Latas fora — sem SKU no registry); smoke headful 112 anúncios, 80 match HIGH, tradução "Deck Inicial"→"Starter Deck" adicionada; preços decodificaram com os templates existentes |
+| §C referência eBay One Piece | ✅ 2026-08-03 — 55/83 ok · 28 sem anúncio · 0 erros (no PC) |
 | §D painel local | pronto para usar após qualquer scan |
