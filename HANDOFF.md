@@ -5,7 +5,28 @@
 > Handoff da sessão de nuvem que construiu e validou a plataforma v1. Leia junto
 > com o `CLAUDE.md` (doc canônica, já atualizada) e o `SETUP-VALIDACAO.md` (runbook §A–§D).
 
-## 🎯 PRÓXIMA TAREFA (aberta pelo operador 2026-08-03 — para a sessão do terminal)
+## 🎯 ~~PRÓXIMA TAREFA~~ ✅ RESOLVIDA 2026-08-04 (sessão do terminal no PC)
+
+**Causa raiz (2 camadas, ambas corrigidas e travadas em teste):**
+
+1. **Espaço cru no `prod=`** do href (site OP) → fix `b2d6b06`
+   (percent-encode na coleta `_sanitize_product_url` + defesa em `md_link`).
+2. **Parênteses crus** (`(ING)`, `(Kit Pré-Lançamento)`) na URL dentro de
+   `[oferta](url)`: o `)` cru fecha o link markdown no primeiro parêntese e o
+   renderizador do chat truncava a URL ("não levava em lugar nenhum") → fix
+   `0765881` (`md_link` encoda `( )` → `%28/%29`; teste
+   `test_md_link_encodes_parentheses`). Confirmado pelo operador: era o mesmo
+   sintoma nos selados Pokémon.
+
+**Verificação fim-a-fim 2026-08-04 (navegador do PC, logado):** URL encodada
+abre a página do produto nos DOIS sites — Pokémon (`pcode=133774`, Booster
+Fogo Branco, e `pcode=133198`, Box Zacian, com "Lojas Vendendo") e One Piece
+(`pcode=136936`, Deck ST-32 Roronoa Zoro). NÃO era a classe do fix #39 do
+liga-cards (roteamento `edid` é só na listagem de singles; `?view=prod/view&
+pcode=` segue válido). Suíte: **442 passed**. CSVs antigos não precisam de
+re-scan: o `md_link` do snapshot encoda retroativamente na entrega.
+
+## 🎯 Texto original da tarefa (histórico — aberta pelo operador 2026-08-03)
 
 **Sintoma:** links `[oferta]` da entrega não abrem a página do produto na Liga
 ("gerava links da oferta que não levava em lugar nenhum", relato do operador).
@@ -126,8 +147,9 @@ sessão — funcionou e ainda rendeu 2 endurecimentos de guard (ver abaixo).
    anúncios → 38 produtos (15 GREEN), com lado de venda eBay (329/340). §A
    regenerado no PC (182/205) e §C feito (55/83). Tabela de estado atualizada
    no `SETUP-VALIDACAO.md`.
-3. **🎯 Links de oferta da Liga não abrem** — tarefa aberta pelo operador,
-   roteiro completo na seção 🎯 do topo deste arquivo (exige o PC).
+3. ~~🎯 Links de oferta da Liga não abrem~~ ✅ RESOLVIDO 2026-08-04
+   (fixes `b2d6b06` + `0765881`; verificação fim-a-fim nos 2 sites — ver
+   seção 🎯 do topo).
 4. **Revisar e mergear o PR #75** (decisão do operador; está draft).
 5. Backlog registrado no CLAUDE.md (PriceCharting, score de longo prazo por
    productId, 5ª fonte do integrado, categoria eBay via Taxonomy API, OP em
