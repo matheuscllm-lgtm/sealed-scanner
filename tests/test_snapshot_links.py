@@ -69,6 +69,21 @@ def test_md_link_encodes_raw_spaces_and_apostrophe():
     assert "pcode=136997" in cell
 
 
+def test_md_link_encodes_parentheses():
+    # URLs da Liga têm parênteses crus no prod= ((ING), (Kit Pré-Lançamento)).
+    # Em `[label](url)` o `)` cru fecha o link no primeiro parêntese e o wrap
+    # `<url>` não é respeitado por todo renderizador (oferta truncada no
+    # remote-control, operador 2026-08-04) — tem que virar %28/%29.
+    url = ("https://www.ligapokemon.com.br/?view=prod/view&pcode=133774"
+           "&prod=(ING)%20Booster%20Avulso")
+    cell = snapshot.md_link("oferta", url)
+    dest = cell[len("[oferta]("):-1]
+    assert "(" not in dest and ")" not in dest
+    assert "%28ING%29" in dest
+    assert "<" not in cell and ">" not in cell
+    assert cell.startswith("[oferta](") and cell.endswith(")")
+
+
 def test_md_link_does_not_double_encode_existing_percent():
     url = "https://www.ligapokemon.com.br/?view=prod/view&pcode=1&prod=Caixa%20X"
     cell = snapshot.md_link("oferta", url)

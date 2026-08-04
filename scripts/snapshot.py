@@ -264,16 +264,17 @@ def is_suspect(r: dict) -> bool:
 
 def md_link(label: str, url: str) -> str:
     """Link markdown clicável. Percent-encoda chars inválidos (espaço, aspas,
-    apóstrofo) sem re-encodar %XX existentes — o site Liga One Piece emite URLs
-    com espaço cru no `prod=` e link com espaço não abre a página na entrega
-    (mesmo entre <>, vários renderizadores cortam no espaço). O adapter já
+    apóstrofo, parênteses) sem re-encodar %XX existentes — o site Liga One Piece
+    emite URLs com espaço cru no `prod=` e link com espaço não abre a página na
+    entrega. Parênteses ((ING), (Kit Pré-Lançamento)) também são encodados: em
+    `[label](url)` o `)` cru fecha o link no primeiro parêntese e o wrap `<url>`
+    não é respeitado por todo renderizador (operador viu oferta truncada no
+    remote-control, 2026-08-04) — %28/%29 abre igual no site. O adapter já
     sanitiza na coleta (liga_adapter._sanitize_product_url); aqui é a mesma
     defesa pra CSVs antigos re-snapshotados."""
     if not url:
         return label
-    url = quote(url, safe="%/?&=:+(),*")
-    if any(c in url for c in "()<>"):
-        return f"[{label}](<{url}>)"
+    url = quote(url, safe="%/?&=:+,*")
     return f"[{label}]({url})"
 
 
