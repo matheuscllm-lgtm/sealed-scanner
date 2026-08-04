@@ -5,6 +5,48 @@
 > Handoff da sessão de nuvem que construiu e validou a plataforma v1. Leia junto
 > com o `CLAUDE.md` (doc canônica, já atualizada) e o `SETUP-VALIDACAO.md` (runbook §A–§D).
 
+## 🎯 PRÓXIMA TAREFA (aberta pelo operador 2026-08-03 — para a sessão do terminal)
+
+**Sintoma:** links `[oferta]` da entrega não abrem a página do produto na Liga
+("gerava links da oferta que não levava em lugar nenhum", relato do operador).
+O fix `b2d6b06` já cobriu UM caso (espaço cru no href do site OP →
+percent-encode na coleta e na entrega), mas o relato do operador sugere que há
+mais coisa além do encoding.
+
+⚠️ **A frase do operador chegou CORTADA no chat:** *"os links de oferta podemos
+pegar da liga pokemon como …"* — ele ia indicar o formato certo. **1º passo da
+sessão: pedir ao operador um exemplo de link FUNCIONAL** (com a página do
+produto aberta no navegador, copiar a URL da barra de endereço) para comparar
+com o que está no CSV.
+
+**Roteiro sugerido (PC, com o site alcançável):**
+
+1. **Reproduzir:** abrir o CSV do último scan real
+   (`results/onepiece/unified_*/unified_deals.csv` e um run Pokémon), clicar
+   3–5 URLs da coluna `URL` de cada jogo e anotar o que acontece (abre a
+   página? cai na home? 404?).
+2. **Comparar** com o link funcional fornecido pelo operador e identificar o
+   delta (parâmetro faltando? roteamento novo? encoding?). Precedente da
+   frota: **fix #39 do `liga-cards-scanner`** — a Liga mudou o roteamento das
+   listagens de singles (2026-06) e a URL antiga passou a cair na home; pode
+   ser a mesma classe aqui no `?view=prod/view&pcode=`.
+3. **Corrigir na camada certa:** a coleta já captura o href REAL da página de
+   categoria (`parse_category_products` → `_sanitize_product_url`,
+   `liga_adapter.py:~580-592`) — se faltar parâmetro, **extraí-lo da própria
+   página** (nunca montar URL na mão / nunca inventar); se for só encoding, a
+   defesa retroativa mora em `scripts/snapshot.py::md_link`. CSV antigo com
+   URL irreparável = dizer honesto que re-scan resolve (não "consertar"
+   fabricando link).
+4. **Travar em teste** com href real capturado como fixture — Pokémon e OP em
+   casos separados (o bug pode ser de um site só).
+5. **Verificar fim-a-fim:** scan curto (`run_liga_local.py
+   --max-por-categoria 3` e/ou `--game onepiece`) → clicar os links do
+   snapshot novo → commit + push na MESMA branch (PR #75 segue draft; a
+   correção entra nele).
+
+Nota: o painel (`panel.py`) serve as MESMAS URLs do CSV — consertar a coleta
+conserta entrega e painel de uma vez.
+
 ## Estado atual (resumo de 30 segundos)
 
 A plataforma v1 está **pronta e validada**: o sealed-scanner agora declara a
@@ -84,8 +126,10 @@ sessão — funcionou e ainda rendeu 2 endurecimentos de guard (ver abaixo).
    anúncios → 38 produtos (15 GREEN), com lado de venda eBay (329/340). §A
    regenerado no PC (182/205) e §C feito (55/83). Tabela de estado atualizada
    no `SETUP-VALIDACAO.md`.
-3. **Revisar e mergear o PR #75** (decisão do operador; está draft).
-4. Backlog registrado no CLAUDE.md (PriceCharting, score de longo prazo por
+3. **🎯 Links de oferta da Liga não abrem** — tarefa aberta pelo operador,
+   roteiro completo na seção 🎯 do topo deste arquivo (exige o PC).
+4. **Revisar e mergear o PR #75** (decisão do operador; está draft).
+5. Backlog registrado no CLAUDE.md (PriceCharting, score de longo prazo por
    productId, 5ª fonte do integrado, categoria eBay via Taxonomy API, OP em
    OLX/ML/Amazon, perfis DBZ/Lorcana, POST /scan no painel). Novo item vindo
    do 1º scan OP real: avaliar SKUs para "Kit Colecionável"/"Illustration
@@ -94,11 +138,11 @@ sessão — funcionou e ainda rendeu 2 endurecimentos de guard (ver abaixo).
 
 ## Próximos passos sugeridos para a PRÓXIMA sessão
 
-1. Conferir CI → se vermelho, corrigir; se verde, apresentar o PR ao operador.
-2. Se a sessão for no **PC (terminal)**: executar o §B com o operador (Chrome
-   visível) e destravar o primeiro scan real de One Piece.
-3. Primeiro scan Pokémon real com o lado de venda: refresh das 2 referências +
-   `run_liga_local.py` + snapshot (comandos abaixo).
+1. **A tarefa 🎯 do topo** (links de oferta da Liga) — começa pedindo ao
+   operador o exemplo de link funcional.
+2. Depois dela: operador revisa/mergeia o PR #75 (draft).
+3. Primeiro scan Pokémon completo com o lado de venda: refresh das 2
+   referências + `run_liga_local.py` + snapshot (comandos abaixo).
 
 ## Comandos para continuar (nova sessão)
 
