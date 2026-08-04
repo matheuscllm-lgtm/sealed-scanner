@@ -129,3 +129,28 @@ def test_snapshot_game_profiles_and_roots():
 def test_snapshot_registry_loader_reads_op_registry():
     ids = snapshot.load_tcg_product_ids(ROOT / "sku_registry_onepiece.yaml")
     assert ids.get("op16-booster-box-en") == 689336   # productId REAL (tcgcsv)
+
+
+# ── resolve_cli_game: --game None deixa o game: do --config valer (review PR #75) ──
+
+def test_resolve_cli_game_config_game_key_wins_without_flag():
+    # `--config config_onepiece.yaml` SEM --game tem que resolver onepiece —
+    # antes o default "pokemon" do argparse tornava o game: do config letra
+    # morta e misturava registry Pokémon com config OP (contaminação cross-game).
+    args = argparse.Namespace(game=None, config=str(ROOT / "config_onepiece.yaml"))
+    assert S.resolve_cli_game(args) == "onepiece"
+
+
+def test_resolve_cli_game_defaults_pokemon():
+    args = argparse.Namespace(game=None, config=None)
+    assert S.resolve_cli_game(args) == "pokemon"
+
+
+def test_resolve_cli_game_explicit_flag_conflicting_config_fails():
+    # --game pokemon + config OP = mistura de perfis; falha alto, nunca roda misto.
+    args = argparse.Namespace(game="pokemon", config=str(ROOT / "config_onepiece.yaml"))
+    try:
+        S.resolve_cli_game(args)
+        assert False, "conflito --game x game: do config tinha que falhar"
+    except SystemExit:
+        pass

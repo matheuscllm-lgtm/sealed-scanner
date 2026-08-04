@@ -294,8 +294,9 @@ def main() -> None:
     from lib.console import harden_stdout
     harden_stdout()  # console Windows cp1252 quebra em títulos Liga/PT-BR
     p = argparse.ArgumentParser(description="Scan unificado multi-fonte (sealed BR -> US)")
-    p.add_argument("--game", default="pokemon", choices=sorted(s.GAME_PROFILES),
-                   help="perfil de jogo (define config/registry/fontes/results default)")
+    p.add_argument("--game", default=None, choices=sorted(s.GAME_PROFILES),
+                   help="perfil de jogo (default: game: do --config, senão pokemon; "
+                        "define config/registry/fontes/results)")
     p.add_argument("--sources", default=None,
                    help="fontes separadas por vírgula (default: default_sources do perfil; "
                         f"Pokémon = {','.join(DEFAULT_SOURCES)})")
@@ -303,6 +304,7 @@ def main() -> None:
     p.add_argument("--registry", default=None, help="sku_registry.yaml (default: do --game)")
     p.add_argument("--mock", default=str(SCRIPT_DIR / "mock_data" / "liga_listings.json"))
     args = p.parse_args()
+    args.game = s.resolve_cli_game(args)
     profile = s.GAME_PROFILES[args.game]
     if not args.config:
         args.config = str(SCRIPT_DIR / profile["config"])

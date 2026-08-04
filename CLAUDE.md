@@ -356,4 +356,8 @@ Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no
   selados como 5ª fonte do `integrated-scanner`; pinagem de categoria eBay via
   Taxonomy API; cobertura One Piece em OLX/ML/Amazon; perfis Dragon Ball/
   Lorcana (mesma mecânica de perfil); POST /scan no painel (com guard
-  anti-headful); watchdog por jogo.
+  anti-headful); watchdog por jogo. Minors do review de merge do PR #75
+  (2026-08-04): escapar HTML/validar URL nos dados de anúncio injetados no
+  painel (`panel.py` INDEX_HTML — título de marketplace é input de terceiro);
+  piso de versão p/ `httpx2` no requirements; `#` fora do `safe` do
+  `snapshot.md_link` (latente — nenhuma fonte emite fragmento hoje).

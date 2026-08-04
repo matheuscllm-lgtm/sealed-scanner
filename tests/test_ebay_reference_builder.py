@@ -237,3 +237,56 @@ def test_majority_errors_aborts_without_writing(tmp_path, monkeypatch):
                  "--us-reference", str(tmp_path / "nao_existe.json")])
     assert rc == 1                          # maioria de erros = falha real
     assert out.read_bytes() == before       # e NADA foi gravado por cima
+
+
+def test_limit_skus_smoke_never_overwrites_main_file(tmp_path, monkeypatch):
+    # --limit-skus é SMOKE: um run de N SKUs não pode clobrar a referência
+    # completa anterior (espírito da regra inviolável nº 8). Sai num arquivo
+    # .smoke.json ao lado; o principal fica byte a byte intacto.
+    registry = tmp_path / "reg.yaml"
+    registry.write_text(
+        "skus:\n"
+        "- id: t1\n"
+        "  name: Test Box\n"
+        "  product_type: Booster Box\n"
+        "  set: T\n"
+        "  match: {set_terms: [test], type_terms: [booster box], exclude_terms: []}\n",
+        encoding="utf-8",
+    )
+    out = tmp_path / "ebay_reference.json"
+    out.write_text('{"previous": true}', encoding="utf-8")
+    before = out.read_bytes()
+    monkeypatch.setattr(B, "load_dotenv_if_present", lambda *a, **k: None)
+    monkeypatch.setattr(B, "EbayClient",
+                        lambda *a, **k: _FakeClient([_item("Test Booster Box Sealed", "99.99")]))
+    rc = B.main(["--registry", str(registry), "--output", str(out),
+                 "--us-reference", str(tmp_path / "nao_existe.json"),
+                 "--limit-skus", "1"])
+    assert rc == 0
+    assert out.read_bytes() == before                      # principal intacto
+    smoke = tmp_path / "ebay_reference.smoke.json"
+    assert smoke.exists()                                  # smoke gravado ao lado
+    assert "t1" in json.loads(smoke.read_text(encoding="utf-8"))["entries"]
+
+
+def test_limit_skus_with_force_overwrites_main_file(tmp_path, monkeypatch):
+    registry = tmp_path / "reg.yaml"
+    registry.write_text(
+        "skus:\n"
+        "- id: t1\n"
+        "  name: Test Box\n"
+        "  product_type: Booster Box\n"
+        "  set: T\n"
+        "  match: {set_terms: [test], type_terms: [booster box], exclude_terms: []}\n",
+        encoding="utf-8",
+    )
+    out = tmp_path / "ebay_reference.json"
+    out.write_text('{"previous": true}', encoding="utf-8")
+    monkeypatch.setattr(B, "load_dotenv_if_present", lambda *a, **k: None)
+    monkeypatch.setattr(B, "EbayClient",
+                        lambda *a, **k: _FakeClient([_item("Test Booster Box Sealed", "99.99")]))
+    rc = B.main(["--registry", str(registry), "--output", str(out),
+                 "--us-reference", str(tmp_path / "nao_existe.json"),
+                 "--limit-skus", "1", "--force"])
+    assert rc == 0
+    assert "t1" in json.loads(out.read_text(encoding="utf-8"))["entries"]

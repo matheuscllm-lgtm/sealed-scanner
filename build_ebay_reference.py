@@ -263,6 +263,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--category-ids", default="",
                     help="IDs de categoria eBay (default: SEM filtro — não chutamos ID de selados)")
     ap.add_argument("--limit-skus", type=int, default=0, help="só os N primeiros SKUs (smoke)")
+    ap.add_argument("--force", action="store_true",
+                    help="com --limit-skus, sobrescreve a referência principal "
+                         "(default: smoke sai em *.smoke.json e preserva a completa)")
     ap.add_argument("--limit", type=int, default=50, help="anúncios por busca (default 50)")
     ap.add_argument("--delay", type=float, default=None,
                     help=f"segundos entre chamadas (default {REQUEST_DELAY_S})")
@@ -314,10 +317,19 @@ def main(argv: list[str] | None = None) -> int:
         print("=" * 64)
         return 1
 
-    write_reference(output_path, entries, counts)
+    # --limit-skus é SMOKE: N entradas jamais clobram a referência COMPLETA
+    # anterior (espírito da regra inviolável nº 8) — sai em *.smoke.json ao
+    # lado; --force sobrescreve de propósito. Review do PR #75.
+    target_path = output_path
+    if args.limit_skus and output_path.exists() and not args.force:
+        target_path = output_path.with_suffix(".smoke.json")
+        print(f"  [smoke] --limit-skus {args.limit_skus}: referência completa "
+              f"preservada em {output_path.name}; smoke vai em "
+              f"{target_path.name} (use --force p/ sobrescrever).")
+    write_reference(target_path, entries, counts)
     print("=" * 64)
     print("  REFERÊNCIA eBay (lado de VENDA) gravada")
-    print(f"  Arquivo : {output_path}")
+    print(f"  Arquivo : {target_path}")
     print(f"  SKUs    : {counts['ok']} ok · {counts['sem_anuncio']} sem anúncio · "
           f"{counts['so_lixo']} só lixo · {counts['erro']} erro")
     print("  Lembrete: é PEDIDA (anúncio ativo), não venda realizada — coluna")

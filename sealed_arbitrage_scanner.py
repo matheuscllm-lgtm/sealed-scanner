@@ -94,6 +94,27 @@ def resolve_game(args, config: dict | None = None) -> str:
     return game if game in GAME_PROFILES else "pokemon"
 
 
+def resolve_cli_game(args) -> str:
+    """Jogo efetivo na ENTRADA do CLI: --game explícito > `game:` do --config
+    explícito > 'pokemon'. Sem isto, o default "pokemon" do argparse tornava o
+    `game:` do config letra morta: `--config config_onepiece.yaml` sem --game
+    carregava config OP com registry Pokémon e gravava em results/ (raiz
+    Pokémon) — contaminação cross-game (review do PR #75). Conflito explícito
+    entre --game e o `game:` do config = SystemExit; nunca roda perfil misto."""
+    cfg_game = None
+    cfg_path = getattr(args, "config", None)
+    if cfg_path:
+        cfg_game = (load_yaml(Path(cfg_path), "config.yaml") or {}).get("game")
+    flag = getattr(args, "game", None)
+    if flag and cfg_game and cfg_game in GAME_PROFILES and flag != cfg_game:
+        raise SystemExit(
+            f"--game {flag} conflita com `game: {cfg_game}` do config {cfg_path} — "
+            "escolha um perfil só (mistura cross-game é proibida)."
+        )
+    game = flag or cfg_game or "pokemon"
+    return game if game in GAME_PROFILES else "pokemon"
+
+
 def results_root_for(game: str, script_dir: Path) -> Path:
     sub = GAME_PROFILES[game]["results_subdir"]
     return script_dir / "results" / sub if sub else script_dir / "results"
@@ -1136,8 +1157,9 @@ def main() -> None:
     from lib.console import harden_stdout
     harden_stdout()  # console Windows cp1252 quebra em títulos Liga/PT-BR
     parser = argparse.ArgumentParser(description="TCG Sealed Arbitrage Scanner (Brasil -> EUA)")
-    parser.add_argument("--game", default="pokemon", choices=sorted(GAME_PROFILES),
-                        help="perfil de jogo (define config/registry/results default)")
+    parser.add_argument("--game", default=None, choices=sorted(GAME_PROFILES),
+                        help="perfil de jogo (default: game: do --config, senão pokemon; "
+                             "define config/registry/results)")
     parser.add_argument("--source", default="mock",
                         choices=["mock", "amazon", "olx", "mercadolivre", "liga"],
                         help="fonte dos anúncios (default: mock)")
@@ -1148,6 +1170,7 @@ def main() -> None:
     parser.add_argument("--mock", default=str(SCRIPT_DIR / "mock_data" / "liga_listings.json"),
                         help="caminho do JSON de anúncios mockados")
     args = parser.parse_args()
+    args.game = resolve_cli_game(args)
     profile = GAME_PROFILES[args.game]
     if not args.config:
         args.config = str(SCRIPT_DIR / profile["config"])
