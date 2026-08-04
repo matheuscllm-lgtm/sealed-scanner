@@ -29,6 +29,10 @@ credentials.json
 results/
 .config_local_run.yaml
 
+# Referência eBay (lado de venda): dado volátil de PEDIDA, só gerável onde há
+# EBAY_CLIENT_ID/SECRET — nunca versionar (a us_reference.json continua versionada)
+data/ebay_reference*.json
+
 # Local-only operational / strategy notes (kept on disk, not published)
 snapshots/
 GOALS.md

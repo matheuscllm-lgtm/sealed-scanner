@@ -62,6 +62,64 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from lib.errors import SourceBlockedError
 
+# ── Perfis por JOGO ─────────────────────────────────────────────────────────
+# Um perfil = arquivos de DADOS (config + registry + referências) + raiz de
+# resultados própria. O pipeline (matcher/margem/classificação) é o MESMO para
+# todos os jogos — zero condicional de jogo na lógica (precedente da frota:
+# isolamento por dados, não por fork de código). Pokémon = arquivos históricos
+# na raiz de sempre; jogo novo = subpasta própria em results/ (o snapshot de um
+# jogo NUNCA pega run do outro).
+GAME_PROFILES: dict[str, dict] = {
+    "pokemon": {
+        "config": "config.yaml",
+        "registry": "sku_registry.yaml",
+        "results_subdir": "",          # results/ (histórico, inalterado)
+        "tag": "pokemon",
+        "label": "Pokémon",
+    },
+    "onepiece": {
+        "config": "config_onepiece.yaml",
+        "registry": "sku_registry_onepiece.yaml",
+        "results_subdir": "onepiece",  # results/onepiece/
+        "tag": "onepiece",
+        "label": "One Piece",
+    },
+}
+
+
+def resolve_game(args, config: dict | None = None) -> str:
+    """Jogo do run: --game > config['game'] > 'pokemon'. `getattr` defensivo —
+    Namespaces antigos (testes/chamadas programáticas) não têm o atributo."""
+    game = getattr(args, "game", None) or (config or {}).get("game") or "pokemon"
+    return game if game in GAME_PROFILES else "pokemon"
+
+
+def resolve_cli_game(args) -> str:
+    """Jogo efetivo na ENTRADA do CLI: --game explícito > `game:` do --config
+    explícito > 'pokemon'. Sem isto, o default "pokemon" do argparse tornava o
+    `game:` do config letra morta: `--config config_onepiece.yaml` sem --game
+    carregava config OP com registry Pokémon e gravava em results/ (raiz
+    Pokémon) — contaminação cross-game (review do PR #75). Conflito explícito
+    entre --game e o `game:` do config = SystemExit; nunca roda perfil misto."""
+    cfg_game = None
+    cfg_path = getattr(args, "config", None)
+    if cfg_path:
+        cfg_game = (load_yaml(Path(cfg_path), "config.yaml") or {}).get("game")
+    flag = getattr(args, "game", None)
+    if flag and cfg_game and cfg_game in GAME_PROFILES and flag != cfg_game:
+        raise SystemExit(
+            f"--game {flag} conflita com `game: {cfg_game}` do config {cfg_path} — "
+            "escolha um perfil só (mistura cross-game é proibida)."
+        )
+    game = flag or cfg_game or "pokemon"
+    return game if game in GAME_PROFILES else "pokemon"
+
+
+def results_root_for(game: str, script_dir: Path) -> Path:
+    sub = GAME_PROFILES[game]["results_subdir"]
+    return script_dir / "results" / sub if sub else script_dir / "results"
+
+
 # Idiomas não-ingleses que invalidam o match (vendemos EN no TCGPlayer).
 NON_EN_LANGUAGE_TOKENS = ("japones", "japonesa", "coreano", "coreana", "chines", "chinesa")
 # Padrão de numeração de carta avulsa, ex.: "238/191".
@@ -295,6 +353,23 @@ def load_json(path: Path, label: str) -> dict:
         sys.exit(2)
 
 
+def load_json_optional(path: Path) -> dict | None:
+    """Como load_json, mas arquivo AUSENTE/ilegível é condição esperada -> None.
+
+    Usado pela referência eBay (lado de venda, informativa): sem o arquivo o
+    scan roda normal, só sem as colunas eBay — nunca sys.exit (o load_json
+    clássico derrubaria o run por causa de um dado opcional)."""
+    if not path.exists():
+        return None
+    try:
+        with path.open(encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (json.JSONDecodeError, OSError) as exc:
+        print(f"  [aviso] referência opcional ilegível ({path}): {exc} — ignorada.")
+        return None
+    return data if isinstance(data, dict) else None
+
+
 # --------------------------------------------------------------------------
 # Modelos
 # --------------------------------------------------------------------------
@@ -349,6 +424,15 @@ class ScanRow:
     main_risk: str = ""
     recommended_action: str = ""
     reject_reason: str = ""
+    # ── Lado de VENDA (eBay US via Probstein) — INFORMATIVO ──────────────
+    # Preenchido por apply_ebay_reference() DEPOIS da classificação, a partir
+    # do data/ebay_reference.json (menor anúncio ATIVO = pedida, não venda
+    # realizada). NUNCA entra em deal_confidence/bucket/margem oficial.
+    ebay_price_usd: float | None = None
+    ebay_price_brl: float | None = None
+    ebay_margin_pct: float | None = None   # (eBay_BRL - BR) / BR — bruta, informativa
+    ebay_url: str = ""
+    ebay_status: str = ""             # ok / sem_referencia_ebay / status do builder
 
 
 # --------------------------------------------------------------------------
@@ -500,6 +584,18 @@ def compute_margin(price_brl: float, us_usd: float, config: dict) -> dict:
         "total_margin_pct": round(total_margin, 4),
         "us_discount_pct": round(us_discount, 4),
     }
+
+
+def compute_ebay_margin(price_brl: float, ebay_usd: float, fx: float) -> tuple[float, float]:
+    """Margem BRUTA vs o menor anúncio ativo do eBay US — INFORMATIVA.
+
+    Função SEPARADA de compute_margin de propósito: o contrato de compute_margin
+    (exatamente 4 chaves, travado em test_gross_only) não muda. Mesma convenção
+    ROI (lucro sobre o capital de compra), mesmo zero-guard, nenhuma taxa
+    embutida. Retorna (ebay_price_brl, ebay_margin_frac)."""
+    ebay_brl = ebay_usd * fx
+    margin = (ebay_brl - price_brl) / price_brl if price_brl else 0.0
+    return round(ebay_brl, 2), round(margin, 4)
 
 
 # --------------------------------------------------------------------------
@@ -658,6 +754,13 @@ CSV_COLUMNS = [
     ("gross_profit_brl", "Lucro bruto (R$)"),
     ("total_margin_pct", "Margem total %"),
     ("us_discount_pct", "Mais barato que US %"),
+    # Lado de VENDA (eBay US) — colunas INFORMATIVAS (pedida, não venda
+    # realizada); nunca mudam a classificação, que segue 100% TCGplayer.
+    ("ebay_price_usd", "eBay menor anúncio (US$)"),
+    ("ebay_price_brl", "eBay menor anúncio (R$)"),
+    ("ebay_margin_pct", "Margem vs eBay %"),
+    ("ebay_url", "eBay URL"),
+    ("ebay_status", "Ref. eBay status"),
     ("match_confidence", "Confiança do match"),
     ("deal_confidence", "Confiança do deal"),
     ("main_risk", "Risco principal"),
@@ -670,7 +773,7 @@ def cell_value(row: ScanRow, key: str):
     val = getattr(row, key)
     if val is None:
         return ""
-    if key in ("total_margin_pct", "us_discount_pct"):
+    if key in ("total_margin_pct", "us_discount_pct", "ebay_margin_pct"):
         return f"{val * 100:.2f}"
     return val
 
@@ -745,6 +848,13 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path) -> boo
         ("Custos operacionais", "fora do scanner (operador calcula por fora)"),
         ("Margem líquida", "não calculada — só margem bruta"),
     ]
+    route_label = (config.get("route") or {}).get("label")
+    if route_label:
+        assumptions.insert(0, ("Rota (compra → venda)", route_label))
+    assumptions.append((
+        "Ref. venda eBay",
+        "informativa (menor anúncio ATIVO = pedida, não venda realizada); nunca classifica",
+    ))
     for label, value in assumptions:
         ws.append([label, value])
     ws.column_dimensions["A"].width = 32
@@ -821,8 +931,88 @@ def apply_freshness_downgrade(rows: list, ref_data: dict, config: dict) -> int |
     return ref_age
 
 
+# --------------------------------------------------------------------------
+# Lado de VENDA (eBay US) — enriquecimento INFORMATIVO pós-classificação
+# --------------------------------------------------------------------------
+def ebay_reference_settings(config: dict) -> dict:
+    """Bloco route.extra_sell_references.ebay do config, com defaults seguros.
+
+    Config sem o bloco = comportamento de sempre (tenta o arquivo default;
+    ausente -> no-op). `enabled: false` desliga explicitamente."""
+    route = config.get("route") or {}
+    ebay = (route.get("extra_sell_references") or {}).get("ebay") or {}
+    return {
+        "enabled": bool(ebay.get("enabled", True)),
+        "reference_file": ebay.get("reference_file") or "data/ebay_reference.json",
+        "label": ebay.get("label") or "menor anúncio ativo eBay US (pedida, não venda realizada)",
+        "max_age_days": ebay.get("max_age_days", 7),
+    }
+
+
+def apply_ebay_reference(rows: list, ebay_data: dict | None, config: dict) -> dict:
+    """Anexa a referência do lado de VENDA (eBay US) às linhas com match HIGH.
+
+    Regra dura: NUNCA muda deal_confidence/bucket/main_risk/reject_reason —
+    a classificação segue 100% TCGplayer. Só preenche os campos ebay_* (pedida,
+    não venda realizada; margem bruta informativa vs o capital de compra).
+    Muta `rows` in-place; retorna contadores p/ o banner (auditável)."""
+    if not ebay_data:
+        return {"loaded": False}
+    entries = ebay_data.get("entries") or {}
+    stats = {"loaded": True, "ok": 0, "sem": 0, "outros": 0,
+             "age_days": reference_age_days(ebay_data.get("captured_at"))}
+    fx = config["currency"]["usd_brl"]
+    for row in rows:
+        if not row.sku_id:            # NONE/REVIEW: sem SKU único, sem referência
+            continue
+        entry = entries.get(row.sku_id)
+        if entry is None:
+            row.ebay_status = "sem_referencia_ebay"
+            stats["sem"] += 1
+            continue
+        status = entry.get("status") or ""
+        if status == "ok" and entry.get("usd"):
+            row.ebay_price_usd = float(entry["usd"])
+            row.ebay_url = entry.get("url") or ""
+            row.ebay_status = "ok"
+            ebay_brl, ebay_margin = compute_ebay_margin(row.price_brl, row.ebay_price_usd, fx)
+            row.ebay_price_brl = ebay_brl
+            row.ebay_margin_pct = ebay_margin
+            stats["ok"] += 1
+        else:
+            row.ebay_status = status or "sem_referencia_ebay"
+            stats["outros"] += 1
+    return stats
+
+
+def load_and_apply_ebay(rows: list, config: dict, script_dir: Path) -> tuple[dict | None, dict]:
+    """Caminho ÚNICO (single-source e orquestrador): carrega o ebay_reference
+    do config (opcional — ausente = no-op honesto) e enriquece as linhas.
+    Retorna (ebay_data, stats) e imprime UMA linha auditável de status."""
+    settings = ebay_reference_settings(config)
+    if not settings["enabled"]:
+        print("  [ebay] referência de venda desligada no config (route.extra_sell_references.ebay.enabled=false)")
+        return None, {"loaded": False}
+    ebay_data = load_json_optional(script_dir / settings["reference_file"])
+    stats = apply_ebay_reference(rows, ebay_data, config)
+    if not stats.get("loaded"):
+        print(f"  [ebay] sem referência de venda ({settings['reference_file']} ausente) — "
+              "colunas eBay vazias; rode build_ebay_reference.py p/ preencher (informativa).")
+        return None, stats
+    age = stats.get("age_days")
+    age_txt = f"capturada há {age}d" if age is not None else "idade desconhecida"
+    print(f"  [ebay] lado de venda: {settings['label']} — "
+          f"{stats['ok']} ok / {stats['sem']} sem ref / {stats['outros']} outros · {age_txt}")
+    max_age = settings["max_age_days"]
+    if age is not None and max_age is not None and age > max_age:
+        print(f"  [ebay][aviso] referência eBay tem {age}d (> {max_age}) — é informativa "
+              "(nada é rebaixado), mas rode build_ebay_reference.py p/ refrescar.")
+    return ebay_data, stats
+
+
 def run(args: argparse.Namespace) -> int:
     config = load_yaml(Path(args.config), "config.yaml")
+    game = resolve_game(args, config)
     fx_source = resolve_fx_rate(config)
     config["currency"]["_source"] = fx_source
     print(f"  [fx] cambio USD/BRL: {fx_source}")
@@ -858,8 +1048,10 @@ def run(args: argparse.Namespace) -> int:
         return 1
 
     # Referência US (TCGPlayer via tcgcsv.com) — independente da fonte BR.
-    # Rode sealed/build_us_reference.py para refrescar os preços.
-    ref_data = load_json(SCRIPT_DIR / "data" / "us_reference.json", "data/us_reference.json")
+    # Rode sealed/build_us_reference.py para refrescar os preços. O caminho é
+    # configurável (references.us_file) p/ perfis por jogo; ausente = default.
+    us_ref_rel = (config.get("references") or {}).get("us_file") or "data/us_reference.json"
+    ref_data = load_json(SCRIPT_DIR / us_ref_rel, us_ref_rel)
     us_reference = ref_data.get("prices", {})
 
     rows: list[ScanRow] = []
@@ -893,6 +1085,10 @@ def run(args: argparse.Namespace) -> int:
             f"rebaixados p/ YELLOW (conferência). Rode build_us_reference.py p/ refrescar."
         )
 
+    # Lado de VENDA (eBay US via Probstein) — enriquecimento INFORMATIVO:
+    # preenche as colunas ebay_* sem tocar em classificação/margem oficial.
+    load_and_apply_ebay(rows, config, SCRIPT_DIR)
+
     buckets = {"real_opportunities": [], "review_required": [], "rejected": []}
     for row in rows:
         buckets[row.bucket].append(row)
@@ -904,8 +1100,9 @@ def run(args: argparse.Namespace) -> int:
         )
 
     # Diretório novo por run — cada scan é fresco, nada de misturar resultados.
+    # Raiz por JOGO (Pokémon = results/ histórico; One Piece = results/onepiece/).
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_dir = SCRIPT_DIR / "results" / stamp
+    out_dir = results_root_for(game, SCRIPT_DIR) / stamp
     out_dir.mkdir(parents=True, exist_ok=True)
 
     for key in buckets:
@@ -919,6 +1116,9 @@ def run(args: argparse.Namespace) -> int:
     print("  TCG SEALED ARBITRAGE SCANNER")
     print("=" * 64)
     print(f"  Fonte             : {source_desc}")
+    route_label = (config.get("route") or {}).get("label")
+    if route_label:
+        print(f"  Rota              : {route_label}")
     print(f"  Referência US     : {', '.join(config['sources']['usa'])}")
     print(f"  Câmbio USD/BRL    : {config['currency']['usd_brl']:.4f}  [{config['currency'].get('_source', 'manual')}]")
     print(f"  Anúncios lidos    : {len(rows)}")
@@ -957,16 +1157,25 @@ def main() -> None:
     from lib.console import harden_stdout
     harden_stdout()  # console Windows cp1252 quebra em títulos Liga/PT-BR
     parser = argparse.ArgumentParser(description="TCG Sealed Arbitrage Scanner (Brasil -> EUA)")
+    parser.add_argument("--game", default=None, choices=sorted(GAME_PROFILES),
+                        help="perfil de jogo (default: game: do --config, senão pokemon; "
+                             "define config/registry/results)")
     parser.add_argument("--source", default="mock",
                         choices=["mock", "amazon", "olx", "mercadolivre", "liga"],
                         help="fonte dos anúncios (default: mock)")
-    parser.add_argument("--config", default=str(SCRIPT_DIR / "config.yaml"),
-                        help="caminho do config.yaml")
-    parser.add_argument("--registry", default=str(SCRIPT_DIR / "sku_registry.yaml"),
-                        help="caminho do sku_registry.yaml")
+    parser.add_argument("--config", default=None,
+                        help="caminho do config.yaml (default: do --game)")
+    parser.add_argument("--registry", default=None,
+                        help="caminho do sku_registry.yaml (default: do --game)")
     parser.add_argument("--mock", default=str(SCRIPT_DIR / "mock_data" / "liga_listings.json"),
                         help="caminho do JSON de anúncios mockados")
     args = parser.parse_args()
+    args.game = resolve_cli_game(args)
+    profile = GAME_PROFILES[args.game]
+    if not args.config:
+        args.config = str(SCRIPT_DIR / profile["config"])
+    if not args.registry:
+        args.registry = str(SCRIPT_DIR / profile["registry"])
     sys.exit(run(args))
 
 

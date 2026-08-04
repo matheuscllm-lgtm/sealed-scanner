@@ -84,7 +84,10 @@ def main() -> int:
     from lib.console import harden_stdout
     harden_stdout()
 
-    p = argparse.ArgumentParser(description="Scanner da Liga Pokémon — modo local (Chrome real).")
+    p = argparse.ArgumentParser(description="Scanner da Liga (plataforma LigaMagic) — modo local (Chrome real).")
+    p.add_argument("--game", default="pokemon", choices=["pokemon", "onepiece"],
+                   help="perfil de jogo: pokemon (Liga Pokémon, default) ou onepiece "
+                        "(Liga One Piece — exige categorias validadas, ver SETUP-VALIDACAO.md §B)")
     p.add_argument("--categorias", default="", help="Lista CSV de IDs de categoria (ex: 10,14,21,27).")
     p.add_argument("--max-por-categoria", type=int, default=None, help="Teto de produtos por categoria.")
     p.add_argument("--janela", action=argparse.BooleanOptionalAction, default=True,
@@ -101,9 +104,11 @@ def main() -> int:
     if not args.skip_check and not check_environment():
         return 1
 
-    # Monta config temporário com overrides do usuário
+    # Monta config temporário com overrides do usuário, a partir do config do
+    # PERFIL do jogo (pokemon = config.yaml; onepiece = config_onepiece.yaml).
     import yaml  # type: ignore[import-untyped]
-    base_cfg_path = SEALED / "config.yaml"
+    profile_cfg = {"pokemon": "config.yaml", "onepiece": "config_onepiece.yaml"}[args.game]
+    base_cfg_path = SEALED / profile_cfg
     cfg = yaml.safe_load(base_cfg_path.read_text(encoding="utf-8"))
     liga_cfg = cfg.setdefault("liga", {})
     liga_cfg["mode"] = "local"
@@ -116,18 +121,20 @@ def main() -> int:
     tmp_cfg = SEALED / ".config_local_run.yaml"
     tmp_cfg.write_text(yaml.safe_dump(cfg, allow_unicode=True, sort_keys=False), encoding="utf-8")
 
-    print("\n== Iniciando scan da Liga (modo local — Chrome real) ==")
+    print(f"\n== Iniciando scan da Liga (modo local — Chrome real) · jogo: {args.game} ==")
+    print(f"  Site             : {liga_cfg.get('base_url') or 'https://www.ligapokemon.com.br'}")
     print(f"  Categorias       : {liga_cfg.get('categorias')}")
     print(f"  Máx por categoria: {liga_cfg.get('max_products_per_category')}")
     print(f"  Janela visível   : {args.janela}")
     print()
 
-    # run_all_sources grava a saída canônica results/unified_<stamp>/ — é o que
-    # snapshot.py lê por default. O standalone (results/<stamp>/ por-bucket) faria
-    # o snapshot entregar a run unified_* ANTERIOR como se fosse o scan fresco.
+    # run_all_sources grava a saída canônica results/[<jogo>/]unified_<stamp>/ —
+    # é o que snapshot.py (com o mesmo --game) lê por default. O standalone
+    # (results/<stamp>/ por-bucket) faria o snapshot entregar a run unified_*
+    # ANTERIOR como se fosse o scan fresco.
     rc = subprocess.call(
         [sys.executable, str(SEALED / "run_all_sources.py"),
-         "--sources", "liga", "--config", str(tmp_cfg)],
+         "--game", args.game, "--sources", "liga", "--config", str(tmp_cfg)],
         cwd=ROOT,
     )
     if rc != 0:
@@ -136,10 +143,11 @@ def main() -> int:
     if args.snapshot:
         print("\n== Gerando snapshots Markdown ==")
         rc = subprocess.call(
-            [sys.executable, str(SEALED / "scripts" / "snapshot.py")],
+            [sys.executable, str(SEALED / "scripts" / "snapshot.py"),
+             "--game", args.game],
             cwd=ROOT,
         )
-        if rc == 0:
+        if rc == 0 and args.game == "pokemon":
             print("  → também gerando versão didática (humano-friendly)...")
             rc = subprocess.call(
                 [sys.executable, str(SEALED / "scripts" / "snapshot_friendly.py")],

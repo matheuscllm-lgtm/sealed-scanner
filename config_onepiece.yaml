@@ -1,0 +1,110 @@
+# TCG Sealed Arbitrage Scanner — PERFIL ONE PIECE
+#
+# Brasil (Liga One Piece) -> EUA (TCGPlayer cat 68 / venda eBay US via Probstein).
+# Produtos selados de One Piece Card Game (EN). Mesmo pipeline, mesmos
+# invariantes do perfil Pokémon (margem BRUTA fração 0.30, SEM piso, teto 200%,
+# ref. 14d, YELLOW só por ambiguidade). Use com:
+#   python run_all_sources.py --game onepiece            (fontes default: liga)
+#   python build_us_reference.py --game onepiece         (referência US)
+#   python build_ebay_reference.py --game onepiece       (referência de venda)
+#
+# ⚠️ ESTADO: o coletor da Liga One Piece ainda NÃO foi validado ao vivo
+# (Cloudflare barra IP de datacenter; validação é LOCAL, no PC do operador —
+# runbook SETUP-VALIDACAO.md §B). Até lá, `liga.categorias` fica VAZIO de
+# propósito e o scan falha HONESTO com instrução (nunca chuta categoria).
+
+game: onepiece
+
+currency:
+  mode: fetch
+  usd_brl: 5.05
+
+filters:
+  # SEM PISO (regra inviolável nº 1 do repo — selado não tem piso de preço).
+  min_brazil_price_brl: 0
+
+deal_criteria:
+  # Idênticos ao perfil Pokémon (regras invioláveis nº 1–5 do CLAUDE.md).
+  min_total_margin_pct: 0.30     # fração; >= 30% -> GREEN
+  review_above_margin_pct: 2.0   # > 200% -> RED margem_anomala
+  max_reference_age_days: 14
+
+sources:
+  brazil:
+    - Liga One Piece
+  usa:
+    - TCGPlayer
+
+route:
+  name: ligaop_to_ebay_us
+  label: "BR (Liga One Piece) → venda eBay US via Probstein · classificação vs TCGplayer (cat 68)"
+  sell_reference: "TCGplayer Market via tcgcsv.com (categoria 68, catálogo EN)"
+  extra_sell_references:
+    ebay:
+      enabled: true
+      label: "menor anúncio ativo eBay US (pedida, não venda realizada)"
+      reference_file: data/ebay_reference_onepiece.json
+      max_age_days: 7
+
+references:
+  us_file: data/us_reference_onepiece.json
+
+# Fontes default DESTE perfil: só Liga (OLX/ML/Amazon têm queries de busca
+# Pokémon hardcoded — cobertura OP dessas fontes é backlog, não silêncio).
+default_sources:
+  - liga
+
+liga:
+  mode: local            # Chrome real headful (mesma plataforma LigaMagic)
+  headless: false        # Cloudflare da plataforma NÃO clareia em headless
+  base_url: https://www.ligaonepiece.com.br
+  # IDs `categ=N` VALIDADOS no site OP em 2026-08-03 (runbook §B, navegação
+  # real no menu Produtos de ligaonepiece.com.br — namespace é POR SITE).
+  # Entram só as categorias com tipo correspondente no registry:
+  #   10 Caixas de Pacotes      → Booster Box / Extra Booster Box
+  #   21 Pacotes Avulsos        → Booster Pack / Extra Booster Pack
+  #   28 Caixas Colecionáveis   → Double Pack Set (DP-xx; divide espaço com
+  #                               Illustration Box/Gift Collection, fora do registry)
+  #   36 Decks Iniciais         → Starter Deck (ST-xx, inclui "Deck Inicial EX")
+  # Descobertas e deixadas FORA (nenhum SKU no registry — não coletar ruído):
+  #   38 Kits Colecionáveis (anniversary/premium sets) · 24 Latas
+  categorias: [10, 21, 28, 36]
+  categorias_nomes:
+    10: "Caixas de Pacotes"
+    21: "Pacotes Avulsos"
+    28: "Caixas Colecionáveis"
+    36: "Decks Iniciais"
+  keep_languages: ["EN"]
+  max_products_per_category: 30
+  delay_seconds: 1.0
+  # Traduções PT->EN DESTE jogo (a Bandai não localiza nome de set — set_translate
+  # fica vazio; tipos abaixo = vocabulário CONFIRMADO no site OP em 2026-08-03:
+  # títulos reais "(ING) Caixa de Booster - OP-17 - ...", "(ING) Booster Avulso -
+  # OP-16 - ...", "(ING) Deck Inicial - ST-31 - ...". "Caixa Colecionável" fica
+  # SEM mapa de propósito: o título dos DP já traz "Double Pack Set Vol.N" em EN
+  # e a categoria mistura Illustration Box/Gift Collection — mapear geraria FP.
+  set_translate: {}
+  type_translate:
+    "Caixa de Booster": "Booster Box"
+    "Booster Avulso": "Booster Pack"
+    "Deck Inicial": "Starter Deck"
+
+scope:
+  include:
+    - Booster Box
+    - Booster Pack
+    - Sleeved Booster Pack
+    - Double Pack Set
+    - Double Pack Set Display
+    - Starter Deck
+    - Starter Deck Display
+    - Extra Booster Box
+    - Extra Booster Pack
+  exclude:
+    - Raw Singles
+    - Graded Cards
+    - Opened Products
+    - Damaged Products
+    - Booster Box Case      # lote — nunca vira SKU (idem Dash/DON!!/Bonus Pack)
+  sealed_only_sources:
+    - enjoei

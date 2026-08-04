@@ -43,6 +43,20 @@ Quando o operador pedir um scan **sem** dizer a fonte, **pare e pergunte** via
 | 3 | Amazon (opt-in) | `run_all_sources.py --sources amazon` | **~51 créditos Firecrawl/run** — avise antes |
 | 4 | Todas | `run_all_sources.py --sources liga,olx,mercadolivre,amazon` | soma dos acima |
 
+## Passo 0b — qual JOGO? (default: Pokémon)
+
+O scanner tem **perfis por jogo** (`--game`): `pokemon` (default, arquivos e
+comportamento históricos) e `onepiece` (Liga One Piece → TCGplayer cat 68;
+registry/config/referências próprios; resultados em `results/onepiece/`).
+Se o operador não disse o jogo, **assuma Pokémon** (não precisa perguntar);
+"roda o selados de One Piece" → `--game onepiece` em TODOS os comandos do
+fluxo (runner **e** snapshot — senão a entrega sai do jogo errado).
+
+> ⚠️ One Piece só coleta de verdade depois da validação local da Liga OP
+> (`SETUP-VALIDACAO.md §B`); antes disso o scan falha HONESTO com instrução
+> (categorias vazias de propósito). O perfil OP roda **só a fonte liga** por
+> default (OLX/ML/Amazon têm queries Pokémon — backlog).
+
 ## Referência e custo
 
 - **Preço de referência** = TCGplayer US (preço **Market** do selado, via espelho
@@ -50,7 +64,12 @@ Quando o operador pedir um scan **sem** dizer a fonte, **pare e pergunte** via
 - **Referência fresca:** se `data/us_reference.json` tiver mais de
   `max_reference_age_days: 14`, rode antes
   `.venv\Scripts\python.exe build_us_reference.py` — senão o freshness-downgrade
-  rebaixa GREEN→YELLOW.
+  rebaixa GREEN→YELLOW. (Perfil OP: `build_us_reference.py --game onepiece`.)
+- **Referência de VENDA (eBay, opcional):** `build_ebay_reference.py` preenche
+  as colunas `Ref. eBay (R$)` / `Margem vs eBay %` + o 3º link `[eBay]` (menor
+  anúncio ATIVO no eBay US = **pedida, não venda realizada**; NUNCA muda a
+  classificação). Exige `EBAY_CLIENT_ID/SECRET` (`SETUP-VALIDACAO.md §A`);
+  sem as chaves o scan roda normal com as colunas eBay vazias.
 - **Liga é local-only e $0**: Chrome real via patchright, **janela visível**
   (o Cloudflare da Liga dá **0 produtos em headless** — validado 2026-05-29) e IP
   residencial (datacenter/nuvem é barrado). Numa sessão de NUVEM: não tente
@@ -86,19 +105,22 @@ cd C:\Users\mathe\sealed-arbitrage-scanner
 ### 3. Entregar — SEMPRE via `scripts/snapshot.py`, saída VERBATIM
 ```powershell
 .venv\Scripts\python.exe scripts\snapshot.py
+.venv\Scripts\python.exe scripts\snapshot.py --game onepiece   # perfil OP
 ```
-(`run_liga_local.py` já chama isso no fim.) Sem argumentos pega o
-`results/unified_*` **mais recente** e escreve `snapshots/scan-<YYYY-MM-DD-HHMM>.md`
-(UTC). Abra o `.md` e **cole o conteúdo VERBATIM no chat**.
+(`run_liga_local.py` já chama isso no fim, com o mesmo `--game`.) Sem
+argumentos pega o `results/unified_*` **mais recente do jogo** e escreve
+`snapshots/scan-[onepiece-]<YYYY-MM-DD-HHMM>.md` (UTC). Abra o `.md` e
+**cole o conteúdo VERBATIM no chat**.
 
 ## Contrato de entrega (não negociável)
 
 - **Cole a saída do `scripts/snapshot.py` VERBATIM.** PROIBIDO montar/reformatar
   tabela à mão, reordenar/renomear colunas, tirar um link ou "resumir" linhas.
   Se a entrega não saiu do `snapshot.py`, pare e gere por ele.
-- **Toda linha, em TODO bucket** (GREEN, YELLOW, RED do ranking completo) leva os
-  **dois links**: `Links` = `[oferta](url BR) · [TCG](url TCGplayer)` numa célula
-  só. Links lidos do CSV/registry — **nunca invente URL**.
+- **Toda linha, em TODO bucket** (GREEN, YELLOW, RED do ranking completo) leva a
+  célula `Links` = `[oferta](url BR) · [TCG](url TCGplayer) · [eBay](menor
+  anúncio ativo US)` — o `[eBay]` aparece só quando a referência de venda cobriu
+  o SKU. Links lidos do CSV/registry — **nunca invente URL**.
 - **Mostre TODAS as linhas**: a seção "Produtos acionáveis (GREEN+YELLOW)" **e**
   o "Ranking completo por produto" (inclui RED). Entrega "vazia" (0 GREEN) ainda
   é a tabela completa — nunca texto solto.
@@ -128,3 +150,6 @@ cd C:\Users\mathe\sealed-arbitrage-scanner
 | Coletar Liga da nuvem/IP datacenter | CF barra; entregue o último `results/unified_*` com a data do scan |
 | Tratar preço fallback como real | Fonte tcgcsv/câmbio falhou → linha fallback/erro; não opere em cima |
 | Confundir com o scanner de singles da Liga | `liga-pokemon-scanner` é carta avulsa: threshold inteiro, COM piso R$50 |
+| Rodar scan OP e snapshot sem `--game onepiece` nos DOIS | O snapshot sem `--game` entrega o último scan POKÉMON — jogo errado |
+| Tratar `Ref. eBay` como preço garantido de venda | É PEDIDA (anúncio ativo), sem frete, informativa — NUNCA muda GREEN/YELLOW/RED |
+| "Consertar" o scan OP chutando IDs de categoria da Liga OP | IDs são POR SITE e não foram validados — siga SETUP-VALIDACAO.md §B |

@@ -1,0 +1,2341 @@
+# sku_registry_onepiece.yaml — catálogo canônico de SKUs SELADOS de One Piece TCG
+#
+# GERADO por scripts/gen_onepiece_registry.py a partir de dados REAIS do
+# tcgcsv.com (categoria 68 = One Piece Card Game, catálogo EN do TCGplayer).
+# NÃO editar productIds/nomes à mão — rode o gerador para ampliar/refrescar.
+# Todo SKU entrou com product_id real e preço market DENTRO da sanity band do
+# tipo (SANITY_BANDS_USD_ONEPIECE em build_us_reference.py) no dia da geração.
+#
+# Termos de match:
+# - set_terms = nome REAL do grupo tcgcsv + variantes MECÂNICAS da abbreviation
+#   oficial ('OP16' -> 'op16'/'op 16'); Double Pack usa o nº do volume (o nome
+#   real não carrega set); Starter Deck usa o nº do deck (tema colide).
+# - ALIASES PT DE SET: NENHUM — a Bandai não localiza nome de set de One Piece;
+#   aliases PT só entram depois de TÍTULOS REAIS da Liga One Piece (runbook
+#   SETUP-VALIDACAO.md §B), nunca deduzidos (lição ASI-Evolve da frota).
+# - 'caixa de booster'/'booster avulso' = vocabulário PT de TIPO da plataforma
+#   LigaMagic (validado no site Pokémon da plataforma) — pendente confirmação
+#   no site OP.
+#
+game: onepiece
+tcgcsv_category_id: 68
+skus:
+- id: op17-booster-box-en
+  name: 'The World''s Strongest Warriors Booster Box'
+  product_type: 'Booster Box'
+  set: 'The World''s Strongest Warriors'
+  set_code: 'OP17'
+  language: 'EN'
+  tcgplayer_group_id: 24736
+  tcgplayer_product_id: 704752
+  match:
+    set_terms:
+    - 'the world s strongest warriors'
+    - 'op17'
+    - 'op 17'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op17-booster-pack-en
+  name: 'The World''s Strongest Warriors Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'The World''s Strongest Warriors'
+  set_code: 'OP17'
+  language: 'EN'
+  tcgplayer_group_id: 24736
+  tcgplayer_product_id: 704756
+  match:
+    set_terms:
+    - 'the world s strongest warriors'
+    - 'op17'
+    - 'op 17'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op17-double-pack-en
+  name: 'Double Pack Set Vol. 12'
+  product_type: 'Double Pack Set'
+  set: 'The World''s Strongest Warriors'
+  set_code: 'OP17'
+  language: 'EN'
+  tcgplayer_group_id: 24736
+  tcgplayer_product_id: 704757
+  match:
+    set_terms:
+    - 'vol 12'
+    - 'volume 12'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op17-double-pack-display-en
+  name: 'Double Pack Set Vol. 12 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'The World''s Strongest Warriors'
+  set_code: 'OP17'
+  language: 'EN'
+  tcgplayer_group_id: 24736
+  tcgplayer_product_id: 704878
+  match:
+    set_terms:
+    - 'vol 12'
+    - 'volume 12'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st31-starter-deck-en
+  name: 'Starter Deck 31: RED Monkey.D.Luffy'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 31: RED Monkey.D.Luffy'
+  set_code: 'ST-31'
+  language: 'EN'
+  tcgplayer_group_id: 24749
+  tcgplayer_product_id: 704885
+  match:
+    set_terms:
+    - 'st31'
+    - 'st 31'
+    - 'starter deck 31'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st31-starter-deck-display-en
+  name: 'Starter Deck 31: RED Monkey.D.Luffy Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 31: RED Monkey.D.Luffy'
+  set_code: 'ST-31'
+  language: 'EN'
+  tcgplayer_group_id: 24749
+  tcgplayer_product_id: 704886
+  match:
+    set_terms:
+    - 'st31'
+    - 'st 31'
+    - 'starter deck 31'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st32-starter-deck-display-en
+  name: 'Starter Deck 32: GREEN Roronoa Zoro Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 32: GREEN Roronoa Zoro'
+  set_code: 'ST-32'
+  language: 'EN'
+  tcgplayer_group_id: 24750
+  tcgplayer_product_id: 704888
+  match:
+    set_terms:
+    - 'st32'
+    - 'st 32'
+    - 'starter deck 32'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st32-starter-deck-en
+  name: 'Starter Deck 32: GREEN Roronoa Zoro'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 32: GREEN Roronoa Zoro'
+  set_code: 'ST-32'
+  language: 'EN'
+  tcgplayer_group_id: 24750
+  tcgplayer_product_id: 704889
+  match:
+    set_terms:
+    - 'st32'
+    - 'st 32'
+    - 'starter deck 32'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st33-starter-deck-en
+  name: 'Starter Deck 33: BLUE Kuzan'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 33: BLUE Kuzan'
+  set_code: 'ST-33'
+  language: 'EN'
+  tcgplayer_group_id: 24751
+  tcgplayer_product_id: 704890
+  match:
+    set_terms:
+    - 'st33'
+    - 'st 33'
+    - 'starter deck 33'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st33-starter-deck-display-en
+  name: 'Starter Deck 33: BLUE Kuzan Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 33: BLUE Kuzan'
+  set_code: 'ST-33'
+  language: 'EN'
+  tcgplayer_group_id: 24751
+  tcgplayer_product_id: 704891
+  match:
+    set_terms:
+    - 'st33'
+    - 'st 33'
+    - 'starter deck 33'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st34-starter-deck-display-en
+  name: 'Starter Deck 34: PURPLE Charlotte Katakuri Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 34: PURPLE Charlotte Katakuri'
+  set_code: 'ST-34'
+  language: 'EN'
+  tcgplayer_group_id: 24752
+  tcgplayer_product_id: 704892
+  match:
+    set_terms:
+    - 'st34'
+    - 'st 34'
+    - 'starter deck 34'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st34-starter-deck-en
+  name: 'Starter Deck 34: PURPLE Charlotte Katakuri'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 34: PURPLE Charlotte Katakuri'
+  set_code: 'ST-34'
+  language: 'EN'
+  tcgplayer_group_id: 24752
+  tcgplayer_product_id: 704893
+  match:
+    set_terms:
+    - 'st34'
+    - 'st 34'
+    - 'starter deck 34'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st35-starter-deck-en
+  name: 'Starter Deck 35: RED/BLACK Sabo'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 35: RED/BLACK Sabo'
+  set_code: 'ST-35'
+  language: 'EN'
+  tcgplayer_group_id: 24753
+  tcgplayer_product_id: 704894
+  match:
+    set_terms:
+    - 'st35'
+    - 'st 35'
+    - 'starter deck 35'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st35-starter-deck-display-en
+  name: 'Starter Deck 35: RED/BLACK Sabo Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 35: RED/BLACK Sabo'
+  set_code: 'ST-35'
+  language: 'EN'
+  tcgplayer_group_id: 24753
+  tcgplayer_product_id: 704895
+  match:
+    set_terms:
+    - 'st35'
+    - 'st 35'
+    - 'starter deck 35'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st36-starter-deck-display-en
+  name: 'Starter Deck 36: YELLOW Eustass”Captain”Kid Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 36: YELLOW Eustass”Captain”Kid'
+  set_code: 'ST-36'
+  language: 'EN'
+  tcgplayer_group_id: 24754
+  tcgplayer_product_id: 704896
+  match:
+    set_terms:
+    - 'st36'
+    - 'st 36'
+    - 'starter deck 36'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st36-starter-deck-en
+  name: 'Starter Deck 36: YELLOW Eustass”Captain”Kid'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 36: YELLOW Eustass”Captain”Kid'
+  set_code: 'ST-36'
+  language: 'EN'
+  tcgplayer_group_id: 24754
+  tcgplayer_product_id: 704897
+  match:
+    set_terms:
+    - 'st36'
+    - 'st 36'
+    - 'starter deck 36'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st30-starter-deck-en
+  name: 'Starter Deck EX: Luffy & Ace'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck EX: Luffy & Ace'
+  set_code: 'ST-30'
+  language: 'EN'
+  tcgplayer_group_id: 24678
+  tcgplayer_product_id: 692138
+  match:
+    set_terms:
+    - 'st30'
+    - 'st 30'
+    - 'luffy ace'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st30-starter-deck-display-en
+  name: 'Starter Deck EX: Luffy & Ace Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck EX: Luffy & Ace'
+  set_code: 'ST-30'
+  language: 'EN'
+  tcgplayer_group_id: 24678
+  tcgplayer_product_id: 692139
+  match:
+    set_terms:
+    - 'st30'
+    - 'st 30'
+    - 'luffy ace'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op16-booster-box-en
+  name: 'The Time of Battle Booster Box'
+  product_type: 'Booster Box'
+  set: 'The Time of Battle'
+  set_code: 'OP16'
+  language: 'EN'
+  tcgplayer_group_id: 24664
+  tcgplayer_product_id: 689336
+  match:
+    set_terms:
+    - 'the time of battle'
+    - 'op16'
+    - 'op 16'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op16-booster-pack-en
+  name: 'The Time of Battle Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'The Time of Battle'
+  set_code: 'OP16'
+  language: 'EN'
+  tcgplayer_group_id: 24664
+  tcgplayer_product_id: 689341
+  match:
+    set_terms:
+    - 'the time of battle'
+    - 'op16'
+    - 'op 16'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op16-sleeved-booster-en
+  name: 'The Time of Battle Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'The Time of Battle'
+  set_code: 'OP16'
+  language: 'EN'
+  tcgplayer_group_id: 24664
+  tcgplayer_product_id: 689347
+  match:
+    set_terms:
+    - 'the time of battle'
+    - 'op16'
+    - 'op 16'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op16-double-pack-en
+  name: 'Double Pack Set Vol. 11'
+  product_type: 'Double Pack Set'
+  set: 'The Time of Battle'
+  set_code: 'OP16'
+  language: 'EN'
+  tcgplayer_group_id: 24664
+  tcgplayer_product_id: 693364
+  match:
+    set_terms:
+    - 'vol 11'
+    - 'volume 11'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op16-double-pack-display-en
+  name: 'Double Pack Set Vol. 11 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'The Time of Battle'
+  set_code: 'OP16'
+  language: 'EN'
+  tcgplayer_group_id: 24664
+  tcgplayer_product_id: 693365
+  match:
+    set_terms:
+    - 'vol 11'
+    - 'volume 11'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op15-booster-pack-en
+  name: 'Adventure on Kami''s Island Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Adventure on Kami''s Island'
+  set_code: 'OP15-EB04'
+  language: 'EN'
+  tcgplayer_group_id: 24637
+  tcgplayer_product_id: 682056
+  match:
+    set_terms:
+    - 'adventure on kami s island'
+    - 'op15'
+    - 'op 15'
+    - 'eb04'
+    - 'eb 04'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op15-booster-box-en
+  name: 'Adventure on Kami''s Island Booster Box'
+  product_type: 'Booster Box'
+  set: 'Adventure on Kami''s Island'
+  set_code: 'OP15-EB04'
+  language: 'EN'
+  tcgplayer_group_id: 24637
+  tcgplayer_product_id: 682057
+  match:
+    set_terms:
+    - 'adventure on kami s island'
+    - 'op15'
+    - 'op 15'
+    - 'eb04'
+    - 'eb 04'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op15-double-pack-en
+  name: 'Double Pack Set Vol. 10'
+  product_type: 'Double Pack Set'
+  set: 'Adventure on Kami''s Island'
+  set_code: 'OP15-EB04'
+  language: 'EN'
+  tcgplayer_group_id: 24637
+  tcgplayer_product_id: 682789
+  match:
+    set_terms:
+    - 'vol 10'
+    - 'volume 10'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op15-double-pack-display-en
+  name: 'Double Pack Set Vol. 10 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'Adventure on Kami''s Island'
+  set_code: 'OP15-EB04'
+  language: 'EN'
+  tcgplayer_group_id: 24637
+  tcgplayer_product_id: 682790
+  match:
+    set_terms:
+    - 'vol 10'
+    - 'volume 10'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op15-sleeved-booster-en
+  name: 'Adventure on Kami''s Island - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Adventure on Kami''s Island'
+  set_code: 'OP15-EB04'
+  language: 'EN'
+  tcgplayer_group_id: 24637
+  tcgplayer_product_id: 688634
+  match:
+    set_terms:
+    - 'adventure on kami s island'
+    - 'op15'
+    - 'op 15'
+    - 'eb04'
+    - 'eb 04'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: eb03-eb-pack-en
+  name: 'Extra Booster: One Piece Heroines Edition Pack'
+  product_type: 'Extra Booster Pack'
+  set: 'Extra Booster: One Piece Heroines Edition'
+  set_code: 'EB-03'
+  language: 'EN'
+  tcgplayer_group_id: 24545
+  tcgplayer_product_id: 666727
+  match:
+    set_terms:
+    - 'extra booster one piece heroines edition'
+    - 'eb03'
+    - 'eb 03'
+    type_terms:
+    - 'pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+    - 'sleeved'
+    - 'dash'
+- id: eb03-eb-box-en
+  name: 'Extra Booster: One Piece Heroines Edition Box'
+  product_type: 'Extra Booster Box'
+  set: 'Extra Booster: One Piece Heroines Edition'
+  set_code: 'EB-03'
+  language: 'EN'
+  tcgplayer_group_id: 24545
+  tcgplayer_product_id: 666891
+  match:
+    set_terms:
+    - 'extra booster one piece heroines edition'
+    - 'eb03'
+    - 'eb 03'
+    type_terms:
+    - 'box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'pack'
+    - 'sleeved'
+- id: eb03-sleeved-booster-en
+  name: 'Extra Booster: One Piece Heroines Edition Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Extra Booster: One Piece Heroines Edition'
+  set_code: 'EB-03'
+  language: 'EN'
+  tcgplayer_group_id: 24545
+  tcgplayer_product_id: 679503
+  match:
+    set_terms:
+    - 'extra booster one piece heroines edition'
+    - 'eb03'
+    - 'eb 03'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: st29-starter-deck-en
+  name: 'Starter Deck 29: Egghead'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 29: Egghead'
+  set_code: 'ST-29'
+  language: 'EN'
+  tcgplayer_group_id: 24575
+  tcgplayer_product_id: 671479
+  match:
+    set_terms:
+    - 'st29'
+    - 'st 29'
+    - 'starter deck 29'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st29-starter-deck-display-en
+  name: 'Starter Deck 29: Egghead Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 29: Egghead'
+  set_code: 'ST-29'
+  language: 'EN'
+  tcgplayer_group_id: 24575
+  tcgplayer_product_id: 671480
+  match:
+    set_terms:
+    - 'st29'
+    - 'st 29'
+    - 'starter deck 29'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op14-booster-box-en
+  name: 'The Azure Sea''s Seven Booster Box'
+  product_type: 'Booster Box'
+  set: 'The Azure Sea''s Seven'
+  set_code: 'OP14'
+  language: 'EN'
+  tcgplayer_group_id: 24537
+  tcgplayer_product_id: 665598
+  match:
+    set_terms:
+    - 'the azure sea s seven'
+    - 'op14'
+    - 'op 14'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op14-sleeved-booster-en
+  name: 'The Azure Sea''s Seven Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'The Azure Sea''s Seven'
+  set_code: 'OP14'
+  language: 'EN'
+  tcgplayer_group_id: 24537
+  tcgplayer_product_id: 666576
+  match:
+    set_terms:
+    - 'the azure sea s seven'
+    - 'op14'
+    - 'op 14'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op14-booster-pack-en
+  name: 'The Azure Sea''s Seven Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'The Azure Sea''s Seven'
+  set_code: 'OP14'
+  language: 'EN'
+  tcgplayer_group_id: 24537
+  tcgplayer_product_id: 666577
+  match:
+    set_terms:
+    - 'the azure sea s seven'
+    - 'op14'
+    - 'op 14'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op14-double-pack-en
+  name: 'Double Pack Set Vol. 9'
+  product_type: 'Double Pack Set'
+  set: 'The Azure Sea''s Seven'
+  set_code: 'OP14'
+  language: 'EN'
+  tcgplayer_group_id: 24537
+  tcgplayer_product_id: 666578
+  match:
+    set_terms:
+    - 'vol 9'
+    - 'volume 9'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op14-double-pack-display-en
+  name: 'Double Pack Set Vol. 9 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'The Azure Sea''s Seven'
+  set_code: 'OP14'
+  language: 'EN'
+  tcgplayer_group_id: 24537
+  tcgplayer_product_id: 666579
+  match:
+    set_terms:
+    - 'vol 9'
+    - 'volume 9'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op13-booster-pack-en
+  name: 'Carrying On His Will Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Carrying On His Will'
+  set_code: 'OP13'
+  language: 'EN'
+  tcgplayer_group_id: 24303
+  tcgplayer_product_id: 628351
+  match:
+    set_terms:
+    - 'carrying on his will'
+    - 'op13'
+    - 'op 13'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op13-booster-box-en
+  name: 'Carrying On His Will Booster Box'
+  product_type: 'Booster Box'
+  set: 'Carrying On His Will'
+  set_code: 'OP13'
+  language: 'EN'
+  tcgplayer_group_id: 24303
+  tcgplayer_product_id: 628352
+  match:
+    set_terms:
+    - 'carrying on his will'
+    - 'op13'
+    - 'op 13'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op13-sleeved-booster-en
+  name: 'Carrying On His Will Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Carrying On His Will'
+  set_code: 'OP13'
+  language: 'EN'
+  tcgplayer_group_id: 24303
+  tcgplayer_product_id: 652643
+  match:
+    set_terms:
+    - 'carrying on his will'
+    - 'op13'
+    - 'op 13'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: prb02-booster-pack-en
+  name: 'Premium Booster Vol. 2 - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Premium Booster -The Best- Vol. 2'
+  set_code: 'PRB-02'
+  language: 'EN'
+  tcgplayer_group_id: 24305
+  tcgplayer_product_id: 628451
+  match:
+    set_terms:
+    - 'premium booster vol 2'
+    - 'prb02'
+    - 'prb 02'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: prb02-booster-box-en
+  name: 'Premium Booster Vol. 2 - Booster Box'
+  product_type: 'Booster Box'
+  set: 'Premium Booster -The Best- Vol. 2'
+  set_code: 'PRB-02'
+  language: 'EN'
+  tcgplayer_group_id: 24305
+  tcgplayer_product_id: 628452
+  match:
+    set_terms:
+    - 'premium booster vol 2'
+    - 'prb02'
+    - 'prb 02'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: prb02-sleeved-booster-en
+  name: 'Premium Booster Vol. 2 - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Premium Booster -The Best- Vol. 2'
+  set_code: 'PRB-02'
+  language: 'EN'
+  tcgplayer_group_id: 24305
+  tcgplayer_product_id: 657211
+  match:
+    set_terms:
+    - 'premium booster vol 2'
+    - 'prb02'
+    - 'prb 02'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: st22-starter-deck-en
+  name: 'Starter Deck 22: Ace & Newgate'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 22: Ace & Newgate'
+  set_code: 'ST-22'
+  language: 'EN'
+  tcgplayer_group_id: 24304
+  tcgplayer_product_id: 628448
+  match:
+    set_terms:
+    - 'st22'
+    - 'st 22'
+    - 'starter deck 22'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st22-starter-deck-display-en
+  name: 'Starter Deck 22: Ace & Newgate Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 22: Ace & Newgate'
+  set_code: 'ST-22'
+  language: 'EN'
+  tcgplayer_group_id: 24304
+  tcgplayer_product_id: 628449
+  match:
+    set_terms:
+    - 'st22'
+    - 'st 22'
+    - 'starter deck 22'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op12-booster-pack-en
+  name: 'Legacy of the Master Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Legacy of the Master'
+  set_code: 'OP12'
+  language: 'EN'
+  tcgplayer_group_id: 24302
+  tcgplayer_product_id: 628345
+  match:
+    set_terms:
+    - 'legacy of the master'
+    - 'op12'
+    - 'op 12'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op12-booster-box-en
+  name: 'Legacy of the Master Booster Box'
+  product_type: 'Booster Box'
+  set: 'Legacy of the Master'
+  set_code: 'OP12'
+  language: 'EN'
+  tcgplayer_group_id: 24302
+  tcgplayer_product_id: 628346
+  match:
+    set_terms:
+    - 'legacy of the master'
+    - 'op12'
+    - 'op 12'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op12-double-pack-en
+  name: 'Double Pack Set Vol. 8'
+  product_type: 'Double Pack Set'
+  set: 'Legacy of the Master'
+  set_code: 'OP12'
+  language: 'EN'
+  tcgplayer_group_id: 24302
+  tcgplayer_product_id: 628348
+  match:
+    set_terms:
+    - 'vol 8'
+    - 'volume 8'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op12-double-pack-display-en
+  name: 'Double Pack Set Vol. 8 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'Legacy of the Master'
+  set_code: 'OP12'
+  language: 'EN'
+  tcgplayer_group_id: 24302
+  tcgplayer_product_id: 628349
+  match:
+    set_terms:
+    - 'vol 8'
+    - 'volume 8'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op12-sleeved-booster-en
+  name: 'Legacy of the Master - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Legacy of the Master'
+  set_code: 'OP12'
+  language: 'EN'
+  tcgplayer_group_id: 24302
+  tcgplayer_product_id: 650645
+  match:
+    set_terms:
+    - 'legacy of the master'
+    - 'op12'
+    - 'op 12'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op11-double-pack-en
+  name: 'Double Pack Set Volume 7'
+  product_type: 'Double Pack Set'
+  set: 'A Fist of Divine Speed'
+  set_code: 'OP11'
+  language: 'EN'
+  tcgplayer_group_id: 24241
+  tcgplayer_product_id: 606561
+  match:
+    set_terms:
+    - 'vol 7'
+    - 'volume 7'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op11-double-pack-display-en
+  name: 'Double Pack Set Volume 7 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'A Fist of Divine Speed'
+  set_code: 'OP11'
+  language: 'EN'
+  tcgplayer_group_id: 24241
+  tcgplayer_product_id: 606562
+  match:
+    set_terms:
+    - 'vol 7'
+    - 'volume 7'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op11-booster-pack-en
+  name: 'A Fist of Divine Speed Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'A Fist of Divine Speed'
+  set_code: 'OP11'
+  language: 'EN'
+  tcgplayer_group_id: 24241
+  tcgplayer_product_id: 620179
+  match:
+    set_terms:
+    - 'a fist of divine speed'
+    - 'op11'
+    - 'op 11'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op11-booster-box-en
+  name: 'A Fist of Divine Speed Booster Box'
+  product_type: 'Booster Box'
+  set: 'A Fist of Divine Speed'
+  set_code: 'OP11'
+  language: 'EN'
+  tcgplayer_group_id: 24241
+  tcgplayer_product_id: 620180
+  match:
+    set_terms:
+    - 'a fist of divine speed'
+    - 'op11'
+    - 'op 11'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op11-sleeved-booster-en
+  name: 'A Fist of Divine Speed - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'A Fist of Divine Speed'
+  set_code: 'OP11'
+  language: 'EN'
+  tcgplayer_group_id: 24241
+  tcgplayer_product_id: 636741
+  match:
+    set_terms:
+    - 'a fist of divine speed'
+    - 'op11'
+    - 'op 11'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: st23-starter-deck-en
+  name: 'Starter Deck 23: RED Shanks'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 23: RED Shanks'
+  set_code: 'ST-23'
+  language: 'EN'
+  tcgplayer_group_id: 24282
+  tcgplayer_product_id: 627669
+  match:
+    set_terms:
+    - 'st23'
+    - 'st 23'
+    - 'starter deck 23'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st23-starter-deck-display-en
+  name: 'Starter Deck 23: RED Shanks Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 23: RED Shanks'
+  set_code: 'ST-23'
+  language: 'EN'
+  tcgplayer_group_id: 24282
+  tcgplayer_product_id: 627670
+  match:
+    set_terms:
+    - 'st23'
+    - 'st 23'
+    - 'starter deck 23'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st24-starter-deck-display-en
+  name: 'Starter Deck 24: GREEN Jewelry Bonney Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 24: GREEN Jewelry Bonney'
+  set_code: 'ST-24'
+  language: 'EN'
+  tcgplayer_group_id: 24283
+  tcgplayer_product_id: 627671
+  match:
+    set_terms:
+    - 'st24'
+    - 'st 24'
+    - 'starter deck 24'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st24-starter-deck-en
+  name: 'Starter Deck 24: GREEN Jewelry Bonney'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 24: GREEN Jewelry Bonney'
+  set_code: 'ST-24'
+  language: 'EN'
+  tcgplayer_group_id: 24283
+  tcgplayer_product_id: 627672
+  match:
+    set_terms:
+    - 'st24'
+    - 'st 24'
+    - 'starter deck 24'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st25-starter-deck-en
+  name: 'Starter Deck 25: BLUE Buggy'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 25: BLUE Buggy'
+  set_code: 'ST-25'
+  language: 'EN'
+  tcgplayer_group_id: 24284
+  tcgplayer_product_id: 627674
+  match:
+    set_terms:
+    - 'st25'
+    - 'st 25'
+    - 'starter deck 25'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st25-starter-deck-display-en
+  name: 'Starter Deck 25: BLUE Buggy Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 25: BLUE Buggy'
+  set_code: 'ST-25'
+  language: 'EN'
+  tcgplayer_group_id: 24284
+  tcgplayer_product_id: 627675
+  match:
+    set_terms:
+    - 'st25'
+    - 'st 25'
+    - 'starter deck 25'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st26-starter-deck-display-en
+  name: 'Starter Deck 26: PURPLE/BLACK Monkey.D.Luffy Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 26: PURPLE/BLACK Monkey.D.Luffy'
+  set_code: 'ST-26'
+  language: 'EN'
+  tcgplayer_group_id: 24285
+  tcgplayer_product_id: 627676
+  match:
+    set_terms:
+    - 'st26'
+    - 'st 26'
+    - 'starter deck 26'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st26-starter-deck-en
+  name: 'Starter Deck 26: PURPLE/BLACK Monkey.D.Luffy'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 26: PURPLE/BLACK Monkey.D.Luffy'
+  set_code: 'ST-26'
+  language: 'EN'
+  tcgplayer_group_id: 24285
+  tcgplayer_product_id: 627677
+  match:
+    set_terms:
+    - 'st26'
+    - 'st 26'
+    - 'starter deck 26'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st27-starter-deck-en
+  name: 'Starter Deck 27: BLACK Marshall.D.Teach'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 27: BLACK Marshall.D.Teach'
+  set_code: 'ST-27'
+  language: 'EN'
+  tcgplayer_group_id: 24286
+  tcgplayer_product_id: 627678
+  match:
+    set_terms:
+    - 'st27'
+    - 'st 27'
+    - 'starter deck 27'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st27-starter-deck-display-en
+  name: 'Starter Deck 27: BLACK Marshall.D.Teach Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 27: BLACK Marshall.D.Teach'
+  set_code: 'ST-27'
+  language: 'EN'
+  tcgplayer_group_id: 24286
+  tcgplayer_product_id: 627679
+  match:
+    set_terms:
+    - 'st27'
+    - 'st 27'
+    - 'starter deck 27'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st28-starter-deck-display-en
+  name: 'Starter Deck 28: GREEN/YELLOW Yamato Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck 28: GREEN/YELLOW Yamato'
+  set_code: 'ST-28'
+  language: 'EN'
+  tcgplayer_group_id: 24287
+  tcgplayer_product_id: 627680
+  match:
+    set_terms:
+    - 'st28'
+    - 'st 28'
+    - 'starter deck 28'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: st28-starter-deck-en
+  name: 'Starter Deck 28: GREEN/YELLOW Yamato'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck 28: GREEN/YELLOW Yamato'
+  set_code: 'ST-28'
+  language: 'EN'
+  tcgplayer_group_id: 24287
+  tcgplayer_product_id: 627681
+  match:
+    set_terms:
+    - 'st28'
+    - 'st 28'
+    - 'starter deck 28'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: eb02-eb-pack-en
+  name: 'Extra Booster: Anime 25th Collection Pack'
+  product_type: 'Extra Booster Pack'
+  set: 'Extra Booster: Anime 25th Collection'
+  set_code: 'EB-02'
+  language: 'EN'
+  tcgplayer_group_id: 23834
+  tcgplayer_product_id: 594068
+  match:
+    set_terms:
+    - 'extra booster anime 25th collection'
+    - 'eb02'
+    - 'eb 02'
+    type_terms:
+    - 'pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+    - 'sleeved'
+    - 'dash'
+- id: eb02-eb-box-en
+  name: 'Extra Booster: Anime 25th Collection Box'
+  product_type: 'Extra Booster Box'
+  set: 'Extra Booster: Anime 25th Collection'
+  set_code: 'EB-02'
+  language: 'EN'
+  tcgplayer_group_id: 23834
+  tcgplayer_product_id: 594069
+  match:
+    set_terms:
+    - 'extra booster anime 25th collection'
+    - 'eb02'
+    - 'eb 02'
+    type_terms:
+    - 'box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'pack'
+    - 'sleeved'
+- id: op10-booster-pack-en
+  name: 'Royal Blood Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Royal Blood'
+  set_code: 'OP10'
+  language: 'EN'
+  tcgplayer_group_id: 23766
+  tcgplayer_product_id: 586670
+  match:
+    set_terms:
+    - 'royal blood'
+    - 'op10'
+    - 'op 10'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op10-booster-box-en
+  name: 'Royal Blood Booster Box'
+  product_type: 'Booster Box'
+  set: 'Royal Blood'
+  set_code: 'OP10'
+  language: 'EN'
+  tcgplayer_group_id: 23766
+  tcgplayer_product_id: 586671
+  match:
+    set_terms:
+    - 'royal blood'
+    - 'op10'
+    - 'op 10'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op10-sleeved-booster-en
+  name: 'Royal Blood - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Royal Blood'
+  set_code: 'OP10'
+  language: 'EN'
+  tcgplayer_group_id: 23766
+  tcgplayer_product_id: 624523
+  match:
+    set_terms:
+    - 'royal blood'
+    - 'op10'
+    - 'op 10'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: st21-starter-deck-en
+  name: 'Starter Deck EX: Gear 5'
+  product_type: 'Starter Deck'
+  set: 'Starter Deck EX: Gear 5'
+  set_code: 'ST-21'
+  language: 'EN'
+  tcgplayer_group_id: 23991
+  tcgplayer_product_id: 606575
+  match:
+    set_terms:
+    - 'st21'
+    - 'st 21'
+    - 'gear 5'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'set of'
+    - 'bonus'
+- id: st21-starter-deck-display-en
+  name: 'Starter Deck EX: Gear 5 Display'
+  product_type: 'Starter Deck Display'
+  set: 'Starter Deck EX: Gear 5'
+  set_code: 'ST-21'
+  language: 'EN'
+  tcgplayer_group_id: 23991
+  tcgplayer_product_id: 606576
+  match:
+    set_terms:
+    - 'st21'
+    - 'st 21'
+    - 'gear 5'
+    type_terms:
+    - 'starter deck'
+    - 'ultra deck'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op09-booster-pack-en
+  name: 'Emperors in the New World - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Emperors in the New World'
+  set_code: 'OP09'
+  language: 'EN'
+  tcgplayer_group_id: 23589
+  tcgplayer_product_id: 563833
+  match:
+    set_terms:
+    - 'emperors in the new world'
+    - 'op09'
+    - 'op 09'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op09-booster-box-en
+  name: 'Emperors in the New World - Booster Box'
+  product_type: 'Booster Box'
+  set: 'Emperors in the New World'
+  set_code: 'OP09'
+  language: 'EN'
+  tcgplayer_group_id: 23589
+  tcgplayer_product_id: 563834
+  match:
+    set_terms:
+    - 'emperors in the new world'
+    - 'op09'
+    - 'op 09'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op09-double-pack-en
+  name: 'Double Pack Set Volume 6'
+  product_type: 'Double Pack Set'
+  set: 'Emperors in the New World'
+  set_code: 'OP09'
+  language: 'EN'
+  tcgplayer_group_id: 23589
+  tcgplayer_product_id: 563842
+  match:
+    set_terms:
+    - 'vol 6'
+    - 'volume 6'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op09-double-pack-display-en
+  name: 'Double Pack Set Volume 6 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'Emperors in the New World'
+  set_code: 'OP09'
+  language: 'EN'
+  tcgplayer_group_id: 23589
+  tcgplayer_product_id: 563843
+  match:
+    set_terms:
+    - 'vol 6'
+    - 'volume 6'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op09-sleeved-booster-en
+  name: 'Emperors in the New World - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Emperors in the New World'
+  set_code: 'OP09'
+  language: 'EN'
+  tcgplayer_group_id: 23589
+  tcgplayer_product_id: 606604
+  match:
+    set_terms:
+    - 'emperors in the new world'
+    - 'op09'
+    - 'op 09'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: prb01-booster-pack-en
+  name: 'Premium Booster - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Premium Booster -The Best-'
+  set_code: 'PRB-01'
+  language: 'EN'
+  tcgplayer_group_id: 23496
+  tcgplayer_product_id: 545398
+  match:
+    set_terms:
+    - 'premium booster'
+    - 'prb01'
+    - 'prb 01'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'vol 2'
+    - 'vol ii'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: prb01-booster-box-en
+  name: 'Premium Booster - Booster Box'
+  product_type: 'Booster Box'
+  set: 'Premium Booster -The Best-'
+  set_code: 'PRB-01'
+  language: 'EN'
+  tcgplayer_group_id: 23496
+  tcgplayer_product_id: 545399
+  match:
+    set_terms:
+    - 'premium booster'
+    - 'prb01'
+    - 'prb 01'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'vol 2'
+    - 'vol ii'
+    - 'double pack'
+    - 'sleeved'
+- id: prb01-sleeved-booster-en
+  name: 'Premium Booster - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Premium Booster -The Best-'
+  set_code: 'PRB-01'
+  language: 'EN'
+  tcgplayer_group_id: 23496
+  tcgplayer_product_id: 622980
+  match:
+    set_terms:
+    - 'premium booster'
+    - 'prb01'
+    - 'prb 01'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'vol 2'
+    - 'vol ii'
+    - 'box'

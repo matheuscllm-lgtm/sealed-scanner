@@ -64,6 +64,11 @@ def test_run_malformed_price_is_red_never_green(tmp_path, monkeypatch):
     # 102%: GREEN robusto no meio da banda (30%–200%), imune a drift de dado.
     ref = json.loads((ROOT / "data" / "us_reference.json").read_text(encoding="utf-8"))
     ref["prices"][SKU_ID] = 200.0
+    # captured_at PINADO em agora: sem isso o teste herda a idade do arquivo
+    # real e vira bomba-relógio — quando a referência commitada passa dos 14
+    # dias, o freshness guard (correto) rebaixa o GREEN de controle p/ YELLOW
+    # e o teste falha por motivo alheio ao que ele testa (preço malformado).
+    ref["captured_at"] = S.datetime.now(S.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     (tmp_path / "data" / "us_reference.json").write_text(json.dumps(ref), encoding="utf-8")
 
     listings = [

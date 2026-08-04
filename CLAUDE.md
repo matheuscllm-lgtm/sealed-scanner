@@ -2,11 +2,16 @@
 
 Instruções para qualquer sessão Claude Code (local ou nuvem) que trabalhe neste repo.
 
-Scanner de arbitragem de **produtos SELADOS** de Pokémon TCG (booster box, ETB,
-fat pack, lata, blister, kit, pré-lançamento…): compara ofertas em marketplaces
-BR (Liga Pokémon, OLX, MercadoLivre, Amazon BR) com a referência US do TCGplayer
-e classifica por margem bruta. Repo GitHub: `matheuscllm-lgtm/sealed-scanner`;
-pasta local no PC do operador: `C:\Users\mathe\sealed-arbitrage-scanner`.
+**Plataforma de arbitragem de produtos SELADOS de colecionáveis** (booster box,
+ETB, fat pack, lata, blister, kit, pré-lançamento…): compara ofertas em
+marketplaces BR (Liga, OLX, MercadoLivre, Amazon BR) com a referência US do
+TCGplayer, classifica por margem bruta e — desde 2026-08-03 — mostra também a
+**referência do lado de VENDA** (menor anúncio ativo no eBay US, onde o operador
+vende via Probstein) e a **ROTA** (onde comprar → para onde vender) de cada run.
+Suporta **perfis por JOGO** (`--game`): **Pokémon** (default, comportamento
+histórico) e **One Piece TCG** (primeira expansão de nicho). Repo GitHub:
+`matheuscllm-lgtm/sealed-scanner`; pasta local no PC do operador:
+`C:\Users\mathe\sealed-arbitrage-scanner`.
 
 ## 🛰️ Convenções da frota (cross-scanner)
 
@@ -28,7 +33,7 @@ Erros recorrentes (3 famílias — detalhe no manual):
 2. **Git:** branch ou `main` local defasado por squash-merge PARECE pendência. O teste real de "já mergeado" é `git diff --stat origin/main <branch>` estar vazio (não `git merge-base`).
 3. **Honestidade de preço:** inflação de referência, fallback tratado como real, NM frouxo → sempre validar versão/condição e rotular fallback.
 
-**Este scanner (SELADOS):** referência de preço = TCGplayer US (preço Market do selado, via espelho `tcgcsv.com`); chaves = `FIRECRAWL_API_KEY` (no PC; rota Firecrawl fura o WAF da OLX).
+**Este scanner (SELADOS):** referência de preço que CLASSIFICA = TCGplayer US (preço Market do selado, via espelho `tcgcsv.com`; Pokémon = categoria 3, One Piece = categoria 68); referência de VENDA informativa = eBay US Browse API (menor anúncio ativo — pedida, nunca classifica); chaves = `FIRECRAWL_API_KEY` (no PC; rota Firecrawl fura o WAF da OLX) e `EBAY_CLIENT_ID`/`EBAY_CLIENT_SECRET` (opcionais — só p/ a referência de venda; sem elas nada quebra).
 
 > **Como os invariantes de SINGLES se traduzem para SELADOS** (o bloco acima é o
 > texto canônico da frota; dois bullets dele são específicos de cartas avulsas e
@@ -77,6 +82,16 @@ Erros recorrentes (3 famílias — detalhe no manual):
    - A cobertura do catálogo de selados da Liga é travada por
      `tests/test_gap_loose_packs.py` (**127 títulos reais do operador** → match
      único, exceto essa lista fechada).
+7. **A referência eBay é INFORMATIVA e NUNCA classifica** (2026-08-03): as
+   colunas `Ref. eBay (R$)`/`Margem vs eBay %` e o link `[eBay]` vêm do menor
+   anúncio ATIVO no eBay US (**pedida, não venda realizada**; sem frete) e
+   jamais mudam GREEN/YELLOW/RED, margem oficial, bucket ou risco — travado em
+   teste (`test_ebay_enrichment.py`: vereditos byte-idênticos com e sem ela).
+   `compute_margin` segue retornando exatamente as 4 chaves de sempre.
+8. **Run degradado nunca sobrescreve referência anterior** (2026-08-03):
+   `build_ebay_reference.py` sem `EBAY_CLIENT_ID/SECRET` avisa alto, retorna 0
+   e NÃO TOCA no arquivo anterior; maioria de erros → aborta sem gravar
+   (espelho do PR #19 do ebay-arbitrage-scanner; travado em teste).
 
 ## Como rodar (skill `sealed-scan` — MANDATÓRIO)
 
@@ -93,13 +108,18 @@ Erros recorrentes (3 famílias — detalhe no manual):
   python run_liga_local.py            # só Liga; roda via run_all_sources.py --sources liga
   python run_all_sources.py --sources liga,olx,mercadolivre   # multi-fonte (default)
   python run_all_sources.py --sources amazon,liga             # Amazon é opt-in
+  python run_liga_local.py --game onepiece                    # perfil One Piece (ver 🎴)
   ```
 
-  `run_liga_local.py` usa a saída canônica `results/unified_*` (a que o snapshot
-  lê) e já gera as notas markdown no fim (snapshot é default; `--no-snapshot` /
-  `--no-janela` só para debug do coletor). Flags úteis: `--categorias 10,27`,
-  `--max-por-categoria N`, `--skip-check`. O orquestrador aceita `--config`,
-  `--registry` e `--mock` (fixture JSON de `mock_data/`).
+  `run_liga_local.py` usa a saída canônica `results/[<jogo>/]unified_*` (a que o
+  snapshot lê) e já gera as notas markdown no fim (snapshot é default;
+  `--no-snapshot` / `--no-janela` só para debug do coletor). Flags úteis:
+  `--game {pokemon,onepiece}` (default pokemon — define config/registry/
+  referências/raiz de resultados), `--categorias 10,27`, `--max-por-categoria N`,
+  `--skip-check`. O orquestrador aceita `--game`, `--config`, `--registry` e
+  `--mock` (fixture JSON de `mock_data/`; a de OP é `onepiece_listings.json`).
+  Refresh opcional da referência de VENDA: `python build_ebay_reference.py`
+  (exige chaves eBay — `SETUP-VALIDACAO.md §A`; sem elas nada quebra).
 - **Setup 1ª vez:** `pip install -r requirements.txt` (+ `patchright` e Google
   Chrome instalado para o modo local da Liga). Guia passo a passo do PC do
   operador: `SETUP-WINDOWS.md`. Nuvem/servidor: a Liga bloqueia IP de datacenter
@@ -120,18 +140,103 @@ Erros recorrentes (3 famílias — detalhe no manual):
 - Formato = modelo MYP cross-scanner (padrão do operador, 2026-06-20) **adaptado
   a selados**: tabela **agrupada por produto/SKU canônico** (não lista plana de
   anúncios), com status 🟢 GREEN / 🟡 YELLOW / 🔴 RED, Ref. Nacional (R$),
-  Ref. TCG (US$→R$), Margem bruta % por linha e coluna
-  `Links` = `[oferta](url) · [TCG](url)` em toda linha. Formato travado em
-  `tests/test_snapshot_*`.
+  Ref. TCG (US$→R$), **Ref. eBay (R$) + Margem vs eBay % (informativas, lado de
+  venda)** e Margem bruta % por linha; coluna `Links` =
+  `[oferta](url) · [TCG](url) · [eBay](url)` (o `[eBay]` só quando a referência
+  de venda cobriu o SKU). Cabeçalho traz a **Rota** e a idade/cobertura da
+  referência de venda. Formato travado em `tests/test_snapshot_*` (contrato dos
+  3 links atualizado de propósito em 2026-08-03).
 - O `scripts/snapshot.py` roda sobre o `unified_deals.csv` da run
-  (`results/unified_*/`); o `run_liga_local.py` já o dispara por default.
-  `scripts/build_delivery_xlsx.py` gera o XLSX de apoio — só sob pedido.
+  (`results/[<jogo>/]unified_*/`); o `run_liga_local.py` já o dispara por
+  default. **Scan de One Piece exige `--game onepiece` TAMBÉM no snapshot**
+  (senão a entrega sai do último scan Pokémon). `scripts/build_delivery_xlsx.py`
+  gera o XLSX de apoio — só sob pedido.
 - Lembrete: selado **não tem piso de preço** (regra inviolável nº 1 acima).
+
+## 🧭 Rotas e referência de VENDA (eBay) — 2026-08-03
+
+> **Em uma frase:** cada scan agora declara a **rota** (onde comprar → para
+> onde vender) e mostra, ao lado da referência TCGplayer, **quanto o produto
+> está pedindo no eBay US** — o mercado onde o operador de fato vende, via
+> Probstein (consignação = uma empresa vende por você no eBay).
+
+- **Rota** = bloco `route:` do config (labels auditáveis; ex.: "BR (Liga) →
+  venda eBay US via Probstein · classificação vs TCGplayer"). É DADO, não
+  comportamento: aparece no banner, no sidecar `run_meta.json` do run e no
+  cabeçalho da entrega — nada de matching/margem/classificação muda por rota.
+- **Referência de venda** = `data/ebay_reference.json` (gitignored), gerada por
+  `build_ebay_reference.py`: menor anúncio **ATIVO** plausível por SKU no eBay
+  US (Buy It Now, item nos EUA, sem frete), via Browse API oficial (grátis,
+  5.000 chamadas/dia; cliente stdlib em `lib/ebay_client.py`). Gate de título
+  estrito (termos do PRÓPRIO registry + não-EN + graded + aberto/usado +
+  lote/case) e guard de anúncio-lixo (<50% da ref TCG = contado, nunca
+  vencedor). SEM filtro de categoria eBay de propósito (a categoria de singles
+  183454 é errada p/ selado e não chutamos outra — pinagem via Taxonomy API é
+  backlog).
+- **Vocabulário honesto (não confundir):** anúncio ativo é **PEDIDA** (o que
+  vendedores estão pedindo), não **venda realizada** (o que compradores
+  pagaram — a API de vendidos do eBay é restrita). Colunas/link eBay são
+  informativos; ver regras invioláveis nº 7 e 8.
+- Validade: `max_age_days: 7` no config — vencida só AVISA (nunca rebaixa).
+- Setup das chaves (uma vez, ~5 min, grátis): `SETUP-VALIDACAO.md §A`.
+
+## 🎴 Perfis por jogo (Pokémon / One Piece) — 2026-08-03
+
+> **Em uma frase:** o MESMO pipeline roda mais de um jogo — o que muda por
+> jogo são só os DADOS (config + registry + referências + raiz de resultados),
+> nunca a lógica (zero condicional de jogo em matcher/margem/classificação).
+
+| — | Pokémon (default) | One Piece |
+|---|---|---|
+| Config | `config.yaml` | `config_onepiece.yaml` |
+| Registry | `sku_registry.yaml` (205 SKUs) | `sku_registry_onepiece.yaml` (83 SKUs seed) |
+| Referência US | `data/us_reference.json` (tcgcsv **cat 3**) | `data/us_reference_onepiece.json` (tcgcsv **cat 68**) |
+| Referência venda | `data/ebay_reference.json` | `data/ebay_reference_onepiece.json` |
+| Resultados | `results/` (histórico) | `results/onepiece/` |
+| Fontes default | liga, olx, mercadolivre | **só liga** (OLX/ML/Amazon têm queries Pokémon — backlog) |
+| Site da Liga | ligapokemon.com.br | ligaonepiece.com.br (mesma plataforma LigaMagic) |
+
+- Seleção: `--game {pokemon,onepiece}` nos 2 runners, no `run_liga_local.py` e
+  no `scripts/snapshot.py` (mesma flag nos DOIS passos do fluxo!). Sem a flag,
+  vale `game:` do config; sem nada, Pokémon.
+- **Registry OP = 100% dados reais do tcgcsv** (gerado/ampliável por
+  `scripts/gen_onepiece_registry.py`): escopo seed = PRB-01 (2024-11) → OP17;
+  Case/DON!!/Dash/Bonus/lotes ficam FORA e contados. **ZERO alias PT de set**
+  (a Bandai não localiza nomes; aliases PT só entram com títulos reais da Liga
+  OP — nunca deduzidos, lição ASI-Evolve). Autoconsistência 83/83 + anti-
+  contaminação cross-game travadas em `tests/test_onepiece_registry.py`.
+- ✅ **Coletor OP VALIDADO no PC do operador (2026-08-03, §B):** categorias do
+  site OP = `10` Caixas de Pacotes (Booster Box/EB Box), `21` Pacotes Avulsos,
+  `28` Caixas Colecionáveis (é onde vivem os **Double Pack DP-xx**, junto de
+  Illustration Box/Gift Collection que ficam sem match de propósito), `36`
+  Decks Iniciais; `38` Kits Colecionáveis e `24` Latas ficaram FORA (nenhum SKU
+  no registry). Lembrete permanente: o namespace `categ=N` é POR SITE (no site
+  Pokémon 27=ETB; no tcgcsv 27=Dragon Ball Masters — nunca confundir). Os
+  templates de preço do site Pokémon funcionaram inalterados no site OP, e
+  `type_translate` ganhou `"Deck Inicial" → "Starter Deck"`. Smoke offline:
+  `python run_all_sources.py --game onepiece --sources mock --mock
+  mock_data/onepiece_listings.json`.
+
+## 🖥️ Painel local (somente leitura) — 2026-08-03
+
+```bash
+python -m uvicorn panel:app --host 127.0.0.1 --port 8078   # abra http://127.0.0.1:8078
+```
+
+Uma "tomada" HTTP local (padrão do api.py do integrated-scanner) para explorar
+os deals do último scan de cada jogo no navegador: filtros por status/margem/
+busca, agrupado por produto, 3 links por linha e faixa de status com idade das
+referências. `/api/products` é servido pelo MESMO `group_products` da entrega —
+números idênticos por construção. **Só leitura** (nenhum endpoint escreve;
+disparar scan pelo painel é backlog de propósito — a Liga é headful/local). A
+entrega oficial continua sendo a tabela do `scripts/snapshot.py` no chat; o
+painel nunca recomenda compra. Endpoints: `/` (página), `/health`, `/api/deals`,
+`/api/products`, `/api/status`, `/api/routes`, `/docs` (Swagger).
 
 ## Testes
 
 ```bash
-python -m pytest -q     # 354 testes (verificado 2026-07-07), 100% offline
+python -m pytest -q     # 436 testes (verificado 2026-08-03), 100% offline
 ```
 
 - A suíte roda inteira sem rede/credencial/browser: adapters testados contra
@@ -147,24 +252,37 @@ python -m pytest -q     # 354 testes (verificado 2026-07-07), 100% offline
 ## Arquitetura
 
 ```
-sealed_arbitrage_scanner.py  pipeline: match título↔SKU + gate de condição + compute_margin (zero-guard) + classificação GREEN/YELLOW/RED
-run_all_sources.py           orquestrador multi-fonte (DEFAULT_SOURCES = liga,olx,mercadolivre; amazon opt-in) → results/unified_*/
-run_liga_local.py            atalho canônico do scan Liga local (Chrome headful + snapshot no fim)
-liga_adapter.py              Liga Pokémon (patchright + Chrome headful; modo scraperapi p/ servidor)
-olx_adapter.py               OLX (rota Firecrawl fura o WAF)
-mercadolivre_adapter.py      MercadoLivre
+sealed_arbitrage_scanner.py  pipeline: match título↔SKU + gate de condição + compute_margin (zero-guard) +
+                             classificação GREEN/YELLOW/RED + enriquecimento eBay pós-classify (informativo)
+                             + GAME_PROFILES/resolve_game (perfis por jogo)
+run_all_sources.py           orquestrador multi-fonte (--game; default_sources do perfil; amazon opt-in)
+                             → results/[<jogo>/]unified_*/ + sidecar run_meta.json (rota + referências)
+run_liga_local.py            atalho canônico do scan Liga local (--game; Chrome headful + snapshot no fim)
+liga_adapter.py              plataforma LigaMagic (patchright + Chrome headful; modo scraperapi p/ servidor);
+                             parametrizado por PERFIL (base_url/categorias/traduções; defaults = Liga Pokémon)
+olx_adapter.py               OLX (rota Firecrawl fura o WAF) — queries Pokémon (cobertura OP = backlog)
+mercadolivre_adapter.py      MercadoLivre — idem
 amazon_adapter.py            Amazon BR (urllib + fallback browser $0 default desde 2026-06-10; Firecrawl legado opt-in pago)
-build_us_reference.py        gera/refresca a referência US (TCGplayer via tcgcsv.com) + sanity bands por tipo de produto (SANITY_BANDS_USD)
-sku_registry.yaml            catálogo canônico de SKUs (~10,6k linhas: product_id tcgcsv, set_terms EN+PT, requires_terms)
-config.yaml                  premissas auditáveis: câmbio (fetch/manual), filtros (SEM piso), deal_criteria (0.30 / teto 200% / ref. 14d), fontes
-lib/                         browser.py (patchright), console.py, env.py, errors.py, firecrawl.py
-scripts/snapshot.py          ⭐ GERADOR CANÔNICO da entrega (tabela markdown agrupada por produto)
+build_us_reference.py        referência US que CLASSIFICA (tcgcsv; --game/--category-id/--bands;
+                             SANITY_BANDS_USD Pokémon + SANITY_BANDS_USD_ONEPIECE)
+build_ebay_reference.py      referência de VENDA informativa (eBay Browse API; menor anúncio ATIVO por SKU;
+                             degradação honesta sem chaves — nunca sobrescreve a anterior)
+panel.py                     🖥️ painel web LOCAL read-only (FastAPI :8078; /api/* + página única embutida)
+sku_registry.yaml            catálogo Pokémon (205 SKUs: product_id tcgcsv, set_terms EN+PT, requires_terms)
+sku_registry_onepiece.yaml   catálogo One Piece (83 SKUs seed, 100% dados reais tcgcsv cat 68)
+config.yaml                  perfil Pokémon: câmbio, filtros (SEM piso), deal_criteria, ROTA (route:), referências
+config_onepiece.yaml         perfil One Piece (categorias 10/21/28/36 validadas no site OP — 2026-08-03, §B)
+lib/                         browser.py (patchright), console.py, env.py, errors.py, firecrawl.py,
+                             ebay_client.py (Browse API stdlib, copiado/adaptado da frota)
+scripts/snapshot.py          ⭐ GERADOR CANÔNICO da entrega (--game; tabela agrupada por produto, 3 links)
 scripts/snapshot_friendly.py variante de leitura; build_delivery_xlsx.py (XLSX de apoio sob pedido)
-scripts/expand_registry_modern.py / readd_tins_split.py   manutenção do registry
+scripts/gen_onepiece_registry.py  gera/amplia o registry OP a partir do tcgcsv (rerunnável)
+scripts/expand_registry_modern.py / readd_tins_split.py   manutenção do registry Pokémon
 watchdog.py, register_task.ps1                            apoio de execução no PC do operador
 probe_liga_sealed.py / probe_olx_local.py                 sondas manuais de coleta
-mock_data/                   fixtures de listing p/ rodar o pipeline sem rede (--mock)
-tests/                       354 testes offline (gaps de cobertura, matcher, gates, snapshot, adapters)
+SETUP-VALIDACAO.md           runbook das validações que exigem o PC/chaves do operador (§A–§D)
+mock_data/                   fixtures de listing p/ rodar sem rede (--mock; onepiece_listings.json p/ OP)
+tests/                       436 testes offline (gaps, matcher, gates, snapshot, adapters, eBay, perfis, painel)
 ```
 
 Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no
@@ -224,4 +342,22 @@ Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no
   entrega agrupado por produto padrão MYP (2026-06-20) · fallback browser $0 da
   Amazon (2026-06-10) · SEM piso (2026-06-27) · cobertura total do catálogo Liga,
   127 títulos (PR #70) · exclusão Battle Decks (2026-07-02) · exclusão Blister
-  Duplo Heróis Excelsos Tangela/Komala (2026-07-03).
+  Duplo Heróis Excelsos Tangela/Komala (2026-07-03) · **plataforma: rotas +
+  referência de venda eBay + perfil One Piece + painel local (2026-08-03 —
+  entrada detalhada no CHANGELOG)**.
+- **Validações §A–§C CONCLUÍDAS em 2026-08-03** (tabela de estado no
+  `SETUP-VALIDACAO.md`): §A chaves eBay (nuvem + PC), §B Liga One Piece
+  (categorias 10/21/28/36 + smoke headful no PC do operador), §C referência
+  eBay OP (55/83). O scan OP real está destravado.
+- **Backlog registrado da plataforma:** PriceCharting (vendas realizadas) como
+  2ª referência de venda (campo `pc_url` no registry; parser da frota já provou
+  páginas de selado); join do score de longo prazo do `pokemon-longterm-outlook
+  --sealed` por productId (padrão doubleholo — informativo, nunca classifica);
+  selados como 5ª fonte do `integrated-scanner`; pinagem de categoria eBay via
+  Taxonomy API; cobertura One Piece em OLX/ML/Amazon; perfis Dragon Ball/
+  Lorcana (mesma mecânica de perfil); POST /scan no painel (com guard
+  anti-headful); watchdog por jogo. Minors do review de merge do PR #75
+  (2026-08-04): escapar HTML/validar URL nos dados de anúncio injetados no
+  painel (`panel.py` INDEX_HTML — título de marketplace é input de terceiro);
+  piso de versão p/ `httpx2` no requirements; `#` fora do `safe` do
+  `snapshot.md_link` (latente — nenhuma fonte emite fragmento hoje).
