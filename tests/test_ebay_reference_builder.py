@@ -131,6 +131,41 @@ def test_select_lowest_without_ref_disables_junk_guard():
     assert entry["status"] == "ok" and entry["usd"] == 100.0
 
 
+def test_select_lowest_rejects_non_ebay_host_url():
+    # Classe observada AO VIVO (scan 2026-08-11): a Browse API vazou goldin.co
+    # (casa de leilões da eBay) como "menor anúncio" em 3 SKUs — URL sem item e
+    # preço de LANCE de leilão, que não é pedida BIN comparável. Host fora de
+    # *.ebay.com nunca vence, mesmo sendo o mais barato.
+    items = [
+        _item("Pokemon Surging Sparks Booster Box Sealed", "180.00", url="https://goldin.co"),
+        _item("Pokemon Surging Sparks Booster Box Sealed", "289.99"),
+    ]
+    entry = B.select_lowest(SKU_BOX, items, ref_usd=300.0)
+    assert entry["status"] == "ok"
+    assert entry["usd"] == 289.99
+    assert "ebay.com" in entry["url"]
+
+    # Só o item da Goldin → sem anúncio plausível (nunca URL fora do eBay).
+    only_goldin = [_item("Pokemon Surging Sparks Booster Box Sealed", "180.00",
+                         url="https://goldin.co")]
+    assert B.select_lowest(SKU_BOX, only_goldin, ref_usd=300.0)["status"] == "sem anúncio plausível"
+
+
+def test_select_lowest_requires_auditable_url():
+    # Anúncio sem itemWebUrl não é auditável — não pode ser referência.
+    items = [_item("Pokemon Surging Sparks Booster Box Sealed", "289.99", url="")]
+    assert B.select_lowest(SKU_BOX, items, ref_usd=None)["status"] == "sem anúncio plausível"
+
+
+def test_is_ebay_listing_url_host_matching():
+    assert B._is_ebay_listing_url("https://www.ebay.com/itm/123")
+    assert B._is_ebay_listing_url("https://ebay.com/itm/123")
+    assert not B._is_ebay_listing_url("https://goldin.co")
+    assert not B._is_ebay_listing_url("https://fakeebay.com/itm/123")   # sufixo sem ponto
+    assert not B._is_ebay_listing_url("https://ebay.com.evil.io/itm/1") # host forjado
+    assert not B._is_ebay_listing_url("")
+
+
 def test_select_lowest_skips_non_usd_and_bad_price():
     items = [
         _item("Pokemon Surging Sparks Booster Box Sealed", "150.00", currency="EUR"),

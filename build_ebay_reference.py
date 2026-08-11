@@ -44,6 +44,7 @@ import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlparse
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
@@ -85,6 +86,22 @@ LOT_CASE_RE = re.compile(
 # Anúncio abaixo de SUSPECT_RATIO × referência TCG = lixo provável (caixa
 # errada, foto, pré-venda suspeita): contado, NUNCA vencedor.
 SUSPECT_RATIO = 0.5
+
+
+def _is_ebay_listing_url(url: str) -> bool:
+    """True só para URL de anúncio no próprio eBay (host *.ebay.com).
+
+    A Browse API devolve também itens da rede eBay fora do marketplace core —
+    observado ao vivo (scan 2026-08-11): goldin.co (casa de leilões da eBay)
+    vazou como "menor anúncio" em 3 SKUs, com URL sem item e preço de lance de
+    leilão, que não é pedida Buy It Now comparável. Sem URL auditável no
+    eBay US, o anúncio não serve de referência de venda.
+    """
+    try:
+        host = (urlparse(url).netloc or "").lower()
+    except ValueError:
+        return False
+    return host == "ebay.com" or host.endswith(".ebay.com")
 
 _ENGLISH_SUFFIX_RE = re.compile(r"\s*\((?:english|ingles|inglês)\)\s*$", re.IGNORECASE)
 
@@ -138,6 +155,9 @@ def select_lowest(sku, items: list[dict], ref_usd: float | None) -> dict:
         title = it.get("title") or ""
         if not title_passes_gate(title, sku):
             continue
+        url = it.get("itemWebUrl") or ""
+        if not _is_ebay_listing_url(url):
+            continue
         price = it.get("price") or {}
         if (price.get("currency") or "USD") != "USD":
             continue
@@ -151,7 +171,7 @@ def select_lowest(sku, items: list[dict], ref_usd: float | None) -> dict:
             junk += 1
             continue
         if best is None or usd < best["usd"]:
-            best = {"usd": usd, "url": it.get("itemWebUrl") or "", "status": "ok"}
+            best = {"usd": usd, "url": url, "status": "ok"}
     if best:
         best["junk_skipped"] = junk
         return best
