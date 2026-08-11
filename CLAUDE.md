@@ -236,7 +236,7 @@ painel nunca recomenda compra. Endpoints: `/` (página), `/health`, `/api/deals`
 ## Testes
 
 ```bash
-python -m pytest -q     # 436 testes (verificado 2026-08-03), 100% offline
+python -m pytest -q     # 447 testes (verificado 2026-08-11), 100% offline
 ```
 
 - A suíte roda inteira sem rede/credencial/browser: adapters testados contra
@@ -282,7 +282,7 @@ watchdog.py, register_task.ps1                            apoio de execução no
 probe_liga_sealed.py / probe_olx_local.py                 sondas manuais de coleta
 SETUP-VALIDACAO.md           runbook das validações que exigem o PC/chaves do operador (§A–§D)
 mock_data/                   fixtures de listing p/ rodar sem rede (--mock; onepiece_listings.json p/ OP)
-tests/                       436 testes offline (gaps, matcher, gates, snapshot, adapters, eBay, perfis, painel)
+tests/                       447 testes offline (gaps, matcher, gates, snapshot, adapters, eBay, perfis, painel)
 ```
 
 Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no
@@ -334,10 +334,10 @@ Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no
   eles registram o que foi feito e os gaps adiados (ex.: SKUs com referência
   achada mas sem título real da Liga p/ confirmar match).
 - **`CHANGELOG.md`**: o repo NÃO usa versionamento semântico — entradas por
-  data. Última entrada: 2026-06-27; mudanças posteriores (até o PR #74,
-  2026-07-06 — dedup de env em `lib/env.py`, fechamento de CSVs, banner; antes
-  dele o #72, 2026-07-03 — fix registry TEF ETB) estão só no git log de `main`,
-  que é a fonte de verdade do estado atual junto com o código mergeado.
+  data. Última entrada: 2026-08-03 (plataforma: rotas + referência de venda
+  eBay + perfil One Piece + painel local). Mudanças que ficaram fora do
+  CHANGELOG (ex.: PRs #72–#74 de 2026-07) estão no git log de `main`, que é a
+  fonte de verdade do estado atual junto com o código mergeado.
 - Marcos preservados: gate de condição selado-vs-aberto (2026-06-21) · modelo de
   entrega agrupado por produto padrão MYP (2026-06-20) · fallback browser $0 da
   Amazon (2026-06-10) · SEM piso (2026-06-27) · cobertura total do catálogo Liga,
