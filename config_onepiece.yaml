@@ -27,7 +27,9 @@ deal_criteria:
   # Idênticos ao perfil Pokémon (regras invioláveis nº 1–5 do CLAUDE.md).
   min_total_margin_pct: 0.30     # fração; >= 30% -> GREEN
   review_above_margin_pct: 2.0   # > 200% -> RED margem_anomala
-  max_reference_age_days: 14
+  # Operador 2026-08-15: só referência DO DIA (mesma regra do perfil Pokémon) —
+  # rebuildar build_us_reference.py --game onepiece antes de todo scan.
+  max_reference_age_days: 1
 
 sources:
   brazil:
@@ -37,8 +39,8 @@ sources:
 
 route:
   name: ligaop_to_ebay_us
-  label: "BR (Liga One Piece) → venda eBay US via Probstein · classificação vs TCGplayer (cat 68)"
-  sell_reference: "TCGplayer Market via tcgcsv.com (categoria 68, catálogo EN)"
+  label: "BR (Liga One Piece) → venda eBay US via Probstein · classificação vs eBay menor anúncio ativo"
+  sell_reference: "eBay US menor anúncio ativo (Browse API) — referência única do perfil OP"
   extra_sell_references:
     ebay:
       enabled: true
@@ -48,6 +50,14 @@ route:
 
 references:
   us_file: data/us_reference_onepiece.json
+  # Operador 2026-08-15: "para one piece vamos tomar como referência eBay
+  # apenas" — a CLASSIFICAÇÃO (margem/GREEN) usa o menor anúncio ATIVO do eBay
+  # US (data/ebay_reference_onepiece.json, rebuildado no dia via
+  # build_ebay_reference.py --game onepiece). SKU sem anúncio plausível fica
+  # sem referência -> RED (nunca inventamos preço). O us_file acima segue
+  # existindo só p/ o piso anti-lixo do próprio build_ebay_reference.
+  classification_source: ebay
+  ebay_file: data/ebay_reference_onepiece.json
 
 # Fontes default DESTE perfil: só Liga (OLX/ML/Amazon têm queries de busca
 # Pokémon hardcoded — cobertura OP dessas fontes é backlog, não silêncio).
@@ -65,15 +75,15 @@ liga:
   #   21 Pacotes Avulsos        → Booster Pack / Extra Booster Pack
   #   28 Caixas Colecionáveis   → Double Pack Set (DP-xx; divide espaço com
   #                               Illustration Box/Gift Collection, fora do registry)
-  #   36 Decks Iniciais         → Starter Deck (ST-xx, inclui "Deck Inicial EX")
-  # Descobertas e deixadas FORA (nenhum SKU no registry — não coletar ruído):
+  # Descobertas e deixadas FORA (não coletar ruído):
   #   38 Kits Colecionáveis (anniversary/premium sets) · 24 Latas
-  categorias: [10, 21, 28, 36]
+  #   36 Decks Iniciais (Starter Deck ST-xx) — EXCLUÍDA pelo operador em
+  #     2026-08-15 ("deixa decks de fora"): decks fora do escopo de compra OP.
+  categorias: [10, 21, 28]
   categorias_nomes:
     10: "Caixas de Pacotes"
     21: "Pacotes Avulsos"
     28: "Caixas Colecionáveis"
-    36: "Decks Iniciais"
   keep_languages: ["EN"]
   max_products_per_category: 30
   delay_seconds: 1.0
@@ -96,8 +106,6 @@ scope:
     - Sleeved Booster Pack
     - Double Pack Set
     - Double Pack Set Display
-    - Starter Deck
-    - Starter Deck Display
     - Extra Booster Box
     - Extra Booster Pack
   exclude:
@@ -106,5 +114,9 @@ scope:
     - Opened Products
     - Damaged Products
     - Booster Box Case      # lote — nunca vira SKU (idem Dash/DON!!/Bonus Pack)
+    # Operador 2026-08-15 ("deixa decks de fora"): Starter Deck fora do escopo
+    # de compra OP — categoria 36 da Liga também saiu de liga.categorias.
+    - Starter Deck
+    - Starter Deck Display
   sealed_only_sources:
     - enjoei

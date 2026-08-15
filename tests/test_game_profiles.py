@@ -56,10 +56,17 @@ def test_orchestrator_onepiece_mock_end_to_end(tmp_path, monkeypatch):
     monkeypatch.setattr(ORQ, "SCRIPT_DIR", tmp_path)
     (tmp_path / "data").mkdir()
     today = S.datetime.now(S.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    # Referência OP PINADA (não depende do preço vivo commitado).
+    # Referência OP PINADA (não depende do preço vivo commitado). Desde
+    # 2026-08-15 o perfil OP CLASSIFICA pelo eBay (classification_source: ebay);
+    # o us_reference segue existindo só p/ o piso anti-lixo do builder.
     (tmp_path / "data" / "us_reference_onepiece.json").write_text(
         json.dumps({"captured_at": today,
                     "prices": {"op16-booster-box-en": 200.0}}), encoding="utf-8")
+    (tmp_path / "data" / "ebay_reference_onepiece.json").write_text(
+        json.dumps({"captured_at": today,
+                    "entries": {"op16-booster-box-en": {
+                        "usd": 200.0, "status": "ok",
+                        "url": "https://www.ebay.com/itm/1"}}}), encoding="utf-8")
     listings = [
         {"id": "OP-GOOD", "title": "The Time of Battle Booster Box (English) OP-16",
          "price_brl": 500.0, "seller": "v", "url": "u"},
@@ -85,6 +92,8 @@ def test_orchestrator_onepiece_mock_end_to_end(tmp_path, monkeypatch):
     meta = json.loads((op_dirs[-1] / "run_meta.json").read_text(encoding="utf-8"))
     assert meta["game"] == "onepiece"
     assert "One Piece" in meta["route_label"]
+    # Operador 2026-08-15: a classificação do perfil OP é vs eBay.
+    assert meta["classification_reference"] == "ebay"
 
 
 def test_orchestrator_default_sources_come_from_profile_config(tmp_path, monkeypatch):
@@ -95,6 +104,8 @@ def test_orchestrator_default_sources_come_from_profile_config(tmp_path, monkeyp
     today = S.datetime.now(S.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     (tmp_path / "data" / "us_reference_onepiece.json").write_text(
         json.dumps({"captured_at": today, "prices": {}}), encoding="utf-8")
+    (tmp_path / "data" / "ebay_reference_onepiece.json").write_text(
+        json.dumps({"captured_at": today, "entries": {}}), encoding="utf-8")
 
     seen: dict = {}
     real_load = S.load_listings

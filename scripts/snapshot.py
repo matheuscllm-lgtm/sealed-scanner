@@ -510,6 +510,14 @@ def main() -> None:
                     "Rode `python run_all_sources.py` primeiro."
                 )
     meta = load_run_meta(scan_dir_used)
+    # Modo da referência de CLASSIFICAÇÃO deste run (run_meta.json): 'tcg'
+    # (default/histórico) ou 'ebay' (perfil One Piece, operador 2026-08-15 —
+    # "para one piece vamos tomar como referência eBay apenas"). No modo ebay
+    # as colunas "Preço US" do CSV JÁ carregam o eBay; aqui só rotulamos certo
+    # e suprimimos o par informativo eBay (seria duplicata da referência).
+    ref_mode = (meta.get("classification_reference") or "tcg").strip().lower()
+    ebay_is_ref = ref_mode == "ebay"
+    ref_name = "eBay" if ebay_is_ref else "TCG"
 
     OUT_DIR.mkdir(exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d-%H%M")
@@ -543,9 +551,11 @@ def main() -> None:
     lines.append(f"# Scan TCG Sealed{profile['title_suffix']} — {stamp}")
     lines.append("")
     sources_seen = sorted({src(r) for r in rows})
+    ref_desc = ("eBay US menor anúncio ativo (classificação — operador 2026-08-15)"
+                if ebay_is_ref else "TCGPlayer Market via tcgcsv.com")
     lines.append(
         f"**Fontes BR**: {' + '.join(sources_seen) if sources_seen else '—'} · "
-        f"**Referência US**: TCGPlayer Market via tcgcsv.com · **Escopo**: {scope}"
+        f"**Referência US**: {ref_desc} · **Escopo**: {scope}"
     )
     lines.append("")
     # ── Rota (compra → venda) + status da referência de VENDA (informativa) ──
@@ -583,21 +593,37 @@ def main() -> None:
     if not actionable:
         lines.append("> Nenhum produto GREEN/YELLOW neste scan.")
     else:
-        lines.append(
-            "| # | Status | Produto (EN) | Tipo | Ref. Nacional (R$) | Ref. TCG (R$) | "
-            "Ref. eBay (R$) | Margem bruta % | Margem vs eBay % | Δ R$/unid | "
-            "Qtd total | Ofertas | ⚠️ | Links |"
-        )
-        lines.append("|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|")
+        if ebay_is_ref:
+            lines.append(
+                "| # | Status | Produto (EN) | Tipo | Ref. Nacional (R$) | Ref. eBay (R$) | "
+                "Margem bruta % | Δ R$/unid | Qtd total | Ofertas | ⚠️ | Links |"
+            )
+            lines.append("|---|---|---|---|---:|---:|---:|---:|---:|---:|---|---|")
+        else:
+            lines.append(
+                "| # | Status | Produto (EN) | Tipo | Ref. Nacional (R$) | Ref. TCG (R$) | "
+                "Ref. eBay (R$) | Margem bruta % | Margem vs eBay % | Δ R$/unid | "
+                "Qtd total | Ofertas | ⚠️ | Links |"
+            )
+            lines.append("|---|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|")
         for i, g in enumerate(actionable, start=1):
             flag = "⚠️" if g["suspect"] else ""
-            lines.append(
-                f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | {g['tipo']} | "
-                f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | {fmt_brl(g['ebay_brl'])} | "
-                f"{fmt_pct(g['margem'])} | {fmt_pct(g['ebay_margem'])} | "
-                f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
-                f"{g['n_ofertas']} | {flag} | {group_links_cell(g)} |"
-            )
+            if ebay_is_ref:
+                lines.append(
+                    f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | {g['tipo']} | "
+                    f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | "
+                    f"{fmt_pct(g['margem'])} | "
+                    f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
+                    f"{g['n_ofertas']} | {flag} | {group_links_cell(g)} |"
+                )
+            else:
+                lines.append(
+                    f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | {g['tipo']} | "
+                    f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | {fmt_brl(g['ebay_brl'])} | "
+                    f"{fmt_pct(g['margem'])} | {fmt_pct(g['ebay_margem'])} | "
+                    f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
+                    f"{g['n_ofertas']} | {flag} | {group_links_cell(g)} |"
+                )
 
         # ── Detalhamento: quantidades e preços disponíveis de CADA unidade ──
         lines.append("")
@@ -613,7 +639,7 @@ def main() -> None:
             med = fmt_brl(g["br_median"])
             lines.append(
                 f"**#{i} — {g['produto']}** · {g['tipo']} · Coleção: {g['colecao']} · "
-                f"Ref. TCG {ref_tcg} · Ref. Nacional (menor) {fmt_brl(g['br_ref'])} · "
+                f"Ref. {ref_name} {ref_tcg} · Ref. Nacional (menor) {fmt_brl(g['br_ref'])} · "
                 f"mediana BR {med} · {g['n_ofertas']} oferta(s) · Qtd total "
                 f"{fmt_qtd_total(g)}"
             )
@@ -642,33 +668,56 @@ def main() -> None:
     # ── Ranking completo por produto (todos, incl. RED) — referência ──
     lines.append("## Ranking completo por produto (do mais vantajoso pro menos)")
     lines.append("")
-    lines.append(
-        "| # | Status | Produto (EN) | Ref. Nacional (R$) | Ref. TCG (R$) | "
-        "Ref. eBay (R$) | Margem bruta % | Δ R$/unid | Qtd total | Ofertas | Links |"
-    )
-    lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|---:|---|")
-    for i, g in enumerate(groups, start=1):
+    if ebay_is_ref:
         lines.append(
-            f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | "
-            f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | {fmt_brl(g['ebay_brl'])} | "
-            f"{fmt_pct(g['margem'])} | "
-            f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
-            f"{g['n_ofertas']} | {group_links_cell(g)} |"
+            "| # | Status | Produto (EN) | Ref. Nacional (R$) | Ref. eBay (R$) | "
+            "Margem bruta % | Δ R$/unid | Qtd total | Ofertas | Links |"
         )
+        lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|---|")
+    else:
+        lines.append(
+            "| # | Status | Produto (EN) | Ref. Nacional (R$) | Ref. TCG (R$) | "
+            "Ref. eBay (R$) | Margem bruta % | Δ R$/unid | Qtd total | Ofertas | Links |"
+        )
+        lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|---:|---|")
+    for i, g in enumerate(groups, start=1):
+        if ebay_is_ref:
+            lines.append(
+                f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | "
+                f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | "
+                f"{fmt_pct(g['margem'])} | "
+                f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
+                f"{g['n_ofertas']} | {group_links_cell(g)} |"
+            )
+        else:
+            lines.append(
+                f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | "
+                f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | {fmt_brl(g['ebay_brl'])} | "
+                f"{fmt_pct(g['margem'])} | "
+                f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
+                f"{g['n_ofertas']} | {group_links_cell(g)} |"
+            )
 
     lines.append("")
     lines.append("## Notas")
     lines.append("")
     lines.append("- A entrega é **agrupada por produto** (SKU canônico): cada linha consolida todas as ofertas BR do mesmo produto. O nº entre parênteses no topo mostra quantos anúncios brutos viraram quantos produtos.")
-    lines.append("- **Ref. Nacional (R$)** = preço da oferta de REFERÊNCIA = a unidade mais barata que tem referência TCG (a mesma oferta que dá a margem e o link da linha — nunca cruzamos preço de um anúncio com referência de outro). A `mediana BR` no detalhamento dá o contexto de mercado nacional; a escada mostra unidades ainda mais baratas que eventualmente estejam sem referência.")
-    lines.append("- **Ref. TCG (R$)** = TCGPlayer Market price (US$) convertido pra R$ pelo câmbio do scan — a referência internacional de revenda.")
+    lines.append(f"- **Ref. Nacional (R$)** = preço da oferta de REFERÊNCIA = a unidade mais barata que tem referência {ref_name} (a mesma oferta que dá a margem e o link da linha — nunca cruzamos preço de um anúncio com referência de outro). A `mediana BR` no detalhamento dá o contexto de mercado nacional; a escada mostra unidades ainda mais baratas que eventualmente estejam sem referência.")
+    if ebay_is_ref:
+        lines.append("- **Ref. eBay (R$)** = menor anúncio ATIVO no eBay US (Buy It Now, item nos EUA; PEDIDA, não venda realizada; sem frete), convertido pra R$ pelo câmbio do scan — a **referência única de classificação** deste perfil (operador 2026-08-15). SKU sem anúncio plausível fica sem referência → RED.")
+    else:
+        lines.append("- **Ref. TCG (R$)** = TCGPlayer Market price (US$) convertido pra R$ pelo câmbio do scan — a referência internacional de revenda.")
     lines.append("- **Qtd total** = soma do estoque de TODAS as ofertas do produto (importamos em LOTE). **Ofertas** = nº de anúncios. `N+?` quando algum anúncio não teve estoque parseado (a soma é um piso); `?` quando nenhum teve.")
     lines.append("- O bloco **Quantidades e preços disponíveis por unidade** lista, por produto, CADA anúncio (vendedor, fonte, qtd e preço BR) — a escada de unidades disponíveis, da mais barata pra mais cara.")
-    lines.append("- **Links** = `[oferta](anúncio BR mais barato) · [TCG](página TCGplayer) · [eBay](menor anúncio ativo US)` numa coluna só (modelo MYP). A oferta linkada é a unidade de menor preço; as demais estão no detalhamento. O `[eBay]` só aparece quando a referência de venda cobriu o SKU.")
-    lines.append("- **Margem bruta %** = (Ref. TCG − Ref. Nacional) / Ref. Nacional × 100 — só preço vs preço, SEM taxas/frete. Custos operacionais ficam fora do scanner (o operador calcula por fora).")
-    lines.append("- **Ref. eBay (R$)** e **Margem vs eBay %** = lado de VENDA (eBay US, onde se vende via Probstein): menor anúncio ATIVO — é PEDIDA, não venda realizada, e NÃO inclui frete. Colunas INFORMATIVAS: nunca mudam a classificação GREEN/YELLOW/RED, que segue 100% a Ref. TCG.")
-    lines.append("- Referência eBay vem de `build_ebay_reference.py` (opcional). Sem ela, as colunas eBay ficam `-` e nada mais muda.")
-    lines.append("- **Δ R$/unid** = Ref. TCG R$ − Ref. Nacional R$, em reais por unidade do produto.")
+    if ebay_is_ref:
+        lines.append("- **Links** = `[oferta](anúncio BR mais barato) · [TCG](página TCGplayer, validação secundária) · [eBay](menor anúncio ativo US — a referência)` numa coluna só (modelo MYP). A oferta linkada é a unidade de menor preço; as demais estão no detalhamento.")
+    else:
+        lines.append("- **Links** = `[oferta](anúncio BR mais barato) · [TCG](página TCGplayer) · [eBay](menor anúncio ativo US)` numa coluna só (modelo MYP). A oferta linkada é a unidade de menor preço; as demais estão no detalhamento. O `[eBay]` só aparece quando a referência de venda cobriu o SKU.")
+    lines.append(f"- **Margem bruta %** = (Ref. {ref_name} − Ref. Nacional) / Ref. Nacional × 100 — só preço vs preço, SEM taxas/frete. Custos operacionais ficam fora do scanner (o operador calcula por fora).")
+    if not ebay_is_ref:
+        lines.append("- **Ref. eBay (R$)** e **Margem vs eBay %** = lado de VENDA (eBay US, onde se vende via Probstein): menor anúncio ATIVO — é PEDIDA, não venda realizada, e NÃO inclui frete. Colunas INFORMATIVAS: nunca mudam a classificação GREEN/YELLOW/RED, que segue 100% a Ref. TCG.")
+        lines.append("- Referência eBay vem de `build_ebay_reference.py` (opcional). Sem ela, as colunas eBay ficam `-` e nada mais muda.")
+    lines.append(f"- **Δ R$/unid** = Ref. {ref_name} R$ − Ref. Nacional R$, em reais por unidade do produto.")
     lines.append("- **⚠️** = produto com alguma oferta que precisa de conferência manual (match ambíguo YELLOW ou margem/variante suspeita) — o motivo está listado acima.")
     lines.append("- **GREEN** = margem bruta ≥ 30% · **YELLOW** = match ambíguo (1 anúncio casa com 2+ SKUs) · **RED** = < 30%, sem match, sem referência US ou preço inválido. (Selado NÃO tem piso de preço — o piso R$50 vale só para cartas avulsas.)")
     lines.append("- Sem recomendação de compra — o operador decide capital.")

@@ -667,6 +667,24 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
     row.product_type = sku.product_type
     row.set_name = sku.set_name
 
+    # Escopo por TIPO: product_type listado em scope.exclude é barreira dura
+    # (operador OP 2026-08-15: "deixa decks de fora" -> Starter Deck excluído
+    # do perfil One Piece). No perfil Pokémon o exclude só lista categorias que
+    # nunca são product_type de SKU (Raw Singles/Graded/Opened/Damaged) ->
+    # no-op, comportamento histórico intacto.
+    excluded_types = {
+        str(t).strip().lower() for t in (config.get("scope", {}).get("exclude") or [])
+    }
+    if (sku.product_type or "").strip().lower() in excluded_types:
+        row.deal_confidence = "RED"
+        row.bucket = "rejected"
+        row.reject_reason = "tipo_fora_do_escopo"
+        row.main_risk = (
+            f"Tipo '{sku.product_type}' excluído do escopo deste perfil (scope.exclude)"
+        )
+        row.recommended_action = "Ignorar (tipo fora do escopo de compra do operador)"
+        return row
+
     # Piso de preço configurável. SELADO roda SEM piso (min_price=0, decisão do
     # operador 2026-06-27), então este ramo fica INATIVO por política — preço
     # 0/malformado é barrado adiante pelo zero-guard de compute_margin (margem 0%
@@ -682,12 +700,16 @@ def classify(row: ScanRow, registry: list[Sku], us_reference: dict, config: dict
 
     us_usd = us_reference.get(sku.id)
     if us_usd is None:
-        # Nunca inventar preço.
+        # Nunca inventar preço. (reject_reason fica estável nos dois modos de
+        # referência — 'sem_referencia_us' é contrato de coluna/painel.)
+        ref_label = classification_reference_label(config)
         row.deal_confidence = "RED"
         row.bucket = "rejected"
         row.reject_reason = "sem_referencia_us"
-        row.main_risk = "Sem preço de referência no TCGPlayer para este SKU"
-        row.recommended_action = "Coletar referência TCGPlayer antes de avaliar"
+        row.main_risk = f"Sem preço de referência ({ref_label}) para este SKU"
+        row.recommended_action = (
+            f"Rodar {reference_rebuild_hint(config)} e reavaliar (sem referência, sem deal)"
+        )
         return row
 
     fin = compute_margin(row.price_brl, us_usd, config)
@@ -883,6 +905,52 @@ def write_xlsx(buckets: dict, config: dict, source_desc: str, path: Path) -> boo
 # --------------------------------------------------------------------------
 # Orquestração
 # --------------------------------------------------------------------------
+def classification_reference_source(config: dict) -> str:
+    """Fonte da referência que CLASSIFICA (margem/GREEN): 'tcg' (default,
+    comportamento histórico) ou 'ebay' (menor anúncio ATIVO no eBay US).
+
+    Operador 2026-08-15: no perfil One Piece a referência única passa a ser o
+    eBay ('para one piece vamos tomar como referência eBay apenas') — o
+    TCGplayer da categoria 68 descolava do mercado real de venda. Pokémon
+    segue TCGplayer (config sem a chave = 'tcg', nada muda)."""
+    src = str((config.get("references") or {}).get("classification_source") or "tcg").lower()
+    return src if src in ("tcg", "ebay") else "tcg"
+
+
+def classification_reference_label(config: dict) -> str:
+    return ("eBay US (menor anúncio ativo)"
+            if classification_reference_source(config) == "ebay" else "TCGPlayer")
+
+
+def load_classification_reference(config: dict, script_dir: Path) -> tuple[dict, dict]:
+    """Carrega a referência de CLASSIFICAÇÃO conforme o config.
+
+    Retorna (ref_data, prices): `prices` = {sku_id: usd} e `ref_data` carrega o
+    `captured_at` — o freshness guard (apply_freshness_downgrade) é o MESMO nos
+    dois modos. No modo 'ebay' só entram SKUs com status 'ok' e preço; SKU sem
+    anúncio plausível fica SEM referência -> RED sem_referencia_us (honesto,
+    nunca inventamos preço)."""
+    refs = config.get("references") or {}
+    if classification_reference_source(config) == "ebay":
+        rel = refs.get("ebay_file") or ebay_reference_settings(config)["reference_file"]
+        ref_data = load_json(script_dir / rel, rel)
+        prices = {
+            sid: float(entry["usd"])
+            for sid, entry in (ref_data.get("entries") or {}).items()
+            if isinstance(entry, dict) and entry.get("status") == "ok" and entry.get("usd")
+        }
+        return ref_data, prices
+    rel = refs.get("us_file") or "data/us_reference.json"
+    ref_data = load_json(script_dir / rel, rel)
+    return ref_data, ref_data.get("prices", {})
+
+
+def reference_rebuild_hint(config: dict) -> str:
+    """Comando certo p/ refrescar a referência de classificação (mensagens)."""
+    return ("build_ebay_reference.py"
+            if classification_reference_source(config) == "ebay" else "build_us_reference.py")
+
+
 def reference_age_days(captured_at: str | None) -> int | None:
     """Idade (em dias INTEIROS) da referência US a partir do `captured_at` do
     us_reference.json. None se ausente/ilegível (não força rebaixamento).
@@ -916,18 +984,20 @@ def apply_freshness_downgrade(rows: list, ref_data: dict, config: dict) -> int |
     ref_stale = ref_age is not None and ref_age > max_age
     if not ref_stale:
         return None
+    ref_label = classification_reference_label(config)
+    rebuild = reference_rebuild_hint(config)
     for row in rows:
         if row.deal_confidence == "GREEN":
             # Rebaixa GREEN -> YELLOW (revisão) quando a referência está velha:
             # o sinal de margem pode estar desatualizado. Move p/ o bucket de
-            # revisão (review_required) p/ o operador conferir o TCGplayer atual.
+            # revisão (review_required) p/ o operador conferir o preço atual.
             row.deal_confidence = "YELLOW"
             row.bucket = "review_required"
             row.main_risk = (
                 f"Referência US defasada ({ref_age}d) — margem pode estar desatualizada; "
-                "confira o preço TCGplayer atual antes de comprar."
+                f"confira o preço atual ({ref_label}) antes de comprar."
             )
-            row.recommended_action = "Refrescar referência (build_us_reference.py) e reconferir"
+            row.recommended_action = f"Refrescar referência ({rebuild}) e reconferir"
     return ref_age
 
 
@@ -1047,12 +1117,12 @@ def run(args: argparse.Namespace) -> int:
         print("ERRO: nenhum anúncio carregado — fonte vazia ou quebrada.")
         return 1
 
-    # Referência US (TCGPlayer via tcgcsv.com) — independente da fonte BR.
-    # Rode sealed/build_us_reference.py para refrescar os preços. O caminho é
-    # configurável (references.us_file) p/ perfis por jogo; ausente = default.
-    us_ref_rel = (config.get("references") or {}).get("us_file") or "data/us_reference.json"
-    ref_data = load_json(SCRIPT_DIR / us_ref_rel, us_ref_rel)
-    us_reference = ref_data.get("prices", {})
+    # Referência US de CLASSIFICAÇÃO — independente da fonte BR. Default =
+    # TCGPlayer (references.us_file); perfis podem trocar p/ eBay via
+    # references.classification_source: ebay (One Piece, operador 2026-08-15).
+    ref_data, us_reference = load_classification_reference(config, SCRIPT_DIR)
+    print(f"  [ref] classificação vs {classification_reference_label(config)} "
+          f"({len(us_reference)} SKUs com preço)")
 
     rows: list[ScanRow] = []
     for item in listings:
@@ -1082,7 +1152,7 @@ def run(args: argparse.Namespace) -> int:
         max_age = config.get("deal_criteria", {}).get("max_reference_age_days", 14)
         print(
             f"  [aviso] referência US tem {stale_age} dias (> {max_age}) — GREEN serão "
-            f"rebaixados p/ YELLOW (conferência). Rode build_us_reference.py p/ refrescar."
+            f"rebaixados p/ YELLOW (conferência). Rode {reference_rebuild_hint(config)} p/ refrescar."
         )
 
     # Lado de VENDA (eBay US via Probstein) — enriquecimento INFORMATIVO:

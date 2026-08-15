@@ -167,9 +167,11 @@ def run(args: argparse.Namespace) -> int:
     registry_data = s.load_yaml(Path(args.registry), "sku_registry.yaml")
     registry = s.build_registry(registry_data)
     registry_raw = registry_data.get("skus", [])
-    us_ref_rel = (config.get("references") or {}).get("us_file") or "data/us_reference.json"
-    ref_data = s.load_json(SCRIPT_DIR / us_ref_rel, us_ref_rel)
-    us_reference = ref_data.get("prices", {})
+    # Referência de CLASSIFICAÇÃO: TCGplayer (default) ou eBay, conforme
+    # references.classification_source do perfil (One Piece = ebay, 2026-08-15).
+    ref_data, us_reference = s.load_classification_reference(config, SCRIPT_DIR)
+    print(f"  [ref] classificação vs {s.classification_reference_label(config)} "
+          f"({len(us_reference)} SKUs com preço)")
     mock_path = Path(args.mock)
 
     # Fontes: --sources explícito > default_sources do PERFIL > default Pokémon.
@@ -202,7 +204,8 @@ def run(args: argparse.Namespace) -> int:
         max_age = config.get("deal_criteria", {}).get("max_reference_age_days", 14)
         print(
             f"\n  [orq][aviso] referência US tem {stale_age} dias (> {max_age}) — "
-            f"GREEN rebaixados p/ YELLOW (conferência). Rode build_us_reference.py p/ refrescar."
+            f"GREEN rebaixados p/ YELLOW (conferência). "
+            f"Rode {s.reference_rebuild_hint(config)} p/ refrescar."
         )
 
     # Lado de VENDA (eBay US via Probstein) — enriquecimento INFORMATIVO, mesmo
@@ -243,6 +246,9 @@ def run(args: argparse.Namespace) -> int:
             "route_name": route.get("name", ""),
             "route_label": route.get("label", ""),
             "sell_reference": route.get("sell_reference", ""),
+            # 'tcg' (default) ou 'ebay' — snapshot.py usa p/ rotular a coluna
+            # de referência e as notas (One Piece = ebay, operador 2026-08-15).
+            "classification_reference": s.classification_reference_source(config),
             "sources": sources,
             "fx": config["currency"]["usd_brl"],
             "fx_source": fx_source,
