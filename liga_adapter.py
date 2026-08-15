@@ -146,7 +146,11 @@ TYPE_TRANSLATE_PT_TO_EN = {
     "Coleção Treinador Avançado": "Elite Trainer Box",
     "Combo de Pacotes": "Booster Bundle",
     "Booster Avulso": "Booster Pack",
-    "Blister Unitário": "Blister",
+    # "Single Pack Blister" (não "Blister" seco): o registry casa blister
+    # unitário por 'blister unitário'/'single pack blister'/'checklane' — a
+    # tradução pra "Blister" apagava o qualificador e o título sem "Checklane"
+    # caía em sem_match_no_registry (gap real 2026-08-15: JTG a R$23,95).
+    "Blister Unitário": "Single Pack Blister",
     "Blister Triplo": "Blister",
     "Blister Quádruplo": "Blister",
     "Box Coleção": "Collection Box",
@@ -210,7 +214,8 @@ def _get_api_key(liga_cfg: dict) -> str:
 # --------------------------------------------------------------------------
 class _Fetcher:
     def get(self, url: str, *, render: bool = False,
-            wait_for_selector: str | None = None, timeout: int = 180) -> bytes:
+            wait_for_selector: str | None = None, timeout: int = 180,
+            scroll_until_stable: bool = False) -> bytes:
         raise NotImplementedError
 
     def close(self) -> None:
@@ -224,7 +229,10 @@ class _ScraperAPIFetcher(_Fetcher):
         self.api_key = api_key
         self.max_retries = max_retries
 
-    def get(self, url, *, render=False, wait_for_selector=None, timeout=180):
+    def get(self, url, *, render=False, wait_for_selector=None, timeout=180,
+            scroll_until_stable=False):
+        # scroll_until_stable é ignorado aqui: ScraperAPI não expõe controle de
+        # rolagem — a listagem via API fica limitada ao primeiro render.
         params = {"api_key": self.api_key, "url": url, "country_code": "br"}
         if render:
             params["render"] = "true"
@@ -304,7 +312,8 @@ class _LocalChromeFetcher(_Fetcher):
             self._ctx = self._page = None
             raise
 
-    def get(self, url, *, render=False, wait_for_selector=None, timeout=180):
+    def get(self, url, *, render=False, wait_for_selector=None, timeout=180,
+            scroll_until_stable=False):
         self._ensure()
         page = self._page
         try:
@@ -339,6 +348,27 @@ class _LocalChromeFetcher(_Fetcher):
         try:
             page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
             time.sleep(1.5)
+            if scroll_until_stable:
+                # Listagem de categoria carrega por scroll infinito: 1 rolagem só
+                # entrega a primeira leva (~50 produtos) e esconde o resto do
+                # catálogo (gap real 2026-08-15: Blister Unitário JTG a R$23,95
+                # fora do scan). Rola até o nº de links de produto estabilizar
+                # por 2 rodadas; cap de 20 rodadas pra página patológica não
+                # prender o scan.
+                sel = 'a[href*="prod/view"]'
+                stable = 0
+                last = page.locator(sel).count()
+                for _ in range(20):
+                    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+                    time.sleep(1.5)
+                    n = page.locator(sel).count()
+                    if n == last:
+                        stable += 1
+                        if stable >= 2:
+                            break
+                    else:
+                        stable = 0
+                        last = n
         except Exception:
             pass
         return page.content().encode("utf-8", errors="replace")
@@ -716,6 +746,7 @@ def fetch_listings(config: dict) -> list[dict]:
                 raw = fetcher.get(
                     _category_url(categ, base=base),
                     render=True, wait_for_selector='a[href*="prod/view"]',
+                    scroll_until_stable=True,
                 )
                 cat_html = raw.decode("utf-8", errors="replace")
             except Exception as exc:

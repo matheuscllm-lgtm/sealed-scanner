@@ -10231,7 +10231,7 @@ skus:
   language: EN
   pack_count: 1
   tcgplayer_group_id: 24073
-  tcgplayer_product_id: 610949   # variante mais barata com preço (Scraggy)
+  tcgplayer_product_id: 610934   # Sleeved Booster Pack — produto físico do "Blister Unitário" Copag (blister c/ 1 booster, sem promo); variante [Scraggy] 610949 é mais cara e inflava a referência (operador 2026-08-15)
   match:
     set_terms:
     - amigos de jornada
@@ -10300,7 +10300,7 @@ skus:
   language: EN
   pack_count: 1
   tcgplayer_group_id: 24587
-  tcgplayer_product_id: 672410   # única variante com preço (Makuhita)
+  tcgplayer_product_id: 672412   # Sleeved Booster Pack — produto físico do "Blister Unitário" Copag; variante [Makuhita] 672410 é mais cara e inflava a referência (operador 2026-08-15)
   match:
     set_terms:
     - equilíbrio perfeito
@@ -10318,7 +10318,7 @@ skus:
   language: EN
   pack_count: 1
   tcgplayer_group_id: 24655
-  tcgplayer_product_id: 684457   # variante mais barata com preço (Toxel — bate o título checklane da Liga)
+  tcgplayer_product_id: 684448   # Sleeved Booster Pack — produto físico do "Blister Unitário" Copag; variante [Toxel] 684457 é mais cara e inflava a referência (operador 2026-08-15)
   match:
     set_terms:
     - caos ascendente
@@ -10335,7 +10335,7 @@ skus:
   language: EN
   pack_count: 1
   tcgplayer_group_id: 24688
-  tcgplayer_product_id: 692955   # única variante comum com preço (Slowpoke — bate o título checklane da Liga)
+  tcgplayer_product_id: 692957   # Sleeved Booster Pack — produto físico do "Blister Unitário" Copag; variante [Slowpoke] 692955 é mais cara e inflava a referência (operador 2026-08-15)
   match:
     set_terms:
     - pitch black
@@ -10351,7 +10351,7 @@ skus:
   language: EN
   pack_count: 1
   tcgplayer_group_id: 24448
-  tcgplayer_product_id: 654151   # variante mais barata com preço (Cottonee)
+  tcgplayer_product_id: 654145   # Sleeved Booster Pack — produto físico do "Blister Unitário" Copag; variante [Cottonee] 654151 é mais cara e inflava a referência (operador 2026-08-15)
   match:
     set_terms:
     - fogo fantasmagórico
@@ -10367,7 +10367,7 @@ skus:
   language: EN
   pack_count: 1
   tcgplayer_group_id: 24269
-  tcgplayer_product_id: 633106   # variante mais barata com preço (Zarude)
+  tcgplayer_product_id: 624684   # Sleeved Booster Pack — produto físico do "Blister Unitário" Copag (bate a tela do operador: US$11,23); variante [Zarude] 633106 era US$13,43 e inflava a referência (operador 2026-08-15)
   match:
     set_terms:
     - rivais predestinados
