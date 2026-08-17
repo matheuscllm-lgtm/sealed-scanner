@@ -64,9 +64,14 @@ def test_orchestrator_onepiece_mock_end_to_end(tmp_path, monkeypatch):
                     "prices": {"op16-booster-box-en": 200.0}}), encoding="utf-8")
     (tmp_path / "data" / "ebay_reference_onepiece.json").write_text(
         json.dumps({"captured_at": today,
-                    "entries": {"op16-booster-box-en": {
-                        "usd": 200.0, "status": "ok",
-                        "url": "https://www.ebay.com/itm/1"}}}), encoding="utf-8")
+                    "entries": {
+                        "op16-booster-box-en": {
+                            "usd": 200.0, "status": "ok",
+                            "url": "https://www.ebay.com/itm/1"},
+                        "op16-booster-box-case-en": {
+                            "usd": 1200.0, "status": "ok",
+                            "url": "https://www.ebay.com/itm/2"},
+                    }}), encoding="utf-8")
     listings = [
         {"id": "OP-GOOD", "title": "The Time of Battle Booster Box (English) OP-16",
          "price_brl": 500.0, "seller": "v", "url": "u"},
@@ -88,7 +93,9 @@ def test_orchestrator_onepiece_mock_end_to_end(tmp_path, monkeypatch):
     rows = list(csv.DictReader((op_dirs[-1] / "unified_deals.csv").open(encoding="utf-8")))
     verdict = {r["ID Anúncio"]: r["Confiança do deal"] for r in rows}
     assert verdict["OP-GOOD"] == "GREEN"      # 200*5.05/500 → ~102% na banda
-    assert verdict["OP-CASE"] == "RED"        # case = lote, nunca casa SKU
+    # Operador 2026-08-17: case é SKU de 1ª classe — classifica de ponta a
+    # ponta com referência eBay própria (1200*5.05/4000 → ~51,5% GREEN).
+    assert verdict["OP-CASE"] == "GREEN"
     meta = json.loads((op_dirs[-1] / "run_meta.json").read_text(encoding="utf-8"))
     assert meta["game"] == "onepiece"
     assert "One Piece" in meta["route_label"]

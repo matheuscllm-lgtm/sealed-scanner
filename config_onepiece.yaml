@@ -71,19 +71,23 @@ liga:
   # IDs `categ=N` VALIDADOS no site OP em 2026-08-03 (runbook §B, navegação
   # real no menu Produtos de ligaonepiece.com.br — namespace é POR SITE).
   # Entram só as categorias com tipo correspondente no registry:
-  #   10 Caixas de Pacotes      → Booster Box / Extra Booster Box
+  #   10 Caixas de Pacotes      → Booster Box / Extra Booster Box (+ cases)
   #   21 Pacotes Avulsos        → Booster Pack / Extra Booster Pack
-  #   28 Caixas Colecionáveis   → Double Pack Set (DP-xx; divide espaço com
-  #                               Illustration Box/Gift Collection, fora do registry)
-  # Descobertas e deixadas FORA (não coletar ruído):
-  #   38 Kits Colecionáveis (anniversary/premium sets) · 24 Latas
+  #   28 Caixas Colecionáveis   → Double Pack Set / Illustration Box /
+  #                               Gift Collection / Devil Fruits Collection
+  #   24 Latas                  → Tin Pack Set (+Display) — entrou 2026-08-17
+  #   38 Kits Colecionáveis     → Treasure Booster Set / premium sets —
+  #                               entrou 2026-08-17 (escopo BUSCAR do operador)
+  # Descoberta e deixada FORA:
   #   36 Decks Iniciais (Starter Deck ST-xx) — EXCLUÍDA pelo operador em
   #     2026-08-15 ("deixa decks de fora"): decks fora do escopo de compra OP.
-  categorias: [10, 21, 28]
+  categorias: [10, 21, 24, 28, 38]
   categorias_nomes:
     10: "Caixas de Pacotes"
     21: "Pacotes Avulsos"
+    24: "Latas"
     28: "Caixas Colecionáveis"
+    38: "Kits Colecionáveis"
   keep_languages: ["EN"]
   max_products_per_category: 30
   delay_seconds: 1.0
@@ -100,22 +104,39 @@ liga:
     "Deck Inicial": "Starter Deck"
 
 scope:
+  # Lista BUSCAR do operador (2026-08-17): packs (loose+sleeved), boxes,
+  # cases, double packs, treasure/illustration/devil fruits/tin/gift +
+  # displays/cases. `include` é documentacional; a barreira dura é o exclude.
   include:
     - Booster Box
+    - Booster Box Case
     - Booster Pack
     - Sleeved Booster Pack
     - Double Pack Set
     - Double Pack Set Display
+    - Double Pack Set Display Case
     - Extra Booster Box
     - Extra Booster Pack
+    - Treasure Booster Set
+    - Treasure Booster Set Display Case
+    - Illustration Box
+    - Illustration Box Case
+    - Devil Fruits Collection
+    - Devil Fruits Collection Case
+    - Tin Pack Set
+    - Tin Pack Set Display
+    - Tin Pack Set Display Case
+    - Gift Collection
+    - Gift Collection Display
   exclude:
     - Raw Singles
     - Graded Cards
     - Opened Products
     - Damaged Products
-    - Booster Box Case      # lote — nunca vira SKU (idem Dash/DON!!/Bonus Pack)
     # Operador 2026-08-15 ("deixa decks de fora"): Starter Deck fora do escopo
     # de compra OP — categoria 36 da Liga também saiu de liga.categorias.
+    # (Booster Box Case SAIU do exclude em 2026-08-17: cases viraram SKU de
+    # 1ª classe no registry, pedido BUSCAR do operador.)
     - Starter Deck
     - Starter Deck Display
   sealed_only_sources:

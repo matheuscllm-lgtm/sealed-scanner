@@ -79,6 +79,23 @@ SANITY_BANDS_USD_ONEPIECE: dict[str, tuple[float, float]] = {
     "Starter Deck Display": (30.0, 1500.0),
     "Extra Booster Box": (40.0, 1500.0),
     "Extra Booster Pack": (2.0, 80.0),
+    # Operador 2026-08-17 — escopo OP ampliado (cases/collections/tins/gift).
+    # Bandas calibradas nos marketPrice REAIS do tcgcsv no dia da ampliação:
+    # box cases US$2.3k–9k; tin display ~US$460; gift display ~US$2.2k;
+    # illustration box US$38–824 (Vol.7/8 vs EX).
+    "Booster Box Case": (300.0, 15000.0),
+    "Double Pack Set Display Case": (100.0, 5000.0),
+    "Treasure Booster Set": (50.0, 800.0),
+    "Treasure Booster Set Display Case": (200.0, 5000.0),
+    "Illustration Box": (15.0, 1500.0),
+    "Illustration Box Case": (150.0, 5000.0),
+    "Devil Fruits Collection": (20.0, 800.0),
+    "Devil Fruits Collection Case": (100.0, 5000.0),
+    "Tin Pack Set": (10.0, 300.0),
+    "Tin Pack Set Display": (100.0, 2000.0),
+    "Tin Pack Set Display Case": (500.0, 8000.0),
+    "Gift Collection": (100.0, 2000.0),
+    "Gift Collection Display": (500.0, 8000.0),
 }
 
 # Seleção de banda por nome (--bands) — o objeto Pokémon é o MESMO de sempre

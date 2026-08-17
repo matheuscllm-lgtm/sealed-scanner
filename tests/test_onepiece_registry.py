@@ -85,8 +85,29 @@ def _ids(title, registry):
     return [c.id for c in S.match_listing(title, registry)]
 
 
-def test_box_never_matches_case(op_registry):
-    assert _ids("The Time of Battle Booster Box Case", op_registry) == []
+def test_box_vs_case_disambiguation(op_registry):
+    # Operador 2026-08-17: case virou SKU de 1ª classe — o título de case tem
+    # que casar EXATAMENTE o SKU de case (nunca o box, e vice-versa).
+    assert _ids("The Time of Battle Booster Box Case", op_registry) == ["op16-booster-box-case-en"]
+    assert _ids("The Time of Battle Booster Box", op_registry) == ["op16-booster-box-en"]
+    # EB nomeia o case sem "Booster": "… Box Case".
+    assert _ids("Extra Booster: Anime 25th Collection Box Case", op_registry) == ["eb02-booster-box-case-en"]
+
+
+def test_new_families_match_their_own_sku(op_registry):
+    # Famílias do escopo BUSCAR (operador 2026-08-17) — nomes REAIS do tcgcsv.
+    assert _ids("One Piece Card Game Illustration Box Vol. 5", op_registry) == ["ilbox-vol5-en"]
+    assert _ids("One Piece Card Game Illustration Box Vol. 5 Case", op_registry) == ["ilbox-vol5-case-en"]
+    assert _ids("One Piece Card Game Illustration Box EX", op_registry) == ["ilbox-ex-en"]
+    assert _ids("Devil Fruits Collection Vol. 2", op_registry) == ["dfc-vol2-en"]
+    assert _ids("One Piece Tin Pack Set Vol. 2 -Sabo-", op_registry) == ["tinpack-vol2-sabo-en"]
+    assert _ids("One Piece Tin Pack Set Vol. 2 Display", op_registry) == ["tinpack-vol2-display-en"]
+    assert _ids("One Piece Tin Pack Set Vol. 2 Display Case", op_registry) == ["tinpack-vol2-display-case-en"]
+    assert _ids("Treasure Booster Set", op_registry) == ["treasure-booster-en"]
+    assert _ids("Gift Collection 2023", op_registry) == ["gift2023-en"]
+    assert _ids("Gift Collection 2023 Display", op_registry) == ["gift2023-display-en"]
+    # Promotion Pack NÃO é o unit (exclude 'promotion' defensivo).
+    assert _ids("Gift Collection 2023 Promotion Pack", op_registry) == []
 
 
 def test_pack_vs_sleeved_disambiguation(op_registry):

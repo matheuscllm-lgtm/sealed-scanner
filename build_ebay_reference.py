@@ -83,6 +83,17 @@ DIGITAL_TOKENS = (
 LOT_CASE_RE = re.compile(
     r"\b\d+\s*x\b|\bx\s*\d+\b|\blot\b|\bcase\b|\bset of\b|\bbundle of\b|\blote\b"
 )
+# Variante para SKUs cuja PRÓPRIA identidade é um case (product_type termina
+# em "Case" — operador 2026-08-17, escopo OP ampliado): "case" deixa de ser
+# veto; o resto (lot, Nx, set of, bundle of) segue vetando multi-unidade.
+LOT_NOCASE_RE = re.compile(
+    r"\b\d+\s*x\b|\bx\s*\d+\b|\blot\b|\bset of\b|\bbundle of\b|\blote\b"
+)
+
+
+def _lot_re_for(sku) -> re.Pattern:
+    ptype = (getattr(sku, "product_type", "") or "")
+    return LOT_NOCASE_RE if ptype.endswith("Case") else LOT_CASE_RE
 # Anúncio abaixo de SUSPECT_RATIO × referência TCG = lixo provável (caixa
 # errada, foto, pré-venda suspeita): contado, NUNCA vencedor.
 SUSPECT_RATIO = 0.5
@@ -127,7 +138,7 @@ def title_passes_gate(title: str, sku) -> bool:
         return False
     if any(m in low for m in DIGITAL_TOKENS):
         return False
-    if LOT_CASE_RE.search(low):
+    if _lot_re_for(sku).search(low):
         return False
     norm = S.normalize(title)
     if any(S.contains_term(norm, t) for t in USED_TOKENS_EN):

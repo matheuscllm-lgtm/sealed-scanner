@@ -73,6 +73,32 @@ def test_gate_rejects_lot_case_multiunit():
     assert not B.title_passes_gate("Set of 3 Surging Sparks Booster Box", SKU_BOX)
 
 
+SKU_CASE = S.Sku(
+    id="op16-booster-box-case-en",
+    name="The Time of Battle Booster Box Case",
+    product_type="Booster Box Case",
+    set_name="The Time of Battle",
+    language="EN",
+    set_terms=["the time of battle", "op16", "op 16"],
+    type_terms=["booster box case"],
+    exclude_terms=["japanese", "lote", "double pack", "sleeved"],
+    requires_terms=[],
+)
+
+
+def test_gate_case_sku_allows_case_word_but_still_vetoes_lots():
+    # Operador 2026-08-17: SKU de case tem "case" na própria identidade — o
+    # veto lote/case fica ciente do tipo (LOT_NOCASE_RE), sem abrir p/ lote.
+    assert B.title_passes_gate(
+        "One Piece The Time of Battle Booster Box Case Factory Sealed", SKU_CASE)
+    assert not B.title_passes_gate(
+        "Lot of 2 The Time of Battle Booster Box Case", SKU_CASE)
+    assert not B.title_passes_gate(
+        "2x The Time of Battle Booster Box Case", SKU_CASE)
+    # SKU comum segue vetando "case" (nada mudou p/ não-case).
+    assert not B.title_passes_gate("Surging Sparks Booster Box case sealed", SKU_BOX)
+
+
 def test_lot_regex_does_not_hit_plain_bundle():
     # "Booster Bundle" é produto legítimo — só "bundle of" é lote.
     assert B.LOT_CASE_RE.search("pokemon surging sparks booster bundle") is None

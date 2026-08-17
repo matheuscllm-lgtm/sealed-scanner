@@ -48,6 +48,32 @@ skus:
     - 'lote'
     - 'double pack'
     - 'sleeved'
+- id: op17-booster-box-case-en
+  name: 'The World''s Strongest Warriors Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'The World''s Strongest Warriors'
+  set_code: 'OP17'
+  language: 'EN'
+  tcgplayer_group_id: 24736
+  tcgplayer_product_id: 704754
+  match:
+    set_terms:
+    - 'the world s strongest warriors'
+    - 'op17'
+    - 'op 17'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
 - id: op17-booster-pack-en
   name: 'The World''s Strongest Warriors Booster Pack'
   product_type: 'Booster Pack'
@@ -417,7 +443,7 @@ skus:
 - id: st36-starter-deck-display-en
   name: 'Starter Deck 36: YELLOW Eustass”Captain”Kid Display'
   product_type: 'Starter Deck Display'
-  set: 'Starter Deck 36: YELLOW Eustass”Captain”Kid'
+  set: 'Starter Deck 36: YELLOW Eustass"Captain"Kid'
   set_code: 'ST-36'
   language: 'EN'
   tcgplayer_group_id: 24754
@@ -445,7 +471,7 @@ skus:
 - id: st36-starter-deck-en
   name: 'Starter Deck 36: YELLOW Eustass”Captain”Kid'
   product_type: 'Starter Deck'
-  set: 'Starter Deck 36: YELLOW Eustass”Captain”Kid'
+  set: 'Starter Deck 36: YELLOW Eustass"Captain"Kid'
   set_code: 'ST-36'
   language: 'EN'
   tcgplayer_group_id: 24754
@@ -553,6 +579,32 @@ skus:
     - 'chines'
     - 'chinese'
     - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op16-booster-box-case-en
+  name: 'The Time of Battle Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'The Time of Battle'
+  set_code: 'OP16'
+  language: 'EN'
+  tcgplayer_group_id: 24664
+  tcgplayer_product_id: 689338
+  match:
+    set_terms:
+    - 'the time of battle'
+    - 'op16'
+    - 'op 16'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
     - 'lote'
     - 'double pack'
     - 'sleeved'
@@ -725,6 +777,34 @@ skus:
     - 'lote'
     - 'double pack'
     - 'sleeved'
+- id: op15-booster-box-case-en
+  name: 'Adventure on Kami''s Island Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Adventure on Kami''s Island'
+  set_code: 'OP15-EB04'
+  language: 'EN'
+  tcgplayer_group_id: 24637
+  tcgplayer_product_id: 682058
+  match:
+    set_terms:
+    - 'adventure on kami s island'
+    - 'op15'
+    - 'op 15'
+    - 'eb04'
+    - 'eb 04'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
 - id: op15-double-pack-en
   name: 'Double Pack Set Vol. 10'
   product_type: 'Double Pack Set'
@@ -808,7 +888,7 @@ skus:
   name: 'Extra Booster: One Piece Heroines Edition Pack'
   product_type: 'Extra Booster Pack'
   set: 'Extra Booster: One Piece Heroines Edition'
-  set_code: 'EB-03'
+  set_code: 'EB-03-04'
   language: 'EN'
   tcgplayer_group_id: 24545
   tcgplayer_product_id: 666727
@@ -837,7 +917,7 @@ skus:
   name: 'Extra Booster: One Piece Heroines Edition Box'
   product_type: 'Extra Booster Box'
   set: 'Extra Booster: One Piece Heroines Edition'
-  set_code: 'EB-03'
+  set_code: 'EB-03-04'
   language: 'EN'
   tcgplayer_group_id: 24545
   tcgplayer_product_id: 666891
@@ -861,11 +941,37 @@ skus:
     - 'lote'
     - 'pack'
     - 'sleeved'
+- id: eb03-booster-box-case-en
+  name: 'Extra Booster: One Piece Heroines Edition Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Extra Booster: One Piece Heroines Edition'
+  set_code: 'EB-03-04'
+  language: 'EN'
+  tcgplayer_group_id: 24545
+  tcgplayer_product_id: 666892
+  match:
+    set_terms:
+    - 'extra booster one piece heroines edition'
+    - 'eb03'
+    - 'eb 03'
+    type_terms:
+    - 'box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
 - id: eb03-sleeved-booster-en
   name: 'Extra Booster: One Piece Heroines Edition Sleeved Booster Pack'
   product_type: 'Sleeved Booster Pack'
   set: 'Extra Booster: One Piece Heroines Edition'
-  set_code: 'EB-03'
+  set_code: 'EB-03-04'
   language: 'EN'
   tcgplayer_group_id: 24545
   tcgplayer_product_id: 679503
@@ -969,6 +1075,32 @@ skus:
     - 'chines'
     - 'chinese'
     - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op14-booster-box-case-en
+  name: 'The Azure Sea''s Seven Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'The Azure Sea''s Seven'
+  set_code: 'OP14'
+  language: 'EN'
+  tcgplayer_group_id: 24537
+  tcgplayer_product_id: 665599
+  match:
+    set_terms:
+    - 'the azure sea s seven'
+    - 'op14'
+    - 'op 14'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
     - 'lote'
     - 'double pack'
     - 'sleeved'
@@ -1137,6 +1269,32 @@ skus:
     - 'lote'
     - 'double pack'
     - 'sleeved'
+- id: op13-booster-box-case-en
+  name: 'Carrying On His Will Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Carrying On His Will'
+  set_code: 'OP13'
+  language: 'EN'
+  tcgplayer_group_id: 24303
+  tcgplayer_product_id: 628353
+  match:
+    set_terms:
+    - 'carrying on his will'
+    - 'op13'
+    - 'op 13'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
 - id: op13-sleeved-booster-en
   name: 'Carrying On His Will Sleeved Booster Pack'
   product_type: 'Sleeved Booster Pack'
@@ -1218,6 +1376,32 @@ skus:
     - 'chines'
     - 'chinese'
     - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: prb02-booster-box-case-en
+  name: 'Premium Booster Vol. 2 - Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Premium Booster -The Best- Vol. 2'
+  set_code: 'PRB-02'
+  language: 'EN'
+  tcgplayer_group_id: 24305
+  tcgplayer_product_id: 628453
+  match:
+    set_terms:
+    - 'premium booster vol 2'
+    - 'prb02'
+    - 'prb 02'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
     - 'lote'
     - 'double pack'
     - 'sleeved'
@@ -1359,6 +1543,32 @@ skus:
     - 'chines'
     - 'chinese'
     - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op12-booster-box-case-en
+  name: 'Legacy of the Master Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Legacy of the Master'
+  set_code: 'OP12'
+  language: 'EN'
+  tcgplayer_group_id: 24302
+  tcgplayer_product_id: 628347
+  match:
+    set_terms:
+    - 'legacy of the master'
+    - 'op12'
+    - 'op 12'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
     - 'lote'
     - 'double pack'
     - 'sleeved'
@@ -1545,6 +1755,32 @@ skus:
     - 'chines'
     - 'chinese'
     - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op11-booster-box-case-en
+  name: 'A Fist of Divine Speed Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'A Fist of Divine Speed'
+  set_code: 'OP11'
+  language: 'EN'
+  tcgplayer_group_id: 24241
+  tcgplayer_product_id: 620181
+  match:
+    set_terms:
+    - 'a fist of divine speed'
+    - 'op11'
+    - 'op 11'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
     - 'lote'
     - 'double pack'
     - 'sleeved'
@@ -1973,6 +2209,32 @@ skus:
     - 'lote'
     - 'pack'
     - 'sleeved'
+- id: eb02-booster-box-case-en
+  name: 'Extra Booster: Anime 25th Collection Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Extra Booster: Anime 25th Collection'
+  set_code: 'EB-02'
+  language: 'EN'
+  tcgplayer_group_id: 23834
+  tcgplayer_product_id: 594070
+  match:
+    set_terms:
+    - 'extra booster anime 25th collection'
+    - 'eb02'
+    - 'eb 02'
+    type_terms:
+    - 'box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
 - id: op10-booster-pack-en
   name: 'Royal Blood Booster Pack'
   product_type: 'Booster Pack'
@@ -2028,6 +2290,32 @@ skus:
     - 'chines'
     - 'chinese'
     - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op10-booster-box-case-en
+  name: 'Royal Blood Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Royal Blood'
+  set_code: 'OP10'
+  language: 'EN'
+  tcgplayer_group_id: 23766
+  tcgplayer_product_id: 586673
+  match:
+    set_terms:
+    - 'royal blood'
+    - 'op10'
+    - 'op 10'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
     - 'lote'
     - 'double pack'
     - 'sleeved'
@@ -2172,6 +2460,32 @@ skus:
     - 'lote'
     - 'double pack'
     - 'sleeved'
+- id: op09-booster-box-case-en
+  name: 'Emperors in the New World - Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Emperors in the New World'
+  set_code: 'OP09'
+  language: 'EN'
+  tcgplayer_group_id: 23589
+  tcgplayer_product_id: 563835
+  match:
+    set_terms:
+    - 'emperors in the new world'
+    - 'op09'
+    - 'op 09'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
 - id: op09-double-pack-en
   name: 'Double Pack Set Volume 6'
   product_type: 'Double Pack Set'
@@ -2311,6 +2625,34 @@ skus:
     - 'vol ii'
     - 'double pack'
     - 'sleeved'
+- id: prb01-booster-box-case-en
+  name: 'Premium Booster - Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Premium Booster -The Best-'
+  set_code: 'PRB-01'
+  language: 'EN'
+  tcgplayer_group_id: 23496
+  tcgplayer_product_id: 545400
+  match:
+    set_terms:
+    - 'premium booster'
+    - 'prb01'
+    - 'prb 01'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'vol 2'
+    - 'vol ii'
+    - 'double pack'
+    - 'sleeved'
 - id: prb01-sleeved-booster-en
   name: 'Premium Booster - Sleeved Booster Pack'
   product_type: 'Sleeved Booster Pack'
@@ -2339,3 +2681,639 @@ skus:
     - 'vol 2'
     - 'vol ii'
     - 'box'
+- id: gift2023-en
+  name: 'Gift Collection 2023'
+  product_type: 'Gift Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 484943
+  match:
+    set_terms:
+    - 'gift collection 2023'
+    type_terms:
+    - 'gift collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    - 'promotion'
+- id: gift2023-display-en
+  name: 'Gift Collection 2023 Display'
+  product_type: 'Gift Collection Display'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 493744
+  match:
+    set_terms:
+    - 'gift collection 2023'
+    type_terms:
+    - 'gift collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: treasure-booster-en
+  name: 'Treasure Booster Set'
+  product_type: 'Treasure Booster Set'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 565285
+  match:
+    set_terms:
+    - 'treasure booster set'
+    type_terms:
+    - 'treasure booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: ilbox-vol1-en
+  name: 'One Piece Card Game Illustration Box Vol. 1'
+  product_type: 'Illustration Box'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 610116
+  match:
+    set_terms:
+    - 'vol 1'
+    - 'volume 1'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: ilbox-vol2-en
+  name: 'One Piece Card Game Illustration Box Vol. 2'
+  product_type: 'Illustration Box'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 610117
+  match:
+    set_terms:
+    - 'vol 2'
+    - 'volume 2'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: ilbox-ex-en
+  name: 'One Piece Card Game Illustration Box EX'
+  product_type: 'Illustration Box'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 610118
+  match:
+    set_terms:
+    - 'illustration box ex'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: tinpack-vol1-roger-en
+  name: 'One Piece Tin Pack Set Vol. 1 -Gol.D.Roger-'
+  product_type: 'Tin Pack Set'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 620278
+  match:
+    set_terms:
+    - 'vol 1'
+    - 'volume 1'
+    type_terms:
+    - 'tin pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    requires_terms:
+    - 'gol d roger'
+- id: tinpack-vol1-luffy-en
+  name: 'One Piece Tin Pack Set Vol. 1 -Monkey.D.Luffy-'
+  product_type: 'Tin Pack Set'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 620279
+  match:
+    set_terms:
+    - 'vol 1'
+    - 'volume 1'
+    type_terms:
+    - 'tin pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    requires_terms:
+    - 'monkey d luffy'
+- id: tinpack-vol1-display-en
+  name: 'One Piece Tin Pack Set Vol. 1 Display'
+  product_type: 'Tin Pack Set Display'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 620280
+  match:
+    set_terms:
+    - 'vol 1'
+    - 'volume 1'
+    type_terms:
+    - 'tin pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: ilbox-vol3-en
+  name: 'One Piece Card Game Illustration Box Vol. 3'
+  product_type: 'Illustration Box'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 646591
+  match:
+    set_terms:
+    - 'vol 3'
+    - 'volume 3'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: ilbox-vol4-en
+  name: 'One Piece Card Game Illustration Box Vol. 4'
+  product_type: 'Illustration Box'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 646592
+  match:
+    set_terms:
+    - 'vol 4'
+    - 'volume 4'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: tinpack-vol2-display-en
+  name: 'One Piece Tin Pack Set Vol. 2 Display'
+  product_type: 'Tin Pack Set Display'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 657218
+  match:
+    set_terms:
+    - 'vol 2'
+    - 'volume 2'
+    type_terms:
+    - 'tin pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: tinpack-vol2-display-case-en
+  name: 'One Piece Tin Pack Set Vol. 2 Display Case'
+  product_type: 'Tin Pack Set Display Case'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 657219
+  match:
+    set_terms:
+    - 'vol 2'
+    - 'volume 2'
+    type_terms:
+    - 'tin pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    requires_terms:
+    - 'display'
+    - 'case'
+- id: ilbox-vol5-en
+  name: 'One Piece Card Game Illustration Box Vol. 5'
+  product_type: 'Illustration Box'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 669241
+  match:
+    set_terms:
+    - 'vol 5'
+    - 'volume 5'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: ilbox-vol6-en
+  name: 'One Piece Card Game Illustration Box Vol. 6'
+  product_type: 'Illustration Box'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 669242
+  match:
+    set_terms:
+    - 'vol 6'
+    - 'volume 6'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: tinpack-vol2-luffy-en
+  name: 'One Piece Tin Pack Set Vol. 2 -Monkey.D.Luffy-'
+  product_type: 'Tin Pack Set'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 669273
+  match:
+    set_terms:
+    - 'vol 2'
+    - 'volume 2'
+    type_terms:
+    - 'tin pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    requires_terms:
+    - 'monkey d luffy'
+- id: tinpack-vol2-ace-en
+  name: 'One Piece Tin Pack Set Vol. 2 -Portgas.D.Ace-'
+  product_type: 'Tin Pack Set'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 669277
+  match:
+    set_terms:
+    - 'vol 2'
+    - 'volume 2'
+    type_terms:
+    - 'tin pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    requires_terms:
+    - 'portgas d ace'
+- id: tinpack-vol2-sabo-en
+  name: 'One Piece Tin Pack Set Vol. 2 -Sabo-'
+  product_type: 'Tin Pack Set'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 669278
+  match:
+    set_terms:
+    - 'vol 2'
+    - 'volume 2'
+    type_terms:
+    - 'tin pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+    requires_terms:
+    - 'sabo'
+- id: ilbox-vol5-case-en
+  name: 'One Piece Card Game Illustration Box Vol. 5 Case'
+  product_type: 'Illustration Box Case'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 672601
+  match:
+    set_terms:
+    - 'vol 5'
+    - 'volume 5'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    requires_terms:
+    - 'case'
+- id: ilbox-vol6-case-en
+  name: 'One Piece Card Game Illustration Box Vol. 6 Case'
+  product_type: 'Illustration Box Case'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 672604
+  match:
+    set_terms:
+    - 'vol 6'
+    - 'volume 6'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    requires_terms:
+    - 'case'
+- id: ilbox-vol7-en
+  name: 'One Piece Card Game Illustration Box Vol. 7'
+  product_type: 'Illustration Box'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 694721
+  match:
+    set_terms:
+    - 'vol 7'
+    - 'volume 7'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: ilbox-vol8-en
+  name: 'One Piece Card Game Illustration Box Vol. 8'
+  product_type: 'Illustration Box'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 694722
+  match:
+    set_terms:
+    - 'vol 8'
+    - 'volume 8'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: dfc-vol1-en
+  name: 'Devil Fruits Collection Vol. 1'
+  product_type: 'Devil Fruits Collection'
+  set: 'One Piece Collection Sets'
+  set_code: 'OP-CS'
+  language: 'EN'
+  tcgplayer_group_id: 23304
+  tcgplayer_product_id: 516299
+  match:
+    set_terms:
+    - 'vol 1'
+    - 'volume 1'
+    type_terms:
+    - 'devil fruits collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: dfc-vol2-en
+  name: 'Devil Fruits Collection Vol. 2'
+  product_type: 'Devil Fruits Collection'
+  set: 'One Piece Collection Sets'
+  set_code: 'OP-CS'
+  language: 'EN'
+  tcgplayer_group_id: 23304
+  tcgplayer_product_id: 593446
+  match:
+    set_terms:
+    - 'vol 2'
+    - 'volume 2'
+    type_terms:
+    - 'devil fruits collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: dfc-vol3-en
+  name: 'Devil Fruits Collection Vol. 3'
+  product_type: 'Devil Fruits Collection'
+  set: 'One Piece Collection Sets'
+  set_code: 'OP-CS'
+  language: 'EN'
+  tcgplayer_group_id: 23304
+  tcgplayer_product_id: 649748
+  match:
+    set_terms:
+    - 'vol 3'
+    - 'volume 3'
+    type_terms:
+    - 'devil fruits collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'

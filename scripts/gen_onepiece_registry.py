@@ -11,11 +11,18 @@ sem preço/fora da banda NÃO entra; contado no resumo). Os únicos termos
 
 Escopo do seed (recência primeiro — lição da frota: deal mora em lançamento;
 back-catalog é mercado eficiente): grupos principais de PRB-01 (2024-11) até
-hoje. Grupos de evento/promo/demo (RE/PRE/ANN/DD/RP/PR) ficam FORA. Tipos
-cobertos: Booster Box, Booster Pack, Sleeved Booster Pack, Double Pack Set
-(+Display), Starter Deck (+Display), Extra Booster Box/Pack. FORA (contado):
-Case (lote), Dash Pack / Special DON!! (inserts), Bonus Pack, "Set of N",
-deck sets (LT-01/SD01) e qualquer nome de tipo não reconhecido.
+hoje + os DOIS grupos guarda-chuva sem cutoff (17675 Promotion Cards e 23304
+Collection Sets — é onde moram Treasure/Illustration/Tin/Gift/Devil Fruits).
+Grupos de evento/promo/demo (RE/PRE/ANN/DD/RP/PR) ficam FORA. Tipos cobertos
+(operador 2026-08-17 — "revisar o scanner focado em BUSCAR"): Booster Box
+(+Case), Booster Pack, Sleeved Booster Pack, Double Pack Set (+Display,
++Display Case), Extra Booster Box/Pack, Treasure Booster Set (+Display Case),
+Illustration Box (+Case), Devil Fruits Collection (+Case), Tin Pack Set
+(+Display, +Display Case), Gift Collection (+Display). Starter Deck (+Display)
+segue gerado mas FORA do escopo de compra (scope.exclude, operador 2026-08-15).
+FORA (contado): Dash Pack / Special DON!! (inserts), Bonus Pack, Promotion
+Pack, "Set of N" (lote), case de deck, deck sets (LT-01/SD01) e qualquer nome
+de tipo não reconhecido.
 
 Uso (rede: tcgcsv.com):
     python scripts/gen_onepiece_registry.py            # grava o YAML
@@ -65,6 +72,12 @@ SEED_GROUPS: list[tuple[int, str]] = [
     (23991, "st21"),   # Starter Deck EX: Gear 5
     (23589, "op09"),   # Emperors in the New World
     (23496, "prb01"),  # Premium Booster -The Best-
+    # Grupos guarda-chuva SEM cutoff (operador 2026-08-17): é onde o tcgcsv
+    # lista as famílias Treasure Booster / Illustration Box / Tin Pack /
+    # Gift Collection (17675) e Devil Fruits Collection (23304). A identidade
+    # desses SKUs vem do NOME do produto (vol/tema), nunca do nome do grupo.
+    (17675, "promo"),  # One Piece Promotion Cards
+    (23304, "opcs"),   # One Piece Collection Sets
 ]
 
 # Vocabulário PT de TIPO da plataforma LigaMagic (validado no site Pokémon da
@@ -73,13 +86,19 @@ PT_BOX = ["caixa de booster"]
 PT_PACK = ["booster avulso"]
 
 # Nomes de produto que NUNCA viram SKU (lote/insert/desconhecido) — contados.
+# "case" saiu da lista em 2026-08-17: cases agora são SKUs de 1ª classe
+# (operador pediu BUSCAR Booster Case / Display Case das famílias novas);
+# o que segue lote de verdade é "Set of N" / bundle.
 _SKIP_PATTERNS = (
-    ("case", re.compile(r"\bcase\b", re.I)),
     ("dash pack", re.compile(r"\bdash pack\b", re.I)),
     ("don!! pack", re.compile(r"don!!", re.I)),
     ("bonus pack", re.compile(r"\bbonus pack\b", re.I)),
+    ("promotion pack", re.compile(r"\bpromotion pack\b", re.I)),
     ("set of N (lote)", re.compile(r"\bset of \d+\b|\[set of", re.I)),
 )
+
+_CASE_RE = re.compile(r"\bcase\b", re.I)
+_DISPLAY_RE = re.compile(r"\bdisplay\b", re.I)
 
 
 def fetch_json(url: str) -> dict:
@@ -94,16 +113,54 @@ def classify_type(name: str) -> str | None:
     for _, pat in _SKIP_PATTERNS:
         if pat.search(low):
             return None
+    has_case = bool(_CASE_RE.search(low))
+    has_display = bool(_DISPLAY_RE.search(low))
+    # Famílias por NOME (grupos guarda-chuva 17675/23304) — antes dos genéricos.
+    if "illustration box" in low:
+        return "Illustration Box Case" if has_case else "Illustration Box"
+    if "devil fruits collection" in low:
+        return "Devil Fruits Collection Case" if has_case else "Devil Fruits Collection"
+    if "tin pack set" in low:
+        if has_display and has_case:
+            return "Tin Pack Set Display Case"
+        if has_display:
+            return "Tin Pack Set Display"
+        if has_case:
+            return None            # "case sem display" não existe no catálogo — não chutar
+        return "Tin Pack Set"
+    if "treasure booster set" in low:
+        if has_display and has_case:
+            return "Treasure Booster Set Display Case"
+        if has_display or has_case:
+            return None
+        return "Treasure Booster Set"
+    if "gift collection" in low:
+        if has_case:
+            return None            # não existe no catálogo — não chutar
+        return "Gift Collection Display" if has_display else "Gift Collection"
     if "double pack set" in low:
-        return "Double Pack Set Display" if "display" in low else "Double Pack Set"
+        if has_display and has_case:
+            return "Double Pack Set Display Case"
+        if has_case:
+            return None
+        return "Double Pack Set Display" if has_display else "Double Pack Set"
     if "sleeved booster" in low:
-        return "Sleeved Booster Pack"
+        return None if has_case else "Sleeved Booster Pack"
+    if "booster box case" in low:
+        return "Booster Box Case"
+    if "starter deck" in low or "ultra deck" in low:
+        if has_case:
+            return None            # case de deck: decks já estão fora do escopo
+        return "Starter Deck Display" if has_display else "Starter Deck"
+    if has_case:
+        # Nenhuma outra família tem case reconhecido (ex.: EB tratado abaixo).
+        if low.startswith("extra booster:") and low.endswith(" box case"):
+            return "Booster Box Case"
+        return None
     if "booster box" in low:
         return "Booster Box"
     if "booster pack" in low:
         return "Booster Pack"
-    if "starter deck" in low or "ultra deck" in low:
-        return "Starter Deck Display" if "display" in low else "Starter Deck"
     if low.startswith("extra booster:"):
         # EB nomeia "… Box" / "… Pack" sem a palavra "booster" no sufixo.
         if low.endswith(" box"):
@@ -131,27 +188,135 @@ def _dp_vol_tokens(name: str) -> list[str]:
     return [f"vol {n}", f"volume {n}"]
 
 
+_LANG_EXCLUDES = ["japanese", "japones", "japonesa", "coreano",
+                  "korean", "chines", "chinese"]
+
+# Famílias cuja identidade vem do NOME do produto (grupos guarda-chuva).
+_NAME_FAMILIES = {
+    "Illustration Box", "Illustration Box Case",
+    "Devil Fruits Collection", "Devil Fruits Collection Case",
+    "Tin Pack Set", "Tin Pack Set Display", "Tin Pack Set Display Case",
+    "Treasure Booster Set", "Treasure Booster Set Display Case",
+    "Gift Collection", "Gift Collection Display",
+}
+
+
+def _tin_theme(name: str) -> str:
+    """'One Piece Tin Pack Set Vol. 2 -Portgas.D.Ace-' -> 'portgas d ace'."""
+    m = re.search(r"-\s*([^-]+?)\s*-\s*$", name)
+    return _norm_term(m.group(1)) if m else ""
+
+
+def _family_sku_parts(name: str, ptype: str) -> tuple[list[str], list[str],
+                                                      list[str], list[str], str] | None:
+    """(set_terms, type_terms, extra_excludes, requires, slug) da família, ou
+    None se a identidade não puder ser extraída do nome real (não chutar)."""
+    is_case = ptype.endswith("Case")
+    is_display = "Display" in ptype
+    vols = _dp_vol_tokens(name)
+    voln = re.search(r"vol(?:ume)?\.?\s*(\d+)", name, re.I)
+    vslug = f"vol{voln.group(1)}" if voln else ""
+
+    if ptype.startswith("Illustration Box"):
+        if vols:
+            set_terms, slug = vols, f"ilbox-{vslug}"
+        elif re.search(r"\billustration box ex\b", name, re.I):
+            set_terms, slug = ["illustration box ex"], "ilbox-ex"
+        else:
+            return None
+        return (set_terms, ["illustration box"],
+                [] if is_case else ["display"], ["case"] if is_case else [],
+                slug + ("-case" if is_case else ""))
+    if ptype.startswith("Devil Fruits Collection"):
+        if not vols:
+            return None
+        return (vols, ["devil fruits collection"],
+                [] if is_case else ["display"], ["case"] if is_case else [],
+                f"dfc-{vslug}" + ("-case" if is_case else ""))
+    if ptype.startswith("Tin Pack Set"):
+        if not vols:
+            return None
+        if ptype == "Tin Pack Set":
+            theme = _tin_theme(name)
+            if not theme:
+                return None       # unidade sem tema = identidade incompleta
+            return (vols, ["tin pack"], ["display"], [theme],
+                    f"tinpack-{vslug}-{theme.split()[-1]}")
+        requires = ["display"] + (["case"] if is_case else [])
+        return (vols, ["tin pack"], [], requires,
+                f"tinpack-{vslug}-display" + ("-case" if is_case else ""))
+    if ptype.startswith("Treasure Booster Set"):
+        if is_case:
+            return (["treasure booster set"], ["treasure booster"], [],
+                    ["display", "case"], "treasure-booster-display-case")
+        return (["treasure booster set"], ["treasure booster"],
+                ["display"], [], "treasure-booster")
+    if ptype.startswith("Gift Collection"):
+        m = re.search(r"gift collection (\d{4})", name, re.I)
+        if not m:
+            return None
+        year = m.group(1)
+        if is_display:
+            return ([f"gift collection {year}"], ["gift collection"], [],
+                    ["display"], f"gift{year}-display")
+        return ([f"gift collection {year}"], ["gift collection"],
+                ["display", "promotion"], [], f"gift{year}")
+    return None
+
+
 def build_sku(prod: dict, group: dict, code: str, price: float) -> dict | None:
     name = prod["name"]
     ptype = classify_type(name)
     if ptype is None:
         return None
+    # Grupos guarda-chuva: SÓ famílias com identidade no nome — um "booster
+    # pack" promocional solto ali herdaria set_terms do nome do GRUPO (lixo).
+    if group["groupId"] in (17675, 23304) and ptype not in _NAME_FAMILIES:
+        return None
     group_name = group["name"]
     set_terms: list[str] = []
     type_terms: list[str] = []
-    exclude_terms: list[str] = ["japanese", "japones", "japonesa", "coreano",
-                               "korean", "chines", "chinese", "case", "lote"]
+    # Case é lote SÓ para SKU que não é case — SKUs de case têm "case" na
+    # própria identidade (operador 2026-08-17) e não podem se auto-excluir.
+    exclude_terms: list[str] = list(_LANG_EXCLUDES) + (
+        ["lote"] if ptype.endswith("Case") else ["case", "lote"])
     requires_terms: list[str] = []
 
-    if ptype in ("Double Pack Set", "Double Pack Set Display"):
+    if ptype in _NAME_FAMILIES:
+        parts = _family_sku_parts(name, ptype)
+        if parts is None:
+            return None
+        set_terms, type_terms, extra_exc, requires_terms, fam_slug = parts
+        exclude_terms += extra_exc
+        return {
+            "id": f"{fam_slug}-en",
+            "name": name,
+            "product_type": ptype,
+            "set": group_name,
+            "set_code": (group.get("abbreviation") or code).upper(),
+            "language": "EN",
+            "tcgplayer_group_id": group["groupId"],
+            "tcgplayer_product_id": prod["productId"],
+            "match": {
+                "set_terms": set_terms,
+                "type_terms": type_terms,
+                "exclude_terms": exclude_terms,
+                **({"requires_terms": requires_terms} if requires_terms else {}),
+            },
+        }
+
+    if ptype in ("Double Pack Set", "Double Pack Set Display",
+                 "Double Pack Set Display Case"):
         set_terms = _dp_vol_tokens(name)
         if not set_terms:
             return None
         type_terms = ["double pack"]
         if ptype == "Double Pack Set":
             exclude_terms.append("display")
-        else:
+        elif ptype == "Double Pack Set Display":
             requires_terms.append("display")
+        else:
+            requires_terms += ["display", "case"]
     elif ptype in ("Starter Deck", "Starter Deck Display"):
         # Âncora = o número/EX do deck (tema colide entre decks: há 2 decks
         # "Monkey.D.Luffy"); tokens da abbreviation oficial (ST-31 -> st31).
@@ -184,6 +349,14 @@ def build_sku(prod: dict, group: dict, code: str, price: float) -> dict | None:
         if ptype == "Booster Box":
             type_terms = ["booster box"] + PT_BOX
             exclude_terms += ["double pack", "sleeved"]
+        elif ptype == "Booster Box Case":
+            # EB nomeia o case só como "Box Case" (sem "Booster") — gate de SET
+            # escopa, igual ao Extra Booster Box.
+            if group_name.lower().startswith("extra booster"):
+                type_terms = ["box case"]
+            else:
+                type_terms = ["booster box case"]
+            exclude_terms += ["double pack", "sleeved"]
         elif ptype == "Booster Pack":
             type_terms = ["booster pack"] + PT_PACK
             exclude_terms += ["sleeved", "box", "double pack", "dash"]
@@ -201,8 +374,10 @@ def build_sku(prod: dict, group: dict, code: str, price: float) -> dict | None:
 
     slug = {
         "Booster Box": "booster-box", "Booster Pack": "booster-pack",
+        "Booster Box Case": "booster-box-case",
         "Sleeved Booster Pack": "sleeved-booster",
         "Double Pack Set": "double-pack", "Double Pack Set Display": "double-pack-display",
+        "Double Pack Set Display Case": "double-pack-display-case",
         "Starter Deck": "starter-deck", "Starter Deck Display": "starter-deck-display",
         "Extra Booster Box": "eb-box", "Extra Booster Pack": "eb-pack",
     }[ptype]

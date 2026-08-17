@@ -137,3 +137,11 @@ def test_config_onepiece_do_repo_esta_com_as_diretrizes():
     assert cfg["references"]["ebay_file"] == "data/ebay_reference_onepiece.json"
     assert 36 not in cfg["liga"]["categorias"]
     assert "Starter Deck" in cfg["scope"]["exclude"]
+    # Operador 2026-08-17 (lista BUSCAR): cases/collections/tins/gift no
+    # escopo — Booster Box Case saiu do exclude; Latas(24) e Kits(38) entram.
+    assert "Booster Box Case" not in cfg["scope"]["exclude"]
+    for cat in (24, 38):
+        assert cat in cfg["liga"]["categorias"]
+    for t in ("Booster Box Case", "Treasure Booster Set", "Illustration Box",
+              "Devil Fruits Collection", "Tin Pack Set", "Gift Collection"):
+        assert t in cfg["scope"]["include"], t
