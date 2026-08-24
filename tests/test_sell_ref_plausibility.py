@@ -151,6 +151,36 @@ def test_descolada_vira_red_mesmo_com_referencia_velha():
     assert row.reject_reason == "ref_venda_descolada_tcg"
 
 
+# ── wrapper de produção: carrega o us_file e aplica (caminho dos 2 runners) ──
+def test_wrapper_aplica_guard_com_arquivo_presente(tmp_path):
+    import json
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "us_ref.json").write_text(
+        json.dumps({"captured_at": "2099-01-01T00:00:00Z",
+                    "prices": {SKU_ID: 38.01}}), encoding="utf-8")
+    config = _config_ebay()
+    config["references"]["us_file"] = "data/us_ref.json"
+    row = _green_row(price_brl=208.0, ebay_usd=78.5)
+    stats = S.load_and_apply_sell_ref_guard([row], config, tmp_path)
+    assert stats is not None and stats["downgraded"] == 1
+    assert row.reject_reason == "ref_venda_descolada_tcg"
+
+
+def test_wrapper_arquivo_ausente_e_noop_honesto_sem_crash(tmp_path):
+    config = _config_ebay()
+    config["references"]["us_file"] = "data/nao_existe.json"
+    row = _green_row(price_brl=208.0, ebay_usd=78.5)
+    stats = S.load_and_apply_sell_ref_guard([row], config, tmp_path)
+    assert stats is None                      # guard pulado, nunca crash
+    assert row.deal_confidence == "GREEN"     # linha intacta (nunca inventa preço)
+
+
+def test_wrapper_inativo_no_modo_tcg(tmp_path):
+    row = _green_row()
+    assert S.load_and_apply_sell_ref_guard([row], _config_tcg(), tmp_path) is None
+    assert row.deal_confidence == "GREEN"
+
+
 # ── config do perfil OP já vem com o guard ligado ────────────────────────────
 def test_config_onepiece_tem_ratio_default():
     config = yaml.safe_load((ROOT / "config_onepiece.yaml").read_text(encoding="utf-8"))
