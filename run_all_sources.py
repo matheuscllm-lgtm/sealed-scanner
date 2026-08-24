@@ -199,6 +199,12 @@ def run(args: argparse.Namespace) -> int:
     # de contar buckets / escrever o unified. FP-safe: nunca cria deal. Sem isto, o
     # caminho canônico de produção (watchdog -> run_all_sources -> snapshot) entregava
     # GREEN falso quando a ref envelhecia.
+    # Guard de plausibilidade da pedida eBay vs ref TCG (modo eBay apenas) —
+    # ANTES do freshness: o RED `ref_venda_descolada_tcg` prevalece sobre o
+    # rebaixamento GREEN->YELLOW de referência velha. MESMO caminho único do
+    # single-source (load_and_apply_sell_ref_guard).
+    s.load_and_apply_sell_ref_guard(all_rows, config, SCRIPT_DIR)
+
     stale_age = s.apply_freshness_downgrade(all_rows, ref_data, config)
     if stale_age is not None:
         max_age = config.get("deal_criteria", {}).get("max_reference_age_days", 14)
