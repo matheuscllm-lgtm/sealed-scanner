@@ -30,6 +30,12 @@ deal_criteria:
   # Operador 2026-08-15: só referência DO DIA (mesma regra do perfil Pokémon) —
   # rebuildar build_us_reference.py --game onepiece antes de todo scan.
   max_reference_age_days: 1
+  # Guard de plausibilidade da pedida eBay (operador 2026-08-24, caso IB-07):
+  # pedida > 1.5x a ref TCG (us_file) = provável pedida órfã que não acompanhou
+  # queda de preço. GREEN cuja margem vs TCG não passa o mínimo vira RED
+  # `ref_venda_descolada_tcg` (auditável). Só existe no modo
+  # classification_source=ebay; simétrico do guard de anúncio-lixo (<50%).
+  max_sell_ref_vs_tcg_ratio: 1.5
 
 sources:
   brazil:

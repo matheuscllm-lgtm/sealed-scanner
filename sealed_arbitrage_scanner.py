@@ -1001,6 +1001,111 @@ def apply_freshness_downgrade(rows: list, ref_data: dict, config: dict) -> int |
     return ref_age
 
 
+def apply_sell_ref_plausibility_guard(rows: list, tcg_prices: dict | None,
+                                      config: dict) -> dict | None:
+    """Guard de plausibilidade da referência de VENDA (modo eBay apenas).
+
+    Caso real (IB-07, 2026-08-24): o TCGplayer desabou de ~US$160 p/ ~US$37
+    (restock), mas o menor anúncio ATIVO no eBay seguia US$78,50 — pedida órfã
+    que não repreçou. Como o perfil OP classifica pelo eBay, o scan entregou
+    94% de margem num produto cuja margem vs TCG era NEGATIVA. O guard de
+    anúncio-lixo do builder só barra pedida ABAIXO de 50% da ref TCG; este é o
+    simétrico do lado de cima.
+
+    Regra (só com classification_source=ebay E deal_criteria.
+    max_sell_ref_vs_tcg_ratio setado): pedida eBay > ratio × ref TCG ->
+      - margem vs TCG < min_total  -> GREEN vira RED `ref_venda_descolada_tcg`
+        (padrão margem_anomala: RED auditável, nunca YELLOW — invariante);
+      - margem vs TCG >= min_total -> GREEN fica (o deal sobrevive mesmo pela
+        referência conservadora), com nota anexada ao main_risk.
+
+    FP-safe: nunca cria deal, nunca toca YELLOW/RED nem linha sem match HIGH;
+    SKU sem preço TCG fica intacto (contado em `sem_tcg` — nunca inventamos
+    preço). Roda ANTES do apply_freshness_downgrade (que só toca GREEN, então
+    o RED daqui prevalece). Muta `rows` in-place; retorna stats ou None se o
+    guard estiver inativo (modo tcg, sem ratio, sem preços TCG).
+    """
+    if classification_reference_source(config) != "ebay" or not tcg_prices:
+        return None
+    max_ratio = config.get("deal_criteria", {}).get("max_sell_ref_vs_tcg_ratio")
+    if max_ratio is None:
+        return None
+    max_ratio = float(max_ratio)
+    min_total = config["deal_criteria"]["min_total_margin_pct"]
+    stats = {"checked": 0, "downgraded": 0, "kept_with_note": 0, "sem_tcg": 0}
+    for row in rows:
+        if (row.deal_confidence != "GREEN" or row.match_confidence != "HIGH"
+                or not row.sku_id or not row.us_price_usd):
+            continue
+        tcg_usd = tcg_prices.get(row.sku_id)
+        if not tcg_usd:
+            stats["sem_tcg"] += 1
+            continue
+        stats["checked"] += 1
+        if row.us_price_usd <= max_ratio * float(tcg_usd):
+            continue
+        margin_vs_tcg = compute_margin(row.price_brl, float(tcg_usd), config)["total_margin_pct"]
+        if margin_vs_tcg >= min_total:
+            stats["kept_with_note"] += 1
+            row.main_risk = (
+                f"{row.main_risk} | Pedida eBay US$ {row.us_price_usd:.2f} descolada da "
+                f"ref TCG US$ {float(tcg_usd):.2f} (>{max_ratio:.1f}x), mas a margem vs "
+                f"TCG ({margin_vs_tcg:.0%}) ainda passa o mínimo."
+            )
+        else:
+            stats["downgraded"] += 1
+            row.deal_confidence = "RED"
+            row.bucket = "rejected"
+            row.reject_reason = "ref_venda_descolada_tcg"
+            row.main_risk = (
+                f"Pedida eBay US$ {row.us_price_usd:.2f} descolada da ref TCG "
+                f"US$ {float(tcg_usd):.2f} (>{max_ratio:.1f}x — pedida órfã que não "
+                f"acompanhou queda de preço?) e a margem vs TCG ({margin_vs_tcg:.1%}) "
+                f"não atinge o mínimo de {min_total:.0%}. Margem oficial provável miragem."
+            )
+            row.recommended_action = (
+                "Conferir preço atual no TCGplayer/eBay antes de considerar o deal"
+            )
+    return stats
+
+
+def load_and_apply_sell_ref_guard(rows: list, config: dict, script_dir: Path) -> dict | None:
+    """Caminho ÚNICO (single-source e orquestrador) do guard de plausibilidade:
+    carrega os preços TCG do references.us_file (que segue existindo no modo
+    eBay — é o mesmo arquivo do piso anti-lixo do build_ebay_reference) e
+    aplica o guard, com UMA linha auditável de status. Arquivo ausente =
+    no-op honesto (nunca crash)."""
+    if classification_reference_source(config) != "ebay":
+        return None
+    rel = (config.get("references") or {}).get("us_file") or "data/us_reference.json"
+    us_data = load_json_optional(script_dir / rel)
+    tcg_prices = (us_data or {}).get("prices") or {}
+    # Frescor do PRÓPRIO us_file (review 2026-08-28): snapshot TCG velho aqui
+    # geraria RED `ref_venda_descolada_tcg` errado — a miragem na direção
+    # contrária. Mesma semântica leniente do apply_freshness_downgrade (idade
+    # None = desconhecida, não bloqueia); acima da validade o guard é PULADO
+    # com aviso alto — referência de sanidade velha nunca rebaixa deal.
+    us_age = reference_age_days((us_data or {}).get("captured_at"))
+    max_age = config.get("deal_criteria", {}).get("max_reference_age_days", 14)
+    if us_age is not None and us_age > max_age:
+        print(f"  [guard] plausibilidade da pedida eBay PULADA — {rel} defasado "
+              f"({us_age}d > {max_age}d): snapshot TCG velho não pode rebaixar deal. "
+              "Rode build_us_reference.py e re-rode o scan.")
+        return None
+    stats = apply_sell_ref_plausibility_guard(rows, tcg_prices, config)
+    if stats is None:
+        if config.get("deal_criteria", {}).get("max_sell_ref_vs_tcg_ratio") is not None:
+            print(f"  [guard] plausibilidade da pedida eBay PULADA — {rel} ausente/vazio "
+                  "(rode build_us_reference.py p/ habilitar o cruzamento com o TCG)")
+        return None
+    age_txt = "?" if us_age is None else str(us_age)
+    print(f"  [guard] plausibilidade pedida eBay vs TCG (ref {age_txt}d): "
+          f"{stats['checked']} GREEN checados · "
+          f"{stats['downgraded']} descolados -> RED · {stats['kept_with_note']} mantidos c/ nota · "
+          f"{stats['sem_tcg']} sem preço TCG")
+    return stats
+
+
 # --------------------------------------------------------------------------
 # Lado de VENDA (eBay US) — enriquecimento INFORMATIVO pós-classificação
 # --------------------------------------------------------------------------
@@ -1143,6 +1248,11 @@ def run(args: argparse.Namespace) -> int:
         )
         classify(row, registry, us_reference, config)
         rows.append(row)
+
+    # Guard de plausibilidade da pedida eBay vs ref TCG (modo eBay apenas) —
+    # ANTES do freshness: o RED `ref_venda_descolada_tcg` prevalece sobre o
+    # rebaixamento GREEN->YELLOW de referência velha.
+    load_and_apply_sell_ref_guard(rows, config, SCRIPT_DIR)
 
     # Freshness guard — referência US velha pode inflar margem em GREEN falso (o
     # modo de falha histórico dos tins). Acima da validade, rebaixa GREEN->YELLOW
