@@ -1080,13 +1080,27 @@ def load_and_apply_sell_ref_guard(rows: list, config: dict, script_dir: Path) ->
     rel = (config.get("references") or {}).get("us_file") or "data/us_reference.json"
     us_data = load_json_optional(script_dir / rel)
     tcg_prices = (us_data or {}).get("prices") or {}
+    # Frescor do PRÓPRIO us_file (review 2026-08-28): snapshot TCG velho aqui
+    # geraria RED `ref_venda_descolada_tcg` errado — a miragem na direção
+    # contrária. Mesma semântica leniente do apply_freshness_downgrade (idade
+    # None = desconhecida, não bloqueia); acima da validade o guard é PULADO
+    # com aviso alto — referência de sanidade velha nunca rebaixa deal.
+    us_age = reference_age_days((us_data or {}).get("captured_at"))
+    max_age = config.get("deal_criteria", {}).get("max_reference_age_days", 14)
+    if us_age is not None and us_age > max_age:
+        print(f"  [guard] plausibilidade da pedida eBay PULADA — {rel} defasado "
+              f"({us_age}d > {max_age}d): snapshot TCG velho não pode rebaixar deal. "
+              "Rode build_us_reference.py e re-rode o scan.")
+        return None
     stats = apply_sell_ref_plausibility_guard(rows, tcg_prices, config)
     if stats is None:
         if config.get("deal_criteria", {}).get("max_sell_ref_vs_tcg_ratio") is not None:
             print(f"  [guard] plausibilidade da pedida eBay PULADA — {rel} ausente/vazio "
                   "(rode build_us_reference.py p/ habilitar o cruzamento com o TCG)")
         return None
-    print(f"  [guard] plausibilidade pedida eBay vs TCG: {stats['checked']} GREEN checados · "
+    age_txt = "?" if us_age is None else str(us_age)
+    print(f"  [guard] plausibilidade pedida eBay vs TCG (ref {age_txt}d): "
+          f"{stats['checked']} GREEN checados · "
           f"{stats['downgraded']} descolados -> RED · {stats['kept_with_note']} mantidos c/ nota · "
           f"{stats['sem_tcg']} sem preço TCG")
     return stats

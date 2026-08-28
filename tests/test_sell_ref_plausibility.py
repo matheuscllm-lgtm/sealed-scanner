@@ -181,6 +181,66 @@ def test_wrapper_inativo_no_modo_tcg(tmp_path):
     assert row.deal_confidence == "GREEN"
 
 
+# ── fronteiras exatas (review 2026-08-28: travar o <= e o >= em teste) ───────
+def test_fronteira_pedida_exatamente_no_ratio_nao_toca():
+    # us_price_usd == ratio × tcg (78.0 == 1.5 × 52.0): condição usa <= — linha
+    # intacta, mas CONTADA em checked (semântica: checked = todas avaliadas).
+    row = _green_row(price_brl=208.0, ebay_usd=78.0)
+    stats = S.apply_sell_ref_plausibility_guard([row], {SKU_ID: 52.0}, _config_ebay())
+    assert row.deal_confidence == "GREEN"
+    assert row.main_risk == "risco X"
+    assert stats == {"checked": 1, "downgraded": 0, "kept_with_note": 0, "sem_tcg": 0}
+
+
+def test_fronteira_margem_tcg_exatamente_no_minimo_segue_green():
+    # margem vs TCG == min_total (0.30 exato: R$100 -> TCG US$26×5 = R$130):
+    # branch usa >= — GREEN sobrevive com nota, nunca RED.
+    row = _green_row(price_brl=100.0, ebay_usd=60.0)   # 60 > 1.5×26 = 39
+    stats = S.apply_sell_ref_plausibility_guard([row], {SKU_ID: 26.0}, _config_ebay())
+    assert row.deal_confidence == "GREEN"
+    assert "descolada" in row.main_risk.lower()
+    assert stats["kept_with_note"] == 1 and stats["downgraded"] == 0
+
+
+def test_tcg_preco_zero_tratado_como_sem_preco():
+    # Preço 0 no snapshot TCG = dado inválido, não referência: cai em sem_tcg
+    # e a linha fica intacta (nunca divide por zero, nunca rebaixa).
+    row = _green_row()
+    stats = S.apply_sell_ref_plausibility_guard([row], {SKU_ID: 0}, _config_ebay())
+    assert row.deal_confidence == "GREEN"
+    assert stats["sem_tcg"] == 1 and stats["checked"] == 0
+
+
+# ── frescor do próprio us_file (review 2026-08-28, finding MEDIUM) ───────────
+def test_wrapper_us_file_defasado_pula_guard_sem_rebaixar(tmp_path):
+    import json
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "us_ref.json").write_text(
+        json.dumps({"captured_at": "2020-01-01T00:00:00Z",
+                    "prices": {SKU_ID: 38.01}}), encoding="utf-8")
+    config = _config_ebay()                      # OP: max_reference_age_days = 1
+    config["references"]["us_file"] = "data/us_ref.json"
+    row = _green_row(price_brl=208.0, ebay_usd=78.5)
+    stats = S.load_and_apply_sell_ref_guard([row], config, tmp_path)
+    assert stats is None                         # guard PULADO (ref de sanidade velha)
+    assert row.deal_confidence == "GREEN"        # nunca rebaixa com snapshot velho
+
+
+def test_wrapper_us_file_sem_captured_at_ainda_aplica(tmp_path):
+    # Idade desconhecida (sem captured_at) segue a leniência do freshness
+    # downgrade: não bloqueia — o guard aplica normalmente.
+    import json
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "us_ref.json").write_text(
+        json.dumps({"prices": {SKU_ID: 38.01}}), encoding="utf-8")
+    config = _config_ebay()
+    config["references"]["us_file"] = "data/us_ref.json"
+    row = _green_row(price_brl=208.0, ebay_usd=78.5)
+    stats = S.load_and_apply_sell_ref_guard([row], config, tmp_path)
+    assert stats is not None and stats["downgraded"] == 1
+    assert row.reject_reason == "ref_venda_descolada_tcg"
+
+
 # ── config do perfil OP já vem com o guard ligado ────────────────────────────
 def test_config_onepiece_tem_ratio_default():
     config = yaml.safe_load((ROOT / "config_onepiece.yaml").read_text(encoding="utf-8"))
