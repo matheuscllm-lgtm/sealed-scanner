@@ -134,6 +134,9 @@ scope:
     - Tin Pack Set Display Case
     - Gift Collection
     - Gift Collection Display
+    # 2026-08-28 (review do scan): família Premium Card Collection — Liga lista
+    # como "Kit Colecionável - Premium Card Collection - ..." na categoria 38.
+    - Premium Card Collection
   exclude:
     - Raw Singles
     - Graded Cards

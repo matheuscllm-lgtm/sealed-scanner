@@ -897,6 +897,7 @@ skus:
     - 'extra booster one piece heroines edition'
     - 'eb03'
     - 'eb 03'
+    - 'one piece heroines edition'
     type_terms:
     - 'pack'
     - 'booster avulso'
@@ -926,6 +927,7 @@ skus:
     - 'extra booster one piece heroines edition'
     - 'eb03'
     - 'eb 03'
+    - 'one piece heroines edition'
     type_terms:
     - 'box'
     - 'caixa de booster'
@@ -954,6 +956,7 @@ skus:
     - 'extra booster one piece heroines edition'
     - 'eb03'
     - 'eb 03'
+    - 'one piece heroines edition'
     type_terms:
     - 'box case'
     exclude_terms:
@@ -980,6 +983,7 @@ skus:
     - 'extra booster one piece heroines edition'
     - 'eb03'
     - 'eb 03'
+    - 'one piece heroines edition'
     type_terms:
     - 'sleeved booster'
     exclude_terms:
@@ -2165,6 +2169,7 @@ skus:
     - 'extra booster anime 25th collection'
     - 'eb02'
     - 'eb 02'
+    - 'anime 25th collection'
     type_terms:
     - 'pack'
     - 'booster avulso'
@@ -2194,6 +2199,7 @@ skus:
     - 'extra booster anime 25th collection'
     - 'eb02'
     - 'eb 02'
+    - 'anime 25th collection'
     type_terms:
     - 'box'
     - 'caixa de booster'
@@ -2222,6 +2228,7 @@ skus:
     - 'extra booster anime 25th collection'
     - 'eb02'
     - 'eb 02'
+    - 'anime 25th collection'
     type_terms:
     - 'box case'
     exclude_terms:
@@ -2681,6 +2688,1129 @@ skus:
     - 'vol 2'
     - 'vol ii'
     - 'box'
+- id: op01-booster-pack-en
+  name: 'Romance Dawn - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Romance Dawn'
+  set_code: 'OP01'
+  language: 'EN'
+  tcgplayer_group_id: 3188
+  tcgplayer_product_id: 450085
+  match:
+    set_terms:
+    - 'romance dawn'
+    - 'op01'
+    - 'op 01'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op01-booster-box-wave1-en
+  name: 'Romance Dawn - Booster Box (Wave 1 - Blue)'
+  product_type: 'Booster Box'
+  set: 'Romance Dawn'
+  set_code: 'OP01'
+  language: 'EN'
+  tcgplayer_group_id: 3188
+  tcgplayer_product_id: 450086
+  match:
+    set_terms:
+    - 'romance dawn'
+    - 'op01'
+    - 'op 01'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+    requires_terms:
+    - 'wave 1'
+- id: op01-sleeved-booster-en
+  name: 'Romance Dawn - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Romance Dawn'
+  set_code: 'OP01'
+  language: 'EN'
+  tcgplayer_group_id: 3188
+  tcgplayer_product_id: 531774
+  match:
+    set_terms:
+    - 'romance dawn'
+    - 'op01'
+    - 'op 01'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op01-booster-box-wave2-en
+  name: 'Romance Dawn - Booster Box (Wave 2 - White)'
+  product_type: 'Booster Box'
+  set: 'Romance Dawn'
+  set_code: 'OP01'
+  language: 'EN'
+  tcgplayer_group_id: 3188
+  tcgplayer_product_id: 557280
+  match:
+    set_terms:
+    - 'romance dawn'
+    - 'op01'
+    - 'op 01'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+    requires_terms:
+    - 'wave 2'
+- id: op02-booster-pack-en
+  name: 'Paramount War - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Paramount War'
+  set_code: 'OP02'
+  language: 'EN'
+  tcgplayer_group_id: 17698
+  tcgplayer_product_id: 455865
+  match:
+    set_terms:
+    - 'paramount war'
+    - 'op02'
+    - 'op 02'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op02-booster-box-en
+  name: 'Paramount War - Booster Box'
+  product_type: 'Booster Box'
+  set: 'Paramount War'
+  set_code: 'OP02'
+  language: 'EN'
+  tcgplayer_group_id: 17698
+  tcgplayer_product_id: 455866
+  match:
+    set_terms:
+    - 'paramount war'
+    - 'op02'
+    - 'op 02'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op02-sleeved-booster-en
+  name: 'Paramount War - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Paramount War'
+  set_code: 'OP02'
+  language: 'EN'
+  tcgplayer_group_id: 17698
+  tcgplayer_product_id: 531775
+  match:
+    set_terms:
+    - 'paramount war'
+    - 'op02'
+    - 'op 02'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op03-booster-pack-en
+  name: 'Pillars of Strength - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Pillars of Strength'
+  set_code: 'OP03'
+  language: 'EN'
+  tcgplayer_group_id: 22890
+  tcgplayer_product_id: 477175
+  match:
+    set_terms:
+    - 'pillars of strength'
+    - 'op03'
+    - 'op 03'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op03-booster-box-en
+  name: 'Pillars of Strength - Booster Box'
+  product_type: 'Booster Box'
+  set: 'Pillars of Strength'
+  set_code: 'OP03'
+  language: 'EN'
+  tcgplayer_group_id: 22890
+  tcgplayer_product_id: 477176
+  match:
+    set_terms:
+    - 'pillars of strength'
+    - 'op03'
+    - 'op 03'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op03-sleeved-booster-en
+  name: 'Pillars of Strength - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Pillars of Strength'
+  set_code: 'OP03'
+  language: 'EN'
+  tcgplayer_group_id: 22890
+  tcgplayer_product_id: 531776
+  match:
+    set_terms:
+    - 'pillars of strength'
+    - 'op03'
+    - 'op 03'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op04-booster-pack-en
+  name: 'Kingdoms of Intrigue - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Kingdoms of Intrigue'
+  set_code: 'OP04'
+  language: 'EN'
+  tcgplayer_group_id: 23024
+  tcgplayer_product_id: 485832
+  match:
+    set_terms:
+    - 'kingdoms of intrigue'
+    - 'op04'
+    - 'op 04'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op04-booster-box-en
+  name: 'Kingdoms of Intrigue - Booster Box'
+  product_type: 'Booster Box'
+  set: 'Kingdoms of Intrigue'
+  set_code: 'OP04'
+  language: 'EN'
+  tcgplayer_group_id: 23024
+  tcgplayer_product_id: 485833
+  match:
+    set_terms:
+    - 'kingdoms of intrigue'
+    - 'op04'
+    - 'op 04'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op04-double-pack-en
+  name: 'Double Pack Set Volume 1'
+  product_type: 'Double Pack Set'
+  set: 'Kingdoms of Intrigue'
+  set_code: 'OP04'
+  language: 'EN'
+  tcgplayer_group_id: 23024
+  tcgplayer_product_id: 493752
+  match:
+    set_terms:
+    - 'vol 1'
+    - 'volume 1'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op04-double-pack-display-en
+  name: 'Double Pack Set Volume 1 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'Kingdoms of Intrigue'
+  set_code: 'OP04'
+  language: 'EN'
+  tcgplayer_group_id: 23024
+  tcgplayer_product_id: 514029
+  match:
+    set_terms:
+    - 'vol 1'
+    - 'volume 1'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op04-sleeved-booster-en
+  name: 'Kingdoms of Intrigue - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Kingdoms of Intrigue'
+  set_code: 'OP04'
+  language: 'EN'
+  tcgplayer_group_id: 23024
+  tcgplayer_product_id: 531777
+  match:
+    set_terms:
+    - 'kingdoms of intrigue'
+    - 'op04'
+    - 'op 04'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op05-booster-pack-en
+  name: 'Awakening of the New Era - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Awakening of the New Era'
+  set_code: 'OP05'
+  language: 'EN'
+  tcgplayer_group_id: 23213
+  tcgplayer_product_id: 498733
+  match:
+    set_terms:
+    - 'awakening of the new era'
+    - 'op05'
+    - 'op 05'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op05-booster-box-en
+  name: 'Awakening of the New Era - Booster Box'
+  product_type: 'Booster Box'
+  set: 'Awakening of the New Era'
+  set_code: 'OP05'
+  language: 'EN'
+  tcgplayer_group_id: 23213
+  tcgplayer_product_id: 498734
+  match:
+    set_terms:
+    - 'awakening of the new era'
+    - 'op05'
+    - 'op 05'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op05-booster-box-case-en
+  name: 'Awakening of the New Era - Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Awakening of the New Era'
+  set_code: 'OP05'
+  language: 'EN'
+  tcgplayer_group_id: 23213
+  tcgplayer_product_id: 498735
+  match:
+    set_terms:
+    - 'awakening of the new era'
+    - 'op05'
+    - 'op 05'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op05-double-pack-en
+  name: 'Double Pack Set Volume 2'
+  product_type: 'Double Pack Set'
+  set: 'Awakening of the New Era'
+  set_code: 'OP05'
+  language: 'EN'
+  tcgplayer_group_id: 23213
+  tcgplayer_product_id: 527060
+  match:
+    set_terms:
+    - 'vol 2'
+    - 'volume 2'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op05-double-pack-display-en
+  name: 'Double Pack Set Volume 2 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'Awakening of the New Era'
+  set_code: 'OP05'
+  language: 'EN'
+  tcgplayer_group_id: 23213
+  tcgplayer_product_id: 527062
+  match:
+    set_terms:
+    - 'vol 2'
+    - 'volume 2'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op05-sleeved-booster-en
+  name: 'Awakening of the New Era - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Awakening of the New Era'
+  set_code: 'OP05'
+  language: 'EN'
+  tcgplayer_group_id: 23213
+  tcgplayer_product_id: 531575
+  match:
+    set_terms:
+    - 'awakening of the new era'
+    - 'op05'
+    - 'op 05'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op06-booster-pack-en
+  name: 'Wings of the Captain - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Wings of the Captain'
+  set_code: 'OP06'
+  language: 'EN'
+  tcgplayer_group_id: 23272
+  tcgplayer_product_id: 515077
+  match:
+    set_terms:
+    - 'wings of the captain'
+    - 'op06'
+    - 'op 06'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op06-booster-box-en
+  name: 'Wings of the Captain - Booster Box'
+  product_type: 'Booster Box'
+  set: 'Wings of the Captain'
+  set_code: 'OP06'
+  language: 'EN'
+  tcgplayer_group_id: 23272
+  tcgplayer_product_id: 515080
+  match:
+    set_terms:
+    - 'wings of the captain'
+    - 'op06'
+    - 'op 06'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op06-booster-box-case-en
+  name: 'Wings of the Captain - Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Wings of the Captain'
+  set_code: 'OP06'
+  language: 'EN'
+  tcgplayer_group_id: 23272
+  tcgplayer_product_id: 515081
+  match:
+    set_terms:
+    - 'wings of the captain'
+    - 'op06'
+    - 'op 06'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op06-double-pack-en
+  name: 'Double Pack Set Volume 3'
+  product_type: 'Double Pack Set'
+  set: 'Wings of the Captain'
+  set_code: 'OP06'
+  language: 'EN'
+  tcgplayer_group_id: 23272
+  tcgplayer_product_id: 541542
+  match:
+    set_terms:
+    - 'vol 3'
+    - 'volume 3'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op06-double-pack-display-en
+  name: 'Double Pack Set Volume 3 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'Wings of the Captain'
+  set_code: 'OP06'
+  language: 'EN'
+  tcgplayer_group_id: 23272
+  tcgplayer_product_id: 541543
+  match:
+    set_terms:
+    - 'vol 3'
+    - 'volume 3'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op06-sleeved-booster-en
+  name: 'Wings of the Captain - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Wings of the Captain'
+  set_code: 'OP06'
+  language: 'EN'
+  tcgplayer_group_id: 23272
+  tcgplayer_product_id: 543371
+  match:
+    set_terms:
+    - 'wings of the captain'
+    - 'op06'
+    - 'op 06'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op07-booster-pack-en
+  name: '500 Years in the Future - Booster Pack'
+  product_type: 'Booster Pack'
+  set: '500 Years in the Future'
+  set_code: 'OP07'
+  language: 'EN'
+  tcgplayer_group_id: 23387
+  tcgplayer_product_id: 532104
+  match:
+    set_terms:
+    - '500 years in the future'
+    - 'op07'
+    - 'op 07'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op07-sleeved-booster-en
+  name: '500 Years in the Future - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: '500 Years in the Future'
+  set_code: 'OP07'
+  language: 'EN'
+  tcgplayer_group_id: 23387
+  tcgplayer_product_id: 532105
+  match:
+    set_terms:
+    - '500 years in the future'
+    - 'op07'
+    - 'op 07'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op07-booster-box-en
+  name: '500 Years in the Future - Booster Box'
+  product_type: 'Booster Box'
+  set: '500 Years in the Future'
+  set_code: 'OP07'
+  language: 'EN'
+  tcgplayer_group_id: 23387
+  tcgplayer_product_id: 532106
+  match:
+    set_terms:
+    - '500 years in the future'
+    - 'op07'
+    - 'op 07'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op07-booster-box-case-en
+  name: '500 Years in the Future - Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: '500 Years in the Future'
+  set_code: 'OP07'
+  language: 'EN'
+  tcgplayer_group_id: 23387
+  tcgplayer_product_id: 532107
+  match:
+    set_terms:
+    - '500 years in the future'
+    - 'op07'
+    - 'op 07'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op07-double-pack-en
+  name: 'Double Pack Set Volume 4'
+  product_type: 'Double Pack Set'
+  set: '500 Years in the Future'
+  set_code: 'OP07'
+  language: 'EN'
+  tcgplayer_group_id: 23387
+  tcgplayer_product_id: 549493
+  match:
+    set_terms:
+    - 'vol 4'
+    - 'volume 4'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op07-double-pack-display-en
+  name: 'Double Pack Set Volume 4 Display'
+  product_type: 'Double Pack Set Display'
+  set: '500 Years in the Future'
+  set_code: 'OP07'
+  language: 'EN'
+  tcgplayer_group_id: 23387
+  tcgplayer_product_id: 549495
+  match:
+    set_terms:
+    - 'vol 4'
+    - 'volume 4'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: op08-booster-pack-en
+  name: 'Two Legends - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Two Legends'
+  set_code: 'OP08'
+  language: 'EN'
+  tcgplayer_group_id: 23462
+  tcgplayer_product_id: 542502
+  match:
+    set_terms:
+    - 'two legends'
+    - 'op08'
+    - 'op 08'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: op08-sleeved-booster-en
+  name: 'Two Legends - Sleeved Booster Pack'
+  product_type: 'Sleeved Booster Pack'
+  set: 'Two Legends'
+  set_code: 'OP08'
+  language: 'EN'
+  tcgplayer_group_id: 23462
+  tcgplayer_product_id: 542503
+  match:
+    set_terms:
+    - 'two legends'
+    - 'op08'
+    - 'op 08'
+    type_terms:
+    - 'sleeved booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'box'
+- id: op08-booster-box-en
+  name: 'Two Legends - Booster Box'
+  product_type: 'Booster Box'
+  set: 'Two Legends'
+  set_code: 'OP08'
+  language: 'EN'
+  tcgplayer_group_id: 23462
+  tcgplayer_product_id: 542504
+  match:
+    set_terms:
+    - 'two legends'
+    - 'op08'
+    - 'op 08'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op08-booster-box-case-en
+  name: 'Two Legends - Booster Box Case'
+  product_type: 'Booster Box Case'
+  set: 'Two Legends'
+  set_code: 'OP08'
+  language: 'EN'
+  tcgplayer_group_id: 23462
+  tcgplayer_product_id: 542505
+  match:
+    set_terms:
+    - 'two legends'
+    - 'op08'
+    - 'op 08'
+    type_terms:
+    - 'booster box case'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
+- id: op08-double-pack-en
+  name: 'Double Pack Set Volume 5'
+  product_type: 'Double Pack Set'
+  set: 'Two Legends'
+  set_code: 'OP08'
+  language: 'EN'
+  tcgplayer_group_id: 23462
+  tcgplayer_product_id: 561689
+  match:
+    set_terms:
+    - 'vol 5'
+    - 'volume 5'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'display'
+- id: op08-double-pack-display-en
+  name: 'Double Pack Set Volume 5 Display'
+  product_type: 'Double Pack Set Display'
+  set: 'Two Legends'
+  set_code: 'OP08'
+  language: 'EN'
+  tcgplayer_group_id: 23462
+  tcgplayer_product_id: 561690
+  match:
+    set_terms:
+    - 'vol 5'
+    - 'volume 5'
+    type_terms:
+    - 'double pack'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    requires_terms:
+    - 'display'
+- id: eb01-booster-pack-en
+  name: 'Memorial Collection - Booster Pack'
+  product_type: 'Booster Pack'
+  set: 'Extra Booster: Memorial Collection'
+  set_code: 'EB-01'
+  language: 'EN'
+  tcgplayer_group_id: 23333
+  tcgplayer_product_id: 521160
+  match:
+    set_terms:
+    - 'extra booster memorial collection'
+    - 'eb01'
+    - 'eb 01'
+    - 'memorial collection'
+    type_terms:
+    - 'booster pack'
+    - 'booster avulso'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'sleeved'
+    - 'box'
+    - 'double pack'
+    - 'dash'
+- id: eb01-booster-box-en
+  name: 'Memorial Collection - Booster Box'
+  product_type: 'Booster Box'
+  set: 'Extra Booster: Memorial Collection'
+  set_code: 'EB-01'
+  language: 'EN'
+  tcgplayer_group_id: 23333
+  tcgplayer_product_id: 521161
+  match:
+    set_terms:
+    - 'extra booster memorial collection'
+    - 'eb01'
+    - 'eb 01'
+    - 'memorial collection'
+    type_terms:
+    - 'booster box'
+    - 'caixa de booster'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+    - 'double pack'
+    - 'sleeved'
 - id: gift2023-en
   name: 'Gift Collection 2023'
   product_type: 'Gift Collection'
@@ -2706,6 +3836,29 @@ skus:
     - 'lote'
     - 'display'
     - 'promotion'
+- id: pcc-25th-edition-en
+  name: 'Premium Card Collection 25th Edition'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 485271
+  match:
+    set_terms:
+    - '25th edition'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
 - id: gift2023-display-en
   name: 'Gift Collection 2023 Display'
   product_type: 'Gift Collection Display'
@@ -2731,6 +3884,121 @@ skus:
     - 'lote'
     requires_terms:
     - 'display'
+- id: pcc-one-piece-film-red-edition-en
+  name: 'Premium Card Collection -ONE PIECE FILM RED Edition-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 504466
+  match:
+    set_terms:
+    - 'one piece film red edition'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+- id: pcc-best-selection-vol-1-en
+  name: 'Premium Card Collection -Best Selection Vol. 1-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 525294
+  match:
+    set_terms:
+    - 'best selection vol 1'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+- id: pcc-live-action-edition-en
+  name: 'Premium Card Collection -Live Action Edition-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 527128
+  match:
+    set_terms:
+    - 'live action edition'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+- id: pcc-bandai-card-games-fest-23-24-edition-en
+  name: 'Premium Card Collection -BANDAI CARD GAMES Fest. 23-24 Edition-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 536278
+  match:
+    set_terms:
+    - 'bandai card games fest 23 24 edition'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+- id: pcc-uta-en
+  name: 'Premium Card Collection -Uta-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 538837
+  match:
+    set_terms:
+    - 'uta'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
 - id: treasure-booster-en
   name: 'Treasure Booster Set'
   product_type: 'Treasure Booster Set'
@@ -2755,6 +4023,75 @@ skus:
     - 'case'
     - 'lote'
     - 'display'
+- id: pcc-leader-collection-en
+  name: 'Premium Card Collection -Leader Collection-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 566951
+  match:
+    set_terms:
+    - 'leader collection'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+- id: pcc-best-selection-vol-2-en
+  name: 'Premium Card Collection -Best Selection Vol. 2-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 587220
+  match:
+    set_terms:
+    - 'best selection vol 2'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+- id: pcc-best-selection-vol-3-en
+  name: 'Premium Card Collection -Best Selection Vol. 3-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 606589
+  match:
+    set_terms:
+    - 'best selection vol 3'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
 - id: ilbox-vol1-en
   name: 'One Piece Card Game Illustration Box Vol. 1'
   product_type: 'Illustration Box'
@@ -2959,6 +4296,75 @@ skus:
     - 'case'
     - 'lote'
     - 'display'
+- id: pcc-best-selection-vol-4-en
+  name: 'Premium Card Collection -Best Selection Vol. 4-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 649681
+  match:
+    set_terms:
+    - 'best selection vol 4'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+- id: pcc-6-assort-vol-1-en
+  name: 'Premium Card Collection -6 assort vol.1-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 649694
+  match:
+    set_terms:
+    - '6 assort vol 1'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+- id: pcc-best-selection-vol-5-en
+  name: 'Premium Card Collection -Best Selection Vol. 5-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 657215
+  match:
+    set_terms:
+    - 'best selection vol 5'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
 - id: tinpack-vol2-display-en
   name: 'One Piece Tin Pack Set Vol. 2 Display'
   product_type: 'Tin Pack Set Display'
@@ -3242,6 +4648,54 @@ skus:
     - 'case'
     - 'lote'
     - 'display'
+- id: pcc-best-selection-vol-6-en
+  name: 'Premium Card Collection -Best Selection Vol. 6-'
+  product_type: 'Premium Card Collection'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 694874
+  match:
+    set_terms:
+    - 'best selection vol 6'
+    type_terms:
+    - 'premium card collection'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'case'
+    - 'lote'
+- id: ilbox-vol7-case-en
+  name: 'One Piece Card Game Illustration Box Vol. 7 Case'
+  product_type: 'Illustration Box Case'
+  set: 'One Piece Promotion Cards'
+  set_code: 'OP-PR'
+  language: 'EN'
+  tcgplayer_group_id: 17675
+  tcgplayer_product_id: 711511
+  match:
+    set_terms:
+    - 'vol 7'
+    - 'volume 7'
+    type_terms:
+    - 'illustration box'
+    exclude_terms:
+    - 'japanese'
+    - 'japones'
+    - 'japonesa'
+    - 'coreano'
+    - 'korean'
+    - 'chines'
+    - 'chinese'
+    - 'lote'
+    requires_terms:
+    - 'case'
 - id: dfc-vol1-en
   name: 'Devil Fruits Collection Vol. 1'
   product_type: 'Devil Fruits Collection'
