@@ -72,6 +72,19 @@ SEED_GROUPS: list[tuple[int, str]] = [
     (23991, "st21"),   # Starter Deck EX: Gear 5
     (23589, "op09"),   # Emperors in the New World
     (23496, "prb01"),  # Premium Booster -The Best-
+    # Ampliação 2026-08-28 (review do scan Liga OP: 56 anúncios EN sem match):
+    # back-catalog OP-01..OP-08 + EB-01 ainda à venda na Liga (packs, boxes e
+    # os Double Pack Sets Vol.1–5, que vivem nos grupos dos sets principais).
+    # Starter Decks antigos ficam FORA (decks excluídos do escopo, 2026-08-15).
+    (3188, "op01"),    # Romance Dawn
+    (17698, "op02"),   # Paramount War
+    (22890, "op03"),   # Pillars of Strength
+    (23024, "op04"),   # Kingdoms of Intrigue
+    (23213, "op05"),   # Awakening of the New Era
+    (23272, "op06"),   # Wings of the Captain
+    (23387, "op07"),   # 500 Years in the Future
+    (23462, "op08"),   # Two Legends
+    (23333, "eb01"),   # Extra Booster: Memorial Collection
     # Grupos guarda-chuva SEM cutoff (operador 2026-08-17): é onde o tcgcsv
     # lista as famílias Treasure Booster / Illustration Box / Tin Pack /
     # Gift Collection (17675) e Devil Fruits Collection (23304). A identidade
@@ -138,6 +151,17 @@ def classify_type(name: str) -> str | None:
         if has_case:
             return None            # não existe no catálogo — não chutar
         return "Gift Collection Display" if has_display else "Gift Collection"
+    if "premium card collection" in low:
+        # Só a CAIXA selada: o nome COMEÇA com "Premium Card Collection"
+        # (ex.: "Premium Card Collection -Best Selection Vol. 3-"). Entradas
+        # de carta única têm prefixo ("Nami (Premium Card Collection ...)")
+        # e nunca viram SKU (selado-only). Case/Display não existem no
+        # catálogo desta família — não chutar.
+        if not low.startswith("premium card collection"):
+            return None
+        if has_case or has_display:
+            return None
+        return "Premium Card Collection"
     if "double pack set" in low:
         if has_display and has_case:
             return "Double Pack Set Display Case"
@@ -198,6 +222,7 @@ _NAME_FAMILIES = {
     "Tin Pack Set", "Tin Pack Set Display", "Tin Pack Set Display Case",
     "Treasure Booster Set", "Treasure Booster Set Display Case",
     "Gift Collection", "Gift Collection Display",
+    "Premium Card Collection",
 }
 
 
@@ -251,6 +276,20 @@ def _family_sku_parts(name: str, ptype: str) -> tuple[list[str], list[str],
                     ["display", "case"], "treasure-booster-display-case")
         return (["treasure booster set"], ["treasure booster"],
                 ["display"], [], "treasure-booster")
+    if ptype == "Premium Card Collection":
+        # Identidade = o subtítulo da edição, do NOME REAL do tcgcsv:
+        # "Premium Card Collection -Best Selection Vol. 3-" -> "best selection
+        # vol 3"; "Premium Card Collection 25th Edition" -> "25th edition".
+        # Liga escreve "Kit Colecionável - Premium Card Collection - Best
+        # Selection vol.5" — mesmo normalizado. Subtítulos que são prefixo de
+        # outros (Live Action Edition vs ... Vol.2 ...) podem casar 2 SKUs ->
+        # YELLOW de ambiguidade (comportamento honesto, revisão manual).
+        rest = re.sub(r"^premium card collection", "", name, flags=re.I)
+        subtitle = _norm_term(rest.strip(" -"))
+        if not subtitle:
+            return None
+        return ([subtitle], ["premium card collection"], [], [],
+                "pcc-" + "-".join(subtitle.split()))
     if ptype.startswith("Gift Collection"):
         m = re.search(r"gift collection (\d{4})", name, re.I)
         if not m:
@@ -339,6 +378,14 @@ def build_sku(prod: dict, group: dict, code: str, price: float) -> dict | None:
         # Sets principais / EB / PRB: nome REAL do grupo + abbreviation mecânica.
         base = _norm_term(re.sub(r"\s*-the best-\s*", " ", group_name, flags=re.I))
         set_terms = [base] + abbrev_tokens(code)
+        # Grupos "Extra Booster: X": o tcgcsv nomeia produtos antigos SEM o
+        # prefixo ("Memorial Collection - Booster Pack" no grupo "Extra
+        # Booster: Memorial Collection") — o subtítulo real entra como termo
+        # adicional (continua específico; provado na autoconsistência).
+        if group_name.lower().startswith("extra booster:"):
+            sub = _norm_term(group_name.split(":", 1)[1])
+            if sub and sub not in set_terms:
+                set_terms.append(sub)
         if code == "op15":
             set_terms += ["eb04", "eb 04"]     # abbreviation oficial é OP15-EB04
         if code == "prb01":
@@ -381,6 +428,14 @@ def build_sku(prod: dict, group: dict, code: str, price: float) -> dict | None:
         "Starter Deck": "starter-deck", "Starter Deck Display": "starter-deck-display",
         "Extra Booster Box": "eb-box", "Extra Booster Pack": "eb-pack",
     }[ptype]
+    # Variantes por WAVE (OP-01 Romance Dawn: "Booster Box (Wave 1 - Blue)" vs
+    # "(Wave 2 - White)" são produtos DISTINTOS com preços muito diferentes).
+    # Identidade exige o wave no título BR — anúncio sem "wave" não casa nenhum
+    # dos dois (sem_match honesto; nunca chutamos qual wave o vendedor tem).
+    m_wave = re.search(r"\(wave\s*(\d+)", name, re.I)
+    if m_wave:
+        requires_terms.append(f"wave {m_wave.group(1)}")
+        slug += f"-wave{m_wave.group(1)}"
     return {
         "id": f"{code}-{slug}-en",
         "name": name,

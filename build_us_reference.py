@@ -70,11 +70,15 @@ SANITY_BANDS_USD: dict[str, tuple[float, float]] = {
 # Conferidas contra os preços reais do tcgcsv na criação do perfil (2026-08)
 # — ex.: OP16 Booster Box market US$204,70.
 SANITY_BANDS_USD_ONEPIECE: dict[str, tuple[float, float]] = {
-    "Booster Box": (40.0, 1500.0),
+    # Tetos recalibrados 2026-08-28 com o back-catalog OP-01..OP-08 (marketPrice
+    # REAL do dia: Romance Dawn Box US$4.960,70; DP Vol.2 US$226,66; DP Vol.2
+    # Display US$1.512,59; Romance Dawn Sleeved US$151,95) — bandas antigas
+    # calibradas só no catálogo moderno barravam produto legítimo valorizado.
+    "Booster Box": (40.0, 6000.0),
     "Booster Pack": (2.0, 80.0),
-    "Sleeved Booster Pack": (2.0, 150.0),
-    "Double Pack Set": (4.0, 150.0),
-    "Double Pack Set Display": (30.0, 900.0),
+    "Sleeved Booster Pack": (2.0, 300.0),
+    "Double Pack Set": (4.0, 400.0),
+    "Double Pack Set Display": (30.0, 2500.0),
     "Starter Deck": (5.0, 500.0),
     "Starter Deck Display": (30.0, 1500.0),
     "Extra Booster Box": (40.0, 1500.0),
@@ -96,6 +100,10 @@ SANITY_BANDS_USD_ONEPIECE: dict[str, tuple[float, float]] = {
     "Tin Pack Set Display Case": (500.0, 8000.0),
     "Gift Collection": (100.0, 2000.0),
     "Gift Collection Display": (500.0, 8000.0),
+    # 2026-08-28 — família Premium Card Collection (grupo guarda-chuva 17675):
+    # marketPrice real no dia da inclusão = US$76,75 (Best Selection Vol.5) a
+    # US$891,50 (25th Edition); banda com folga p/ flutuação, nunca chutada.
+    "Premium Card Collection": (40.0, 2000.0),
 }
 
 # Seleção de banda por nome (--bands) — o objeto Pokémon é o MESMO de sempre
