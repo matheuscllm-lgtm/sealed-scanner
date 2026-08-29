@@ -191,6 +191,37 @@ def select_lowest(sku, items: list[dict], ref_usd: float | None) -> dict:
     return {"status": "sem anúncio plausível"}
 
 
+def _plausible_prices(sku, items: list[dict]) -> list[float]:
+    """Preços USD dos anúncios que passam o gate de título, asc (escadinha)."""
+    out: list[float] = []
+    for it in items:
+        if not title_passes_gate(it.get("title") or "", sku):
+            continue
+        try:
+            usd = float((it.get("price") or {}).get("value"))
+        except (TypeError, ValueError):
+            continue
+        if usd > 0:
+            out.append(usd)
+    return sorted(out)
+
+
+def _plausible_sellers(sku, items: list[dict]) -> int | None:
+    """Nº de vendedores DISTINTOS entre os anúncios plausíveis da página.
+    None quando a página não traz seller (fake antigo/resposta mínima)."""
+    seen = set()
+    any_field = False
+    for it in items:
+        if not title_passes_gate(it.get("title") or "", sku):
+            continue
+        seller = ((it.get("seller") or {}).get("username") or "").strip()
+        if "seller" in it:
+            any_field = True
+        if seller:
+            seen.add(seller)
+    return len(seen) if (seen or any_field) else None
+
+
 def build_reference(skus: list, us_prices: dict, client, game_word: str,
                     category_ids: str | None = None, limit: int = 50,
                     limit_skus: int = 0) -> tuple[dict, dict]:
@@ -209,9 +240,29 @@ def build_reference(skus: list, us_prices: dict, client, game_word: str,
         # abaixo do piso já seria descartado pelo guard de qualquer forma.
         min_price = round(SUSPECT_RATIO * ref_usd, 2) if ref_usd else None
         try:
-            items = client.search(query, category_ids=category_ids, limit=limit,
-                                  min_price=min_price)
+            # search_page (quando o cliente tem) traz também o `total` da busca
+            # — nº de anúncios ativos, o insumo de OFERTA da camada de análise.
+            # Duck-typing de propósito: fakes de teste que só implementam
+            # `search` continuam válidos (campos de oferta ficam ausentes).
+            if hasattr(client, "search_page"):
+                page = client.search_page(query, category_ids=category_ids,
+                                          limit=limit, min_price=min_price)
+                items = page.get("itemSummaries") or []
+                total = page.get("total")
+            else:
+                items = client.search(query, category_ids=category_ids, limit=limit,
+                                      min_price=min_price)
+                total = None
             entry = select_lowest(sku, items, ref_usd)
+            # Campos ADITIVOS de oferta (análise): nunca mudam status/usd/url.
+            if total is not None:
+                entry["active_count"] = total
+            plaus = _plausible_prices(sku, items)
+            if plaus:
+                entry["ladder_usd"] = plaus[:5]
+            sellers = _plausible_sellers(sku, items)
+            if sellers is not None:
+                entry["sellers"] = sellers
         except Exception as exc:  # rede/HTTP após retries — status explícito
             entry = {"status": f"erro: {type(exc).__name__}: {exc}"}
         entry["query"] = query
@@ -260,6 +311,40 @@ def write_reference(path: Path, entries: dict, counts: dict) -> None:
         except OSError:
             pass
         raise
+
+
+def _append_supply_history(game: str, entries: dict) -> None:
+    """Anexa um ponto da SÉRIE DE OFERTA por SKU ao store da análise (JSONL,
+    gitignored). Best-effort e ADITIVO: falha aqui só avisa — a referência
+    eBay (o produto principal deste script) já foi gravada."""
+    try:
+        from lib.analysis import history_store as _store
+        from lib.analysis.profiles import analysis_config, resolve_path
+        config = S.load_yaml(SCRIPT_DIR / S.GAME_PROFILES[game]["config"], "config.yaml")
+        acfg = analysis_config(config)
+        path = resolve_path(SCRIPT_DIR, (acfg.get("files") or {}).get(
+            "supply_history", f"data/history/supply_{game}.jsonl"))
+        now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        records = []
+        for sid, entry in entries.items():
+            if entry.get("active_count") is None and not entry.get("ladder_usd"):
+                continue
+            records.append({
+                "sku_id": sid, "captured_at": now, "collected_at": now,
+                "source_type": "ebay_active",
+                "source_url": "https://api.ebay.com/buy/browse/v1/item_summary/search?q="
+                              + str(entry.get("query", "")).replace(" ", "+"),
+                "active_count": entry.get("active_count"),
+                "sellers": entry.get("sellers"),
+                "min_price_usd": entry.get("usd") if entry.get("status") == "ok" else None,
+                "ladder_usd": entry.get("ladder_usd") or [],
+                "query": entry.get("query", ""),
+            })
+        n = _store.append_records(path, records)
+        if n:
+            print(f"  [supply] {n} ponto(s) da série de oferta anexados a {path}")
+    except Exception as exc:  # nunca derruba o builder por causa da análise
+        print(f"  [supply] aviso: série de oferta não anexada ({type(exc).__name__}: {exc})")
 
 
 # Perfis por jogo: caminhos default de cada --game. Pokémon = arquivos atuais.
@@ -358,6 +443,8 @@ def main(argv: list[str] | None = None) -> int:
               f"preservada em {output_path.name}; smoke vai em "
               f"{target_path.name} (use --force p/ sobrescrever).")
     write_reference(target_path, entries, counts)
+    if target_path == output_path:
+        _append_supply_history(args.game, entries)
     print("=" * 64)
     print("  REFERÊNCIA eBay (lado de VENDA) gravada")
     print(f"  Arquivo : {target_path}")

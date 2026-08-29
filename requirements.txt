@@ -26,3 +26,8 @@ numpy>=1.24.0
 fastapi>=0.110
 uvicorn>=0.29
 httpx2
+
+# Camada de análise (analyze_sealed.py): lê o ARQUIVO diário de preços do
+# tcgcsv (.ppmd.7z usa filtro PPMd — zipfile/lzma da stdlib não leem).
+# Import é LAZY: sem py7zr o run degrada honesto pra "n/d", nunca quebra.
+py7zr>=0.20

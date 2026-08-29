@@ -1,0 +1,5 @@
+# data/events_onepiece.yaml — eventos de reprint/restock (One Piece, US).
+# Mesmo schema e regras do data/events_pokemon.yaml (ver comentários lá).
+# A análise do perfil OP está DESLIGADA (analysis.enabled=false) até calibrar;
+# eventos já podem ser curados aqui mesmo assim.
+events: []

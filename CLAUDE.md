@@ -217,6 +217,60 @@ Erros recorrentes (3 famílias — detalhe no manual):
   `python run_all_sources.py --game onepiece --sources mock --mock
   mock_data/onepiece_listings.json`.
 
+## 📈 Análise técnica US (hold vs sell) — 2026-08-29
+
+> **Em uma frase:** depois do scan da Liga, `python analyze_sealed.py` olha o
+> mercado AMERICANO de cada SKU casado e responde — com números, fontes e
+> datas — **vender ao chegar, segurar 30/60/90 dias além do ciclo (~24d),
+> evitar a compra, ou dados insuficientes**. Motivação do operador: evitar
+> venda prematura. Doc canônica: `ANALISE-TECNICA.md`.
+
+Regras duras (travadas em teste — `tests/test_analysis_*`):
+
+- **Camada INFORMATIVA e pós-scan**: NÃO toca `classify`/`compute_margin`/
+  `CSV_COLUMNS` nem GREEN/YELLOW/RED; o `unified_deals.csv` sai byte-idêntico
+  com ou sem análise (`test_analysis_noninterference.py`). Falha da análise
+  nunca derruba o scan (hook do `run_liga_local.py` só avisa; `--no-analise`
+  desliga; `analysis.enabled` no config).
+- **Rótulos NEUTROS** (classificação técnica): 🟢 `JANELA_VENDA` ·
+  🔵 `MANTER_30/60/90D` · ⛔ `EVITAR_COMPRA` · ⚪ `DADOS_INSUFICIENTES` —
+  decisão de capital é do operador, sempre.
+- **Nunca estima no chute**: cenários/probabilidades derivam de COMPARÁVEIS
+  reais (arquivo diário do tcgcsv desde 2024-02-08, por `tcgplayer_product_id`
+  — port `lib/tcgcsv_history.py` do pokemon-longterm-outlook) + regras
+  documentadas; coorte < mínimo → DADOS_INSUFICIENTES. Ausência de dado nunca
+  vira evidência favorável; `SEM_EVIDENCIA` de reprint ≠ risco baixo;
+  "esgotado" ≠ descontinuado.
+- **Financeiro simplificado** (operador 2026-08-29): `receita_liquida =
+  venda × net_factor` (0,70 configurável — custos agregados por fora);
+  `valor_de_esperar = lucro_esperado − lucro_hoje − custo_capital(dias extras)`.
+  MANTER só com valor de esperar positivo.
+- **5 sinais SEPARADOS** (cada um com fonte+data+confiança): tendência de
+  preço (tcgcsv + Terapeak) · volume/liquidez (SÓ vendas — Market Price nunca
+  mede volume) · evolução da oferta (snapshots de ativos eBay; <2 pontos =
+  `HISTORICO_INSUFICIENTE`) · reprint/restock (eventos curados
+  `data/events_*.yaml` + estrutural) · chases (indicador auxiliar).
+- **eBay Sold**: sem API (restrita). Caminho oficial validado pelo operador
+  (2026-08-29): `scripts/terapeak_scrape.js` (console da aba Sold do Product
+  Research — a UI NÃO tem export nem seller) → `scripts/import_terapeak.py`
+  (seller via Browse `getItem` + cache; encerrado >90d fica sem seller →
+  captura mensal). **Sales sheets da Probstein NÃO são usadas** (decisão
+  2026-08-29).
+- **Entrega**: a MESMA de sempre — o `scripts/snapshot.py` ganha a **3ª tabela
+  "Decisão de venda"** quando existe análise do MESMO scan (sem artefato =
+  saída idêntica à histórica). Detalhe/reimpressão:
+  `scripts/analysis_report.py`; painel ganhou a aba "Análise" (`/api/analysis`).
+- **Previsão-vs-realidade**: toda análise loga previsões
+  (`data/forecasts/*.jsonl`); `scripts/evaluate_forecasts.py` compara com o
+  preço realizado do arquivo (retroativo) — hit-rate/erro calibram os
+  percentis no config.
+- Dados novos: `data/set_meta*.json` (publishedOn REAL por group_id —
+  `build_set_meta.py`; versionado) e `data/events_*.yaml` (curadoria com fonte
+  obrigatória; versionado); séries/imports/caches em `data/history|forecasts|
+  cache|terapeak` são gitignored. Config: bloco `analysis:` (Pokémon ligado;
+  **One Piece nasce `enabled: false`** até calibrar). `--mock` roda um exemplo
+  completo com DADOS SIMULADOS rotulados.
+
 ## 🖥️ Painel local (somente leitura) — 2026-08-03
 
 ```bash
@@ -236,7 +290,7 @@ painel nunca recomenda compra. Endpoints: `/` (página), `/health`, `/api/deals`
 ## Testes
 
 ```bash
-python -m pytest -q     # 447 testes (verificado 2026-08-11), 100% offline
+python -m pytest -q     # 587 testes (verificado 2026-08-29), 100% offline
 ```
 
 - A suíte roda inteira sem rede/credencial/browser: adapters testados contra
@@ -267,7 +321,17 @@ build_us_reference.py        referência US que CLASSIFICA (tcgcsv; --game/--cat
                              SANITY_BANDS_USD Pokémon + SANITY_BANDS_USD_ONEPIECE)
 build_ebay_reference.py      referência de VENDA informativa (eBay Browse API; menor anúncio ATIVO por SKU;
                              degradação honesta sem chaves — nunca sobrescreve a anterior)
-panel.py                     🖥️ painel web LOCAL read-only (FastAPI :8078; /api/* + página única embutida)
+panel.py                     🖥️ painel web LOCAL read-only (FastAPI :8078; /api/* + página única embutida;
+                             aba "Análise" via /api/analysis)
+analyze_sealed.py            📈 análise técnica US (hold vs sell) — INFORMATIVA, pós-scan (ver seção própria)
+build_set_meta.py            datas de lançamento REAIS por group_id (tcgcsv publishedOn) → data/set_meta*.json
+lib/tcgcsv_history.py        histórico diário REAL do TCGplayer (arquivo tcgcsv, port do outlook; py7zr lazy)
+lib/analysis/                sinais/custos/cenários/decisão/score/stores/importadores/render da análise
+scripts/terapeak_scrape.js   captura da tabela Sold do Product Research (console; a UI não tem export)
+scripts/import_terapeak.py   importa a captura + seller via getItem (cache); import_events / import_trends
+scripts/collect_supply_snapshot.py / collect_market_intel.py   série de oferta eBay · candidatos a evento (feeds)
+scripts/evaluate_forecasts.py / analysis_report.py             previsão-vs-realidade · reimpressão da entrega
+data/set_meta*.json          versionados (referência); data/events_*.yaml (curadoria com fonte obrigatória)
 sku_registry.yaml            catálogo Pokémon (205 SKUs: product_id tcgcsv, set_terms EN+PT, requires_terms)
 sku_registry_onepiece.yaml   catálogo One Piece (83 SKUs seed, 100% dados reais tcgcsv cat 68)
 config.yaml                  perfil Pokémon: câmbio, filtros (SEM piso), deal_criteria, ROTA (route:), referências
@@ -344,7 +408,10 @@ Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no
   127 títulos (PR #70) · exclusão Battle Decks (2026-07-02) · exclusão Blister
   Duplo Heróis Excelsos Tangela/Komala (2026-07-03) · **plataforma: rotas +
   referência de venda eBay + perfil One Piece + painel local (2026-08-03 —
-  entrada detalhada no CHANGELOG)**.
+  entrada detalhada no CHANGELOG)** · **análise técnica US hold-vs-sell
+  (2026-08-29 — seção 📈 acima; camada informativa pós-scan, rótulos neutros,
+  comparáveis do arquivo tcgcsv, Terapeak p/ vendido, sem sales sheets
+  Probstein por decisão do operador)**.
 - **Validações §A–§C CONCLUÍDAS em 2026-08-03** (tabela de estado no
   `SETUP-VALIDACAO.md`): §A chaves eBay (nuvem + PC), §B Liga One Piece
   (categorias 10/21/28/36 + smoke headful no PC do operador), §C referência

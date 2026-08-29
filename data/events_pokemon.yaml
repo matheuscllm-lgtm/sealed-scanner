@@ -1,0 +1,31 @@
+# data/events_pokemon.yaml — eventos de reprint/restock do mercado US (Pokémon).
+#
+# CURADORIA MANUAL, VERSIONADA (como o registry). Regras duras:
+#   - todo evento exige fonte REAL: source_url + collected_at (sem fonte, sem
+#     fato — entrada incompleta é REJEITADA na leitura, com aviso);
+#   - "esgotado" NÃO é evento (não prova descontinuação);
+#   - fórum/rede social nunca passa de RUMOR;
+#   - SEM_EVIDENCIA (nenhum evento) ≠ risco baixo de reprint.
+#
+# Como registrar (um por chamada, auditável):
+#   python scripts/import_events.py --game pokemon --id ev-... --type restock \
+#     --event-date 2026-08-20 --source-type retailer --source-url "https://..." \
+#     --classification RESTOCK_OBSERVADO --set-codes SSP --note "..."
+#
+# Candidatos automáticos (feeds): scripts/collect_market_intel.py — candidato
+# só vira evento por aqui, depois de conferir a URL.
+#
+# Schema por entrada:
+#   - id: ev-<data>-<slug>            (único)
+#     type: reprint_announced | reprint_shipping | restock |
+#           out_of_print_confirmed | allocation | new_product_with_set
+#     event_date: "YYYY-MM-DD"
+#     source_type: pokemon_official | pokemon_center | distributor | retailer |
+#                  news | forum | operator_note
+#     source_url: "https://..."
+#     collected_at: "YYYY-MM-DD"
+#     classification: CONFIRMADA | SINAL_DE_MERCADO | RUMOR | INDETERMINADA
+#     market: US
+#     note: "..."
+#     scope: {set_codes: [SSP], sku_ids: [ssp-etb-en]}
+events: []

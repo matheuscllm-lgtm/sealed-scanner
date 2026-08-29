@@ -150,3 +150,20 @@ scope:
     - Starter Deck Display
   sealed_only_sources:
     - enjoei
+
+# ── ANÁLISE TÉCNICA US (hold vs sell) — DESLIGADA no perfil One Piece ──────
+# Sinais/comparáveis foram calibrados no catálogo Pokémon; ligar aqui só
+# depois de calibrar (backlog declarado). Estrutura idêntica à do config.yaml.
+analysis:
+  enabled: false
+  files:
+    supply_history: data/history/supply_onepiece.jsonl
+    sold_imports: data/history/ebay_sold_onepiece.jsonl
+    trends_imports: data/history/trends_onepiece.jsonl
+    forecast_log: data/forecasts/forecasts_onepiece.jsonl
+    events: data/events_onepiece.yaml
+    set_meta: data/set_meta_onepiece.json
+    intel_candidates: data/history/market_intel_onepiece.jsonl
+  tcgcsv:
+    category_id: "68"
+    cache_dir: data/cache/tcgcsv_history

@@ -33,6 +33,15 @@ results/
 # EBAY_CLIENT_ID/SECRET — nunca versionar (a us_reference.json continua versionada)
 data/ebay_reference*.json
 
+# Camada de análise (hold vs sell): séries/imports/log de previsões e caches
+# são DADO de mercado — fora do repo público (set_meta e events_*.yaml são
+# referência curada e CONTINUAM versionados)
+data/history/
+data/forecasts/
+data/cache/
+data/terapeak/
+mock_data/analysis_sim/out/
+
 # Local-only operational / strategy notes (kept on disk, not published)
 snapshots/
 GOALS.md

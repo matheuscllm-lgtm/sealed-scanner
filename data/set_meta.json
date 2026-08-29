@@ -1,0 +1,199 @@
+{
+  "_comment": "Gerado por build_set_meta.py — publishedOn REAL do tcgcsv por group_id do registry. Idade de set nunca é inferida.",
+  "captured_at": "2026-08-29T21:57:24Z",
+  "category_id": "3",
+  "groups": {
+    "24688": {
+      "name": "ME05: Pitch Black",
+      "abbreviation": "PBL",
+      "publishedOn": "2026-07-17",
+      "url": ""
+    },
+    "24655": {
+      "name": "ME04: Chaos Rising",
+      "abbreviation": "CRI",
+      "publishedOn": "2026-05-22",
+      "url": ""
+    },
+    "24584": {
+      "name": "First Partner Collection 2026",
+      "abbreviation": "",
+      "publishedOn": "2026-03-30",
+      "url": ""
+    },
+    "24587": {
+      "name": "ME03: Perfect Order",
+      "abbreviation": "POR",
+      "publishedOn": "2026-03-27",
+      "url": ""
+    },
+    "24541": {
+      "name": "ME: Ascended Heroes",
+      "abbreviation": "ASC",
+      "publishedOn": "2026-01-30",
+      "url": ""
+    },
+    "24448": {
+      "name": "ME02: Phantasmal Flames",
+      "abbreviation": "PFL",
+      "publishedOn": "2025-11-14",
+      "url": ""
+    },
+    "24380": {
+      "name": "ME01: Mega Evolution",
+      "abbreviation": "MEG",
+      "publishedOn": "2025-09-26",
+      "url": ""
+    },
+    "24325": {
+      "name": "SV: Black Bolt",
+      "abbreviation": "BLK",
+      "publishedOn": "2025-07-18",
+      "url": ""
+    },
+    "24326": {
+      "name": "SV: White Flare",
+      "abbreviation": "WHT",
+      "publishedOn": "2025-07-18",
+      "url": ""
+    },
+    "24269": {
+      "name": "SV10: Destined Rivals",
+      "abbreviation": "DRI",
+      "publishedOn": "2025-05-30",
+      "url": ""
+    },
+    "24073": {
+      "name": "SV09: Journey Together",
+      "abbreviation": "JTG",
+      "publishedOn": "2025-03-28",
+      "url": ""
+    },
+    "23821": {
+      "name": "SV: Prismatic Evolutions",
+      "abbreviation": "PRE",
+      "publishedOn": "2025-01-17",
+      "url": ""
+    },
+    "23651": {
+      "name": "SV08: Surging Sparks",
+      "abbreviation": "SSP",
+      "publishedOn": "2024-11-08",
+      "url": ""
+    },
+    "23537": {
+      "name": "SV07: Stellar Crown",
+      "abbreviation": "SCR",
+      "publishedOn": "2024-09-13",
+      "url": ""
+    },
+    "23561": {
+      "name": "Trick or Trade BOOster Bundle 2024",
+      "abbreviation": "TTBB24",
+      "publishedOn": "2024-08-30",
+      "url": ""
+    },
+    "23529": {
+      "name": "SV: Shrouded Fable",
+      "abbreviation": "SFA",
+      "publishedOn": "2024-08-02",
+      "url": ""
+    },
+    "23473": {
+      "name": "SV06: Twilight Masquerade",
+      "abbreviation": "TWM",
+      "publishedOn": "2024-05-24",
+      "url": ""
+    },
+    "23381": {
+      "name": "SV05: Temporal Forces",
+      "abbreviation": "TEF",
+      "publishedOn": "2024-03-22",
+      "url": ""
+    },
+    "23353": {
+      "name": "SV: Paldean Fates",
+      "abbreviation": "PAF",
+      "publishedOn": "2024-01-26",
+      "url": ""
+    },
+    "23286": {
+      "name": "SV04: Paradox Rift",
+      "abbreviation": "PAR",
+      "publishedOn": "2023-11-03",
+      "url": ""
+    },
+    "23237": {
+      "name": "SV: Scarlet & Violet 151",
+      "abbreviation": "MEW",
+      "publishedOn": "2023-09-22",
+      "url": ""
+    },
+    "23266": {
+      "name": "Trick or Trade BOOster Bundle 2023",
+      "abbreviation": "TTBB23",
+      "publishedOn": "2023-09-01",
+      "url": ""
+    },
+    "23228": {
+      "name": "SV03: Obsidian Flames",
+      "abbreviation": "OBF",
+      "publishedOn": "2023-08-11",
+      "url": ""
+    },
+    "23120": {
+      "name": "SV02: Paldea Evolved",
+      "abbreviation": "PAL",
+      "publishedOn": "2023-06-09",
+      "url": ""
+    },
+    "22873": {
+      "name": "SV01: Scarlet & Violet Base Set",
+      "abbreviation": "SVI",
+      "publishedOn": "2023-03-31",
+      "url": ""
+    },
+    "3170": {
+      "name": "SWSH12: Silver Tempest",
+      "abbreviation": "SWSH12",
+      "publishedOn": "2022-11-11",
+      "url": ""
+    },
+    "3040": {
+      "name": "SWSH10: Astral Radiance",
+      "abbreviation": "SWSH10",
+      "publishedOn": "2022-05-27",
+      "url": ""
+    },
+    "2906": {
+      "name": "SWSH08: Fusion Strike",
+      "abbreviation": "SWSH08",
+      "publishedOn": "2021-11-12",
+      "url": ""
+    },
+    "1815": {
+      "name": "XY - Steam Siege",
+      "abbreviation": "STS",
+      "publishedOn": "2016-08-03",
+      "url": ""
+    },
+    "1422": {
+      "name": "POP Series 1",
+      "abbreviation": "POP",
+      "publishedOn": "2026-08-29",
+      "url": ""
+    },
+    "1432": {
+      "name": "POP Series 6",
+      "abbreviation": "POP",
+      "publishedOn": "2026-08-29",
+      "url": ""
+    },
+    "2374": {
+      "name": "Miscellaneous Cards & Products",
+      "abbreviation": "MCAP",
+      "publishedOn": "2026-08-29",
+      "url": ""
+    }
+  }
+}

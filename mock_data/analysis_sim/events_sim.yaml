@@ -1,0 +1,12 @@
+# EVENTOS SIMULADOS — só para o exemplo --mock (URLs fictícias example.com).
+events:
+  - id: ev-sim-oop-sima
+    type: out_of_print_confirmed
+    event_date: "2026-07-01"
+    source_type: news
+    source_url: "https://example.com/simulado-oop"
+    collected_at: "2026-08-20"
+    classification: SINAL_DE_MERCADO
+    market: US
+    note: "SIMULADO: fim de impressão do set Simul Alpha"
+    scope: {set_codes: [SIMA]}

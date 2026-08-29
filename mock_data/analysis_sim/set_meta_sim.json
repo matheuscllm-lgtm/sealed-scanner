@@ -1,0 +1,67 @@
+{
+ "_comment": "SIMULADO — datas fictícias para o exemplo --mock",
+ "captured_at": "2026-08-29T00:00:00Z",
+ "category_id": "3",
+ "groups": {
+  "80001": {
+   "name": "Simul Alpha",
+   "abbreviation": "SIMA",
+   "publishedOn": "2025-06-13",
+   "url": ""
+  },
+  "80002": {
+   "name": "Simul Beta",
+   "abbreviation": "SIMB",
+   "publishedOn": "2026-06-12",
+   "url": ""
+  },
+  "80100": {
+   "name": "Simul sim-c1-etb",
+   "abbreviation": "SIMC",
+   "publishedOn": "2024-01-10",
+   "url": ""
+  },
+  "80101": {
+   "name": "Simul sim-c2-etb",
+   "abbreviation": "SIMC",
+   "publishedOn": "2024-02-09",
+   "url": ""
+  },
+  "80102": {
+   "name": "Simul sim-c3-etb",
+   "abbreviation": "SIMC",
+   "publishedOn": "2024-03-10",
+   "url": ""
+  },
+  "80103": {
+   "name": "Simul sim-c4-etb",
+   "abbreviation": "SIMC",
+   "publishedOn": "2024-04-09",
+   "url": ""
+  },
+  "80104": {
+   "name": "Simul sim-c5-etb",
+   "abbreviation": "SIMC",
+   "publishedOn": "2024-05-09",
+   "url": ""
+  },
+  "80105": {
+   "name": "Simul sim-c6-etb",
+   "abbreviation": "SIMC",
+   "publishedOn": "2024-06-08",
+   "url": ""
+  },
+  "80106": {
+   "name": "Simul sim-c7-etb",
+   "abbreviation": "SIMC",
+   "publishedOn": "2024-07-08",
+   "url": ""
+  },
+  "80107": {
+   "name": "Simul sim-c8-etb",
+   "abbreviation": "SIMC",
+   "publishedOn": "2024-08-07",
+   "url": ""
+  }
+ }
+}

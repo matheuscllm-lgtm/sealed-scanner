@@ -1,0 +1,19 @@
+{
+ "_comment": "SIMULADO",
+ "captured_at": "2026-08-28T12:00:00Z",
+ "entries": {
+  "sim-aaa-etb": {
+   "usd": 58.0,
+   "url": "https://www.ebay.com/itm/000",
+   "status": "ok",
+   "query": "pokemon simul alpha etb",
+   "active_count": 41,
+   "sellers": 9,
+   "ladder_usd": [
+    58.0,
+    59.5,
+    61.0
+   ]
+  }
+ }
+}

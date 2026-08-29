@@ -37,6 +37,7 @@ import urllib.request
 
 TOKEN_URL = "https://api.ebay.com/identity/v1/oauth2/token"
 SEARCH_URL = "https://api.ebay.com/buy/browse/v1/item_summary/search"
+ITEM_URL = "https://api.ebay.com/buy/browse/v1/item/"
 SCOPE = "https://api.ebay.com/oauth/api_scope"
 TIMEOUT_S = 30
 RETRIES = 3
@@ -153,6 +154,9 @@ class EbayClient:
             try:
                 with _urlopen(req, timeout=TIMEOUT_S) as r:
                     payload = json.loads(r.read().decode())
+                # `total` da busca (nº de anúncios ativos) — lido por
+                # search_page(); atributo aditivo, não muda o retorno.
+                self._last_total = payload.get("total")
                 return payload.get("itemSummaries") or []
             except urllib.error.HTTPError as exc:
                 if exc.code in _RETRYABLE_HTTP:
@@ -164,3 +168,39 @@ class EbayClient:
                 continue
         assert last_error is not None
         raise last_error
+
+    def search_page(self, query: str, **kwargs) -> dict:
+        """Como `search`, mas devolve o PAYLOAD completo da página (inclui
+        `total` = nº de anúncios ativos que casam a busca — o proxy de OFERTA
+        usado pela camada de análise). ADITIVO: `search` segue intocado (os
+        fakes de teste que só implementam `search` continuam válidos)."""
+        items = self.search(query, **kwargs)
+        return {"itemSummaries": items, "total": self._last_total}
+
+    _last_total: int | None = None
+
+    def get_item(self, item_id: str) -> dict | None:
+        """Detalhe de UM anúncio via Browse API getItem (usado pelo
+        import_terapeak p/ descobrir o `seller.username` de cada venda).
+
+        Aceita o id legacy numérico (convertido p/ o formato RESTful
+        `v1|<id>|0`). Anúncio ENCERRADO há mais de ~90 dias some da API →
+        retorna None (o caller deixa seller vazio — nunca inventa). 404/410 =
+        None; demais erros propagam (o caller conta e segue)."""
+        rid = str(item_id) if "|" in str(item_id) else f"v1|{item_id}|0"
+        url = ITEM_URL + urllib.parse.quote(rid, safe="")
+        _sleep(REQUEST_DELAY_S)
+        req = urllib.request.Request(
+            url,
+            headers={
+                "Authorization": f"Bearer {self._get_token()}",
+                "X-EBAY-C-MARKETPLACE-ID": self.marketplace,
+            },
+        )
+        try:
+            with _urlopen(req, timeout=TIMEOUT_S) as r:
+                return json.loads(r.read().decode())
+        except urllib.error.HTTPError as exc:
+            if exc.code in (404, 410):
+                return None
+            raise
