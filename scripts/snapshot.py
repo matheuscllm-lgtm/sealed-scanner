@@ -465,15 +465,20 @@ def analysis_for_scan(results_root: Path, scan_dir_used: Path | None) -> dict | 
     try:
         dirs = sorted(results_root.glob("analysis_*"),
                       key=lambda d: d.stat().st_mtime, reverse=True)
-        for d in dirs:
-            p = d / "analysis.json"
+    except OSError:
+        return None
+    for d in dirs:
+        p = d / "analysis.json"
+        # try POR ARQUIVO: um analysis.json truncado (run interrompida) não
+        # pode esconder um artefato VÁLIDO mais antigo do mesmo scan.
+        try:
             if not p.exists():
                 continue
             data = json.loads(p.read_text(encoding="utf-8"))
-            if isinstance(data, dict) and data.get("scan_dir") == scan_dir_used.name:
-                return data
-    except (OSError, ValueError):
-        return None
+        except (OSError, ValueError):
+            continue
+        if isinstance(data, dict) and data.get("scan_dir") == scan_dir_used.name:
+            return data
     return None
 
 

@@ -35,3 +35,15 @@ def test_filtros_por_sku_e_tipo(tmp_path):
 def test_arquivo_ausente(tmp_path):
     recs, bad = store.read_records(tmp_path / "nada.jsonl")
     assert recs == [] and bad == 0
+
+
+def test_latest_capture_so_a_mais_recente():
+    recs = [{"collected_at": "2026-07-01", "item_id": "1", "total_sold": 5},
+            {"collected_at": "2026-08-01", "item_id": "1", "total_sold": 4},
+            {"collected_at": "2026-08-01", "item_id": "2", "total_sold": 2}]
+    latest = store.latest_capture(recs)
+    # capturas mensais repetem os MESMOS anúncios — só a última conta (senão
+    # unidades/semana inflaria cumulativamente a cada mês)
+    assert len(latest) == 2
+    assert all(r["collected_at"] == "2026-08-01" for r in latest)
+    assert store.latest_capture([]) == []

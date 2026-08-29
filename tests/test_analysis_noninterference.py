@@ -104,3 +104,25 @@ def test_snapshot_artefato_de_outro_scan_e_ignorado(tmp_path, monkeypatch):
         {"scan_dir": "unified_OUTRO", "products": []}), encoding="utf-8")
     text = _run_snapshot(tmp_path, monkeypatch, results, tmp_path / "snaps")
     assert "Decisão de venda" not in text
+
+
+def test_snapshot_artefato_corrompido_nao_esconde_o_valido(tmp_path, monkeypatch):
+    # analysis_B (mais novo) truncado NÃO pode abortar a busca: o artefato
+    # VÁLIDO mais antigo do MESMO scan continua sendo embutido
+    results = tmp_path / "results"
+    scan = results / "unified_20260829_000000"
+    shutil.copytree(FIXTURE, scan)
+    valido = results / "analysis_A"
+    valido.mkdir(parents=True)
+    (valido / "analysis.json").write_text(json.dumps(
+        {"scan_dir": scan.name, "simulated": True, "cycle_days": 24,
+         "net_factor": 0.7, "stamp": "A", "generated_at": "x",
+         "products": []}), encoding="utf-8")
+    corrompido = results / "analysis_B"
+    corrompido.mkdir(parents=True)
+    (corrompido / "analysis.json").write_text('{"scan_dir": "unified_2026',
+                                              encoding="utf-8")
+    import os
+    os.utime(corrompido / "analysis.json")     # B é o mais recente
+    text = _run_snapshot(tmp_path, monkeypatch, results, tmp_path / "snaps")
+    assert "## 📊 Decisão de venda por produto" in text

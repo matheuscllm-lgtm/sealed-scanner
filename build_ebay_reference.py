@@ -263,6 +263,10 @@ def build_reference(skus: list, us_prices: dict, client, game_word: str,
             sellers = _plausible_sellers(sku, items)
             if sellers is not None:
                 entry["sellers"] = sellers
+            if min_price is not None:
+                # piso de busca usado — a série de oferta só compara snapshots
+                # de piso compatível (o `total` muda com o piso, não só com a oferta)
+                entry["floor_usd"] = min_price
         except Exception as exc:  # rede/HTTP após retries — status explícito
             entry = {"status": f"erro: {type(exc).__name__}: {exc}"}
         entry["query"] = query
@@ -336,6 +340,7 @@ def _append_supply_history(game: str, entries: dict) -> None:
                               + str(entry.get("query", "")).replace(" ", "+"),
                 "active_count": entry.get("active_count"),
                 "sellers": entry.get("sellers"),
+                "floor_usd": entry.get("floor_usd"),
                 "min_price_usd": entry.get("usd") if entry.get("status") == "ok" else None,
                 "ladder_usd": entry.get("ladder_usd") or [],
                 "query": entry.get("query", ""),

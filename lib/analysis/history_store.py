@@ -64,3 +64,18 @@ def by_sku(records: list[dict]) -> dict[str, list[dict]]:
         if sid:
             out.setdefault(sid, []).append(rec)
     return out
+
+
+def latest_capture(records: list[dict]) -> list[dict]:
+    """Só os registros da captura MAIS RECENTE (maior `collected_at`).
+
+    O store é append-only e o runbook manda capturar o Terapeak mensalmente —
+    somar capturas sucessivas contaria as MESMAS vendas várias vezes (um item
+    ainda listado reaparece em toda captura) e inflaria unidades/semana,
+    sell-through e share Probstein cumulativamente. Volume honesto = uma
+    captura só, a mais nova; as antigas ficam no store como histórico.
+    """
+    if not records:
+        return []
+    latest = max((r.get("collected_at") or "") for r in records)
+    return [r for r in records if (r.get("collected_at") or "") == latest]

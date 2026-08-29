@@ -88,3 +88,27 @@ def test_set_strength_agregado_e_contagem():
 
 def test_set_strength_sem_chases_e_nd():
     assert sig.set_strength([], SCFG).insufficient
+
+
+def test_supply_ponto_velho_nao_serve_de_base_para_janela_curta():
+    # pontos a 90d e agora: para w=7 NÃO há base válida (banda [0.6w, 1.5w+2]);
+    # o Δ de meses não pode ser rotulado/limiarizado como variação de ~7d
+    now = datetime(2026, 8, 29, tzinfo=timezone.utc)
+    r = sig.supply_trend([_snap(90, 60), _snap(0, 41)], SCFG, now=now)
+    assert "delta_7d" not in r.detail
+    assert "delta_90d" in r.detail          # a janela certa continua medida
+
+
+def test_supply_pisos_incompativeis_pulados():
+    now = datetime(2026, 8, 29, tzinfo=timezone.utc)
+    a = _snap(30, 60); a["floor_usd"] = 30.0
+    b = _snap(0, 90); b["floor_usd"] = 20.0   # ref caiu → piso caiu → total sobe sozinho
+    r = sig.supply_trend([a, b], SCFG, now=now)
+    assert r.insufficient
+    assert r.detail.get("janelas_puladas_piso_incompativel") == 1
+
+
+def test_supply_piso_ausente_e_compativel():
+    now = datetime(2026, 8, 29, tzinfo=timezone.utc)
+    r = sig.supply_trend([_snap(30, 60), _snap(0, 40)], SCFG, now=now)
+    assert not r.insufficient               # snapshots antigos sem floor seguem valendo

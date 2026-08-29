@@ -79,6 +79,7 @@ def snapshot_records(skus: list, us_prices: dict, client, game_word: str,
             "active_count": page.get("total"),
             "plausible_in_page": len(plaus),
             "sellers": len(sellers),
+            "floor_usd": min_price,   # piso da busca — comparabilidade da série
             "min_price_usd": plaus[0] if plaus else None,
             "ladder_usd": plaus[:LADDER_TOP_K],
             "query": query,

@@ -189,18 +189,31 @@ class EbayClient:
         None; demais erros propagam (o caller conta e segue)."""
         rid = str(item_id) if "|" in str(item_id) else f"v1|{item_id}|0"
         url = ITEM_URL + urllib.parse.quote(rid, safe="")
-        _sleep(REQUEST_DELAY_S)
-        req = urllib.request.Request(
-            url,
-            headers={
-                "Authorization": f"Bearer {self._get_token()}",
-                "X-EBAY-C-MARKETPLACE-ID": self.marketplace,
-            },
-        )
-        try:
-            with _urlopen(req, timeout=TIMEOUT_S) as r:
-                return json.loads(r.read().decode())
-        except urllib.error.HTTPError as exc:
-            if exc.code in (404, 410):
-                return None
-            raise
+        # Mesma política de retry do search (429/5xx/rede): um burst de
+        # throttle no meio de um import Terapeak não pode deixar sellers
+        # nulos para sempre (o registro entra no store e vira duplicata).
+        last_error: Exception | None = None
+        for attempt in range(RETRIES):
+            _sleep(REQUEST_DELAY_S * (attempt + 1))
+            req = urllib.request.Request(
+                url,
+                headers={
+                    "Authorization": f"Bearer {self._get_token()}",
+                    "X-EBAY-C-MARKETPLACE-ID": self.marketplace,
+                },
+            )
+            try:
+                with _urlopen(req, timeout=TIMEOUT_S) as r:
+                    return json.loads(r.read().decode())
+            except urllib.error.HTTPError as exc:
+                if exc.code in (404, 410):
+                    return None
+                if exc.code in _RETRYABLE_HTTP:
+                    last_error = exc
+                    continue
+                raise
+            except urllib.error.URLError as exc:
+                last_error = exc
+                continue
+        assert last_error is not None
+        raise last_error

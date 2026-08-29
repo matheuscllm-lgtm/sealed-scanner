@@ -55,19 +55,41 @@ MOCK_DIR = ROOT / "mock_data" / "analysis_sim"
 
 
 # ── Chases (top cards do set — indicador AUXILIAR de demanda) ──────────────
+CHASES_CACHE_TTL_H = 20   # mesmo espírito dos caches tcgcsv da frota (~diário)
+
+
 def _fetch_group_cards(gid: int, category_id: str, cache_dir: Path,
-                       offline: bool, log=print) -> list[dict]:
-    """Top cards de um group tcgcsv: [{id, name, market}]. Cache em disco;
-    offline/sem rede → só cache (ausente = lista vazia, sinal fica n/d)."""
+                       offline: bool, log=print) -> tuple[list[dict], str]:
+    """Top cards de um group tcgcsv: ([{id, name, market}], fetched_at).
+
+    Cache em disco com TTL de ~20h (online, cache velho é re-baixado);
+    offline → usa o cache que houver, e o `fetched_at` devolvido carimba a
+    evidência com a data REAL da coleta (nunca "hoje" para dado velho).
+    Sem cache e sem rede = lista vazia (sinal fica n/d)."""
     cache_dir.mkdir(parents=True, exist_ok=True)
     cp = cache_dir / f"group_cards_{category_id}_{gid}.json"
+    cached_cards: list[dict] = []
+    cached_at = ""
     if cp.exists():
         try:
-            return json.loads(cp.read_text(encoding="utf-8")).get("cards", [])
+            payload = json.loads(cp.read_text(encoding="utf-8"))
+            cached_cards = payload.get("cards", [])
+            cached_at = payload.get("fetched_at", "")
         except ValueError:
             pass
+    if cached_cards:
+        age_ok = False
+        try:
+            dt = datetime.strptime(cached_at[:19], "%Y-%m-%dT%H:%M:%S").replace(
+                tzinfo=timezone.utc)
+            age_ok = (datetime.now(timezone.utc) - dt).total_seconds() \
+                < CHASES_CACHE_TTL_H * 3600
+        except (ValueError, TypeError):
+            age_ok = False
+        if age_ok or offline:
+            return cached_cards, cached_at
     if offline:
-        return []
+        return cached_cards, cached_at
     base = f"https://tcgcsv.com/tcgplayer/{category_id}/{gid}"
     try:
         def _get(url):
@@ -77,8 +99,9 @@ def _fetch_group_cards(gid: int, category_id: str, cache_dir: Path,
         products = _get(f"{base}/products").get("results", [])
         prices = _get(f"{base}/prices").get("results", [])
     except (urllib.error.URLError, OSError, ValueError) as exc:
-        log(f"  [chases] group {gid}: indisponível ({type(exc).__name__}) — sinal fica n/d")
-        return []
+        log(f"  [chases] group {gid}: indisponível ({type(exc).__name__}) — "
+            + ("usando cache antigo" if cached_cards else "sinal fica n/d"))
+        return cached_cards, cached_at
     best: dict[str, float] = {}
     for r in prices:
         if "reverse" in (r.get("subTypeName") or "").lower():
@@ -97,13 +120,18 @@ def _fetch_group_cards(gid: int, category_id: str, cache_dir: Path,
         if market:
             cards.append({"id": pid, "name": prod.get("name", ""), "market": market})
     cards.sort(key=lambda c: -c["market"])
-    cp.write_text(json.dumps({"fetched_at": store.utc_now_iso(), "cards": cards[:50]},
+    fetched_at = store.utc_now_iso()
+    cp.write_text(json.dumps({"fetched_at": fetched_at, "cards": cards[:50]},
                              ensure_ascii=False), encoding="utf-8")
-    return cards[:50]
+    return cards[:50], fetched_at
 
 
 def _load_registry_meta(registry_path: Path) -> dict[str, dict]:
-    """{sku_id: {product_type, set, set_code, product_id, group_id}}."""
+    """{sku_id: {product_type, set, set_code, product_id, group_id}}.
+
+    Parse próprio DE PROPÓSITO (não reusa S.build_registry): o dataclass Sku
+    do scanner descarta set_code/tcgplayer_group_id/tcgplayer_product_id —
+    exatamente os campos que a análise precisa (join tcgcsv + eventos)."""
     data = yaml.safe_load(registry_path.read_text(encoding="utf-8")) or {}
     out: dict[str, dict] = {}
     for sku in data.get("skus", []) or []:
@@ -131,7 +159,7 @@ def _latest_events_review(evs: list) -> str | None:
 
 
 def build_analysis(config: dict, acfg: dict, game: str, scan_dir: Path,
-                   rows: list[dict], groups: list[dict], meta: dict,
+                   groups: list[dict], meta: dict,
                    registry_meta: dict, set_meta: dict, all_events: list,
                    supply_by_sku: dict, sold_by_sku: dict, trends_by_sku: dict,
                    ebay_entries: dict, ebay_captured_at: str | None,
@@ -194,7 +222,10 @@ def build_analysis(config: dict, acfg: dict, game: str, scan_dir: Path,
         tcg_usd = g.get("tcg_usd")
 
         # ── sinais (cada dimensão separada, com fonte/data) ────────────────
-        sold_recs = sold_by_sku.get(sku_id, [])
+        # VOLUME honesto: só a captura Terapeak MAIS RECENTE (o store é
+        # append-only e capturas mensais repetem os mesmos anúncios — somar
+        # tudo inflaria unidades/semana e sell-through cumulativamente).
+        sold_recs = store.latest_capture(sold_by_sku.get(sku_id, []))
         supply_recs = supply_by_sku.get(sku_id, [])
         ebay_entry = (ebay_entries or {}).get(sku_id) or {}
         active_count = ebay_entry.get("active_count")
@@ -214,7 +245,8 @@ def build_analysis(config: dict, acfg: dict, game: str, scan_dir: Path,
             or rmeta.get("set") or "",
             s_cycle.value, sku_events, scfg)
         if gid not in chases_by_group:
-            cards = _fetch_group_cards(gid, cat, chases_cache, offline, log) if gid else []
+            cards, cards_as_of = (_fetch_group_cards(gid, cat, chases_cache, offline, log)
+                                  if gid else ([], ""))
             top_n = int(scfg.get("chases_top_n", 10))
             chases = []
             for c in cards[:top_n]:
@@ -222,8 +254,9 @@ def build_analysis(config: dict, acfg: dict, game: str, scan_dir: Path,
                 chases.append({"product_id": c["id"], "name": c["name"],
                                "price_usd": c["market"],
                                "pct_30": cpcts.get(30), "pct_90": cpcts.get(90)})
-            chases_by_group[gid] = chases
-        s_set = sig.set_strength(chases_by_group.get(gid) or [], scfg)
+            chases_by_group[gid] = (chases, cards_as_of)
+        g_chases, g_as_of = chases_by_group.get(gid) or ([], "")
+        s_set = sig.set_strength(g_chases, scfg, as_of=g_as_of)
         signals = {"price_trend": s_trend, "supply": s_supply, "liquidity": s_liq,
                    "print_cycle": s_cycle, "set_strength": s_set,
                    "reprint_risk": s_reprint}
@@ -419,6 +452,7 @@ def append_forecast_log(analysis: dict, path: Path) -> int:
                 "cycle_days": analysis.get("cycle_days"),
                 "due_date": due,
                 "today_price_usd": (p.get("sell_now") or {}).get("gross_usd"),
+                "basis": (p.get("sell_now") or {}).get("basis"),
                 "scenarios": sc,
                 "recommendation": (p.get("recommendation") or {}).get("state"),
                 "confidence_pct": (p.get("recommendation") or {}).get("confidence_pct"),
@@ -485,9 +519,16 @@ def main(argv: list[str] | None = None) -> int:
         files = acfg.get("files") or {}
         set_meta_path = resolve_path(ROOT, files.get("set_meta", "data/set_meta.json"))
         events_path = resolve_path(ROOT, files.get("events", "data/events_pokemon.yaml"))
-        supply_path = resolve_path(ROOT, files.get("supply_history", ""))
-        sold_path = resolve_path(ROOT, files.get("sold_imports", ""))
-        trends_path = resolve_path(ROOT, files.get("trends_imports", ""))
+
+        # path vazio no config = store DESLIGADO (None → no-op) — resolver ""
+        # daria a RAIZ do repo e a leitura estouraria em IsADirectoryError.
+        def _optional_path(key: str) -> Path | None:
+            rel = str(files.get(key) or "").strip()
+            return resolve_path(ROOT, rel) if rel else None
+
+        supply_path = _optional_path("supply_history")
+        sold_path = _optional_path("sold_imports")
+        trends_path = _optional_path("trends_imports")
         ebay_ref_path = resolve_path(
             ROOT, S.ebay_reference_settings(config)["reference_file"])
         results_root = S.results_root_for(game, ROOT)
@@ -513,9 +554,9 @@ def main(argv: list[str] | None = None) -> int:
     if rejected:
         print(f"  [analysis] {rejected} evento(s) rejeitado(s) por falta de fonte/campo.")
 
-    supply_recs, bad_s = store.read_records(supply_path) if supply_path.name else ([], 0)
-    sold_recs, bad_v = store.read_records(sold_path) if sold_path.name else ([], 0)
-    trends_recs, bad_t = store.read_records(trends_path) if trends_path.name else ([], 0)
+    supply_recs, bad_s = store.read_records(supply_path) if supply_path else ([], 0)
+    sold_recs, bad_v = store.read_records(sold_path) if sold_path else ([], 0)
+    trends_recs, bad_t = store.read_records(trends_path) if trends_path else ([], 0)
     for label, bad in (("supply", bad_s), ("sold", bad_v), ("trends", bad_t)):
         if bad:
             print(f"  [analysis] store {label}: {bad} linha(s) corrompida(s) pulada(s).")
@@ -563,7 +604,7 @@ def main(argv: list[str] | None = None) -> int:
 
     trends_by = store.by_sku(trends_recs)
     analysis = build_analysis(
-        config, acfg, game, scan_dir, rows, groups, meta, registry_meta,
+        config, acfg, game, scan_dir, groups, meta, registry_meta,
         set_meta, all_events, store.by_sku(supply_recs), store.by_sku(sold_recs),
         trends_by, ebay_entries, ebay_captured_at, maps, price_map_fn,
         offline, simulated, stamp, today=today)

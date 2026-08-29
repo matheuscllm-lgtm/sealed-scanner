@@ -87,6 +87,10 @@ def match_candidates(items: list[dict], set_names: dict[str, str],
             continue
         matched = [code for code, name in set_names.items()
                    if name and name.lower() in low]
+        if not matched:
+            # contrato: gatilho + SET DO REGISTRY. Sem set casado, a manchete
+            # ("wave", "preorder"…) é ruído genérico e afogaria a curadoria.
+            continue
         out.append({
             "source_type": feed.get("source_type") or "news",
             "feed": feed.get("name") or "",

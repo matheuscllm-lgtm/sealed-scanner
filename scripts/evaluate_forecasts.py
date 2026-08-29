@@ -31,7 +31,17 @@ from lib.analysis.recommend import evaluate_forecast
 
 def evaluate_all(records: list[dict], as_of: date, price_map_fn,
                  pid_of: dict[str, str]) -> tuple[list[dict], int]:
-    """Avalia previsões vencidas. Retorna (avaliações, sem_preço)."""
+    """Avalia previsões vencidas. Retorna (avaliações, sem_preço).
+
+    ⚠️ Base comparável: os cenários partem da base de VENDA da previsão
+    (default = menor pedida eBay), mas o arquivo tcgcsv guarda o MARKET do
+    TCGplayer — níveis diferentes por um spread. Por isso o realizado é
+    calculado em termos RELATIVOS sempre que possível: aplica-se o RETORNO
+    do market entre a criação e o vencimento ao preço-base da previsão
+    (`today_price_usd × market(due)/market(created)`) — retorno contra
+    retorno, sem artefato de base. Fallback absoluto (nível do market) só
+    quando a previsão é antiga sem `created_at` E a base era tcg_market.
+    """
     out: list[dict] = []
     no_price = 0
     for rec in records:
@@ -39,12 +49,25 @@ def evaluate_all(records: list[dict], as_of: date, price_map_fn,
         if not due or due > as_of.isoformat():
             continue
         pid = str(rec.get("tcgplayer_product_id") or pid_of.get(rec.get("sku_id"), ""))
-        m = price_map_fn(date.fromisoformat(due)) if pid else None
-        realized = (m or {}).get(pid)
-        if not realized:
+        base_price = rec.get("today_price_usd")
+        m_due = price_map_fn(date.fromisoformat(due)) if pid else None
+        due_market = (m_due or {}).get(pid)
+        if not due_market:
             no_price += 1
             continue
-        out.append(evaluate_forecast(rec, float(realized)))
+        realized = None
+        created = rec.get("created_at") or ""
+        if created and base_price:
+            m_created = price_map_fn(date.fromisoformat(created[:10]))
+            created_market = (m_created or {}).get(pid)
+            if created_market:
+                realized = float(base_price) * float(due_market) / float(created_market)
+        if realized is None:
+            if (rec.get("basis") or "tcg_market") != "tcg_market" or not base_price:
+                no_price += 1   # sem base comparável — melhor não avaliar que avaliar torto
+                continue
+            realized = float(due_market)
+        out.append(evaluate_forecast(rec, round(realized, 2)))
     return out, no_price
 
 

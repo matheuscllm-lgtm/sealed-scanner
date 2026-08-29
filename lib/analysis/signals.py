@@ -207,14 +207,30 @@ def supply_trend(supply_records: list[dict], scfg: dict,
                     latest_rec.get("source_type", "ebay_active"),
                     latest_rec.get("source_url", ""),
                     latest_rec.get("captured_at", ""))]
+    latest_floor = latest_rec.get("floor_usd")
     headline = None
+    skipped_floor = 0
     for w in sorted(windows):
-        target = latest_dt.timestamp() - w * 86400
-        past = [p for p in pts[:-1] if p[0].timestamp() <= target + 86400 * 2]
-        if not past:
+        # Base da janela w: ponto com idade DENTRO da banda [0.6w, 1.5w+2d]
+        # (o mais próximo de w). Sem a banda, um ponto de 90d atrás viraria
+        # base da janela de 7d e um Δ de meses seria rotulado/limiarizado como
+        # variação curta — sinal falso de "caindo/subindo forte".
+        candidates = []
+        for base_dt, base_cnt, base_rec in pts[:-1]:
+            age_days = (latest_dt - base_dt).total_seconds() / 86400
+            if 0.6 * w <= age_days <= 1.5 * w + 2 and base_cnt > 0:
+                candidates.append((abs(age_days - w), base_dt, base_cnt, base_rec))
+        if not candidates:
             continue
-        base_dt, base_cnt, base_rec = past[-1]
-        if base_cnt <= 0:
+        _, base_dt, base_cnt, base_rec = min(candidates, key=lambda c: c[0])
+        # Comparabilidade do piso de busca: o `total` da Browse API é capturado
+        # sob min_price = 0.5×ref TCG do dia — se o piso mudou muito entre os
+        # dois snapshots, o Δ mede deriva de referência, não oferta. Par com
+        # pisos incompatíveis é PULADO e contado (piso ausente = compatível,
+        # snapshots antigos não têm o campo).
+        base_floor = base_rec.get("floor_usd")
+        if latest_floor and base_floor and not (0.8 <= latest_floor / base_floor <= 1.25):
+            skipped_floor += 1
             continue
         delta = (latest_cnt - base_cnt) / base_cnt
         detail[f"delta_{w}d"] = round(delta, 4)
@@ -224,9 +240,14 @@ def supply_trend(supply_records: list[dict], scfg: dict,
             base_rec.get("source_url", ""), base_rec.get("captured_at", "")))
         if headline is None or w in (30,):
             headline = (delta, w)
+    if skipped_floor:
+        detail["janelas_puladas_piso_incompativel"] = skipped_floor
     if headline is None:
-        return SignalResult("HISTORICO_INSUFICIENTE (janelas sem par de snapshots)",
-                            float(latest_cnt), detail, evidence, insufficient=True)
+        label = ("HISTORICO_INSUFICIENTE (pisos de busca incompatíveis entre snapshots)"
+                 if skipped_floor else
+                 "HISTORICO_INSUFICIENTE (janelas sem par de snapshots)")
+        return SignalResult(label, float(latest_cnt), detail, evidence,
+                            insufficient=True)
     delta, w = headline
     label = ("caindo forte" if delta <= falling else
              "subindo forte" if delta >= rising else
@@ -235,19 +256,23 @@ def supply_trend(supply_records: list[dict], scfg: dict,
 
 
 # ── 2.5 Demanda pelas chases ───────────────────────────────────────────────
-def set_strength(chases: list[dict], scfg: dict) -> SignalResult:
+def set_strength(chases: list[dict], scfg: dict,
+                 as_of: str | None = None) -> SignalResult:
     """Demanda pelas top chases do set (indicador AUXILIAR — não prova
     escassez do selado; não é análise de singles).
 
     `chases` = [{"product_id", "name", "price_usd", "pct_30", "pct_90"}]
     (top-N por market price do MESMO group_id, com variações do arquivo).
+    `as_of` = data REAL da coleta dos preços das chases (cache do grupo) —
+    a evidência nunca é carimbada com "hoje" se o dado é de outro dia.
     """
     top_conc = int(scfg.get("chases_concentration_top", 3))
+    stamp = (as_of or date.today().isoformat())[:10]
     if not chases:
         return SignalResult("n/d (chases não coletadas)", None, {}, [],
                             insufficient=True)
     with_pct = [c for c in chases if isinstance(c.get("pct_90"), (int, float))]
-    detail: dict = {"top_n": len(chases)}
+    detail: dict = {"top_n": len(chases), "as_of": stamp}
     total_val = sum(c.get("price_usd") or 0.0 for c in chases)
     if total_val > 0:
         conc = sum(sorted((c.get("price_usd") or 0.0 for c in chases),
@@ -255,7 +280,7 @@ def set_strength(chases: list[dict], scfg: dict) -> SignalResult:
         detail[f"concentration_top{top_conc}"] = round(conc, 3)
     evidence = [_ev(
         f"top {len(chases)} chases do set somam US$ {total_val:.0f} (market)",
-        "tcgcsv", "https://tcgcsv.com/", date.today().isoformat())]
+        "tcgcsv", "https://tcgcsv.com/", stamp)]
     if not with_pct:
         detail["basis"] = "sem histórico das chases"
         return SignalResult("n/d (sem histórico das chases)", None, detail,
@@ -270,8 +295,7 @@ def set_strength(chases: list[dict], scfg: dict) -> SignalResult:
                    "chases_down": down})
     evidence.append(_ev(
         f"chases 90d: {agg90:+.0%} agregado · {up} subindo × {down} caindo",
-        "tcgcsv_archive", "https://tcgcsv.com/archive/tcgplayer/",
-        date.today().isoformat()))
+        "tcgcsv_archive", "https://tcgcsv.com/archive/tcgplayer/", stamp))
     label = ("forte" if agg90 > 0.05 and up > down else
              "fraca" if agg90 < -0.05 and down > up else "neutra")
     return SignalResult(f"{label} ({agg90:+.0%} 90d, {up}↑/{down}↓)",
