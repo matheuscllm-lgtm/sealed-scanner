@@ -290,7 +290,7 @@ painel nunca recomenda compra. Endpoints: `/` (página), `/health`, `/api/deals`
 ## Testes
 
 ```bash
-python -m pytest -q     # 587 testes (verificado 2026-08-29), 100% offline
+python -m pytest -q     # 597 testes (verificado 2026-08-30), 100% offline
 ```
 
 - A suíte roda inteira sem rede/credencial/browser: adapters testados contra
@@ -346,7 +346,7 @@ watchdog.py, register_task.ps1                            apoio de execução no
 probe_liga_sealed.py / probe_olx_local.py                 sondas manuais de coleta
 SETUP-VALIDACAO.md           runbook das validações que exigem o PC/chaves do operador (§A–§D)
 mock_data/                   fixtures de listing p/ rodar sem rede (--mock; onepiece_listings.json p/ OP)
-tests/                       447 testes offline (gaps, matcher, gates, snapshot, adapters, eBay, perfis, painel)
+tests/                       597 testes offline (gaps, matcher, gates, snapshot, adapters, eBay, perfis, painel, análise)
 ```
 
 Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no

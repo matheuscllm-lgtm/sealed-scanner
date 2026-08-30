@@ -262,7 +262,12 @@ def analysis(game: str = Query("pokemon")):
                 "confidence_pct": rec.get("confidence_pct"),
                 "score": (prod.get("score") or {}).get("total"),
                 "compra_brl": (prod.get("buy") or {}).get("price_brl"),
-                "venda_base_usd": (prod.get("sell_now") or {}).get("gross_usd"),
+                # venda_base = o preço que entrou no cálculo do lucro (projeção
+                # p/ a realização quando há cenário do ciclo; senão o de hoje)
+                "venda_base_usd": (prod.get("sell_now") or {}).get(
+                    "gross_usd_realizacao",
+                    (prod.get("sell_now") or {}).get("gross_usd")),
+                "venda_hoje_usd": (prod.get("sell_now") or {}).get("gross_usd"),
                 "lucro_hoje_brl": exp.get("lucro_hoje_brl"),
                 "lucro_esperado_brl": (best or {}).get("lucro_esperado_brl"),
                 "valor_de_esperar_brl": (best or {}).get("valor_de_esperar_brl"),

@@ -63,6 +63,31 @@ def test_banner_simulado():
     assert "DADOS SIMULADOS" in "\n".join(decision_table_lines(sim))
 
 
+def test_cadeia_monetaria_fecha_quando_ha_projecao():
+    # o lucro é calculado sobre o preço PROJETADO p/ a realização — a tabela
+    # e o detalhe têm que mostrar ESSE preço (senão a conta não fecha p/ quem
+    # confere: 58×0.7×5 ≠ receita derivada de 59.54)
+    proj = dict(ANALYSIS)
+    proj["products"] = [dict(ANALYSIS["products"][0])]
+    proj["products"][0]["sell_now"] = dict(
+        ANALYSIS["products"][0]["sell_now"],
+        gross_usd_realizacao=59.54, projecao_aplicada=True,
+        receita_liquida_brl=208.4, lucro_liquido_brl=18.4)
+    lines = decision_table_lines(proj)
+    row = lines[2]
+    assert "US$ 59.54†" in row and "US$ 58.00" not in row
+    assert any("projetada para a data de realização" in ln for ln in lines)
+    md = render_markdown(proj)
+    assert "venda bruta hoje US$ 58.00" in md
+    assert "projetada p/ a realização" in md and "US$ 59.54" in md
+
+
+def test_sem_projecao_mostra_preco_de_hoje_sem_marcador():
+    lines = decision_table_lines(ANALYSIS)
+    assert "US$ 58.00" in lines[2] and "†" not in lines[2]
+    assert not any("projetada para a data de realização" in ln for ln in lines)
+
+
 def test_state_label_emoji():
     assert state_label("JANELA_VENDA").startswith("🟢")
     assert state_label("EVITAR_COMPRA").startswith("⛔")

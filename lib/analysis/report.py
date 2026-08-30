@@ -49,6 +49,7 @@ def decision_table_lines(analysis: dict) -> list[str]:
         "Conf. % | Score | Próx. revisão |"
     )
     lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|---:|---|")
+    any_projected = False
     for i, p in enumerate(analysis.get("products") or [], start=1):
         rec = p.get("recommendation") or {}
         exp = p.get("expected") or {}
@@ -56,15 +57,28 @@ def decision_table_lines(analysis: dict) -> list[str]:
         best = (exp.get("por_horizonte") or {}).get(str(best_h)) if best_h else None
         sell = p.get("sell_now") or {}
         score = (p.get("score") or {}).get("total")
+        # a coluna mostra o preço que ENTROU na conta do lucro: quando há
+        # cenário do ciclo, é a projeção para a data de realização (†), não o
+        # preço de hoje — senão a cadeia US$→R$ não fecharia para quem confere
+        sell_base = sell.get("gross_usd_realizacao")
+        if sell_base is None:
+            sell_base = sell.get("gross_usd")
+        mark = "†" if sell.get("projecao_aplicada") else ""
+        any_projected = any_projected or bool(mark)
         lines.append(
             f"| {i} | {state_label(rec.get('state', '?'))} | "
             f"{_esc(p.get('produto'))[:55]} | {_brl((p.get('buy') or {}).get('price_brl'))} | "
-            f"{_usd(sell.get('gross_usd'))} | {_brl(exp.get('lucro_hoje_brl'))} | "
+            f"{_usd(sell_base)}{mark} | {_brl(exp.get('lucro_hoje_brl'))} | "
             f"{_brl(best.get('lucro_esperado_brl')) if best else '-'} | "
             f"{_brl(best.get('valor_de_esperar_brl')) if best else '-'} | "
             f"{rec.get('confidence_pct', '-')} | {score if score is not None else '-'} | "
             f"{rec.get('next_review_date', '-')} |"
         )
+    if any_projected:
+        lines.append("")
+        lines.append("_† venda base projetada para a data de realização (~fim do "
+                     "ciclo operacional) — é o preço usado no cálculo do lucro; "
+                     "o preço de hoje está no detalhe por produto._")
     return lines
 
 
@@ -125,9 +139,18 @@ def render_markdown(analysis: dict) -> str:
         lines.append(_signal_line("Ciclo de impressão", sig.get("print_cycle")))
         lines.append(_signal_line("Força da coleção (chases)", sig.get("set_strength")))
         lines.append("")
+        # a cadeia US$→R$ tem que FECHAR: quando o lucro usa a projeção do fim
+        # do ciclo, mostrar os DOIS preços (hoje e projetado) na mesma linha
+        gross_real = sell.get("gross_usd_realizacao")
+        if sell.get("projecao_aplicada") and gross_real is not None:
+            venda_txt = (f"venda bruta hoje {_usd(sell.get('gross_usd'))} → "
+                         f"projetada p/ a realização (~fim do ciclo) "
+                         f"{_usd(gross_real)}")
+        else:
+            venda_txt = f"venda bruta {_usd(sell.get('gross_usd'))}"
         lines.append(
-            f"- **Vendendo agora** (base {sell.get('basis', '?')}): venda bruta "
-            f"{_usd(sell.get('gross_usd'))} → receita líquida "
+            f"- **Vendendo agora** (base {sell.get('basis', '?')}): {venda_txt} "
+            f"→ receita líquida "
             f"{_brl(sell.get('receita_liquida_brl'))} → lucro líquido "
             f"{_brl(sell.get('lucro_liquido_brl'))} "
             f"(margem sobre custo {_pct(sell.get('margem_sobre_custo'))}) · "

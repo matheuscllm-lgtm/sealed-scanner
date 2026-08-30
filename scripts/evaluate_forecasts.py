@@ -100,6 +100,11 @@ def render(evals: list[dict], pending: int, no_price: int) -> str:
                  f"{'n/d' if mae is None else f'{mae:.1f}%'} · {pending} pendente(s) · "
                  f"{no_price} sem preço realizado")
     lines.append("")
+    lines.append("_\"Realizado\" = preço do arquivo tcgcsv na data de vencimento; "
+                 "para previsão feita sobre pedida eBay (basis ebay_active_min), "
+                 "é a base da previsão × retorno do market no período — proxy "
+                 "relativo, NÃO venda observada._")
+    lines.append("")
     lines.append("_Hit-rate baixo/erro alto = recalibrar `analysis.comparables` "
                  "(percentis/coorte) — o backtest é parte do método._")
     return "\n".join(lines) + "\n"

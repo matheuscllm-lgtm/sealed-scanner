@@ -152,10 +152,13 @@ def main() -> int:
     if args.analise:
         print("\n== Análise técnica US (hold vs sell) ==")
         try:
+            # timeout: cache frio do arquivo tcgcsv pode puxar >100 datas; a
+            # entrega (snapshot) nunca fica bloqueada indefinidamente atrás
+            # disso — estourou, o call mata o filho e cai no except abaixo
             rc_a = subprocess.call(
                 [sys.executable, str(SEALED / "analyze_sealed.py"),
                  "--game", args.game],
-                cwd=ROOT,
+                cwd=ROOT, timeout=1800,
             )
             if rc_a != 0:
                 print(f"  [analise] aviso: analyze_sealed.py saiu com código {rc_a} "
