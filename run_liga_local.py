@@ -98,6 +98,12 @@ def main() -> int:
                    help="Gerar 2 notas Markdown em snapshots/ (técnica + didática). "
                         "LIGADO por default — é a entrega canônica (skill sealed-scan); "
                         "use --no-snapshot só para debug do coletor.")
+    p.add_argument("--analise", action=argparse.BooleanOptionalAction, default=True,
+                   help="Rodar a ANÁLISE TÉCNICA US (hold vs sell) ao fim do scan "
+                        "(analyze_sealed.py — informativa; embute a tabela de decisão "
+                        "na entrega). LIGADA por default; também respeita "
+                        "analysis.enabled do config. Falha da análise NUNCA derruba "
+                        "o scan (só avisa). --no-analise desliga neste run.")
     p.add_argument("--skip-check", action="store_true", help="Pular verificação de dependências.")
     args = p.parse_args()
 
@@ -139,6 +145,27 @@ def main() -> int:
     )
     if rc != 0:
         return rc
+
+    # Análise técnica US (hold vs sell) — ANTES do snapshot, pra tabela de
+    # decisão entrar na entrega. INFORMATIVA e best-effort: qualquer falha
+    # aqui só avisa — o scan e a entrega seguem intactos (regra dura).
+    if args.analise:
+        print("\n== Análise técnica US (hold vs sell) ==")
+        try:
+            # timeout: cache frio do arquivo tcgcsv pode puxar >100 datas; a
+            # entrega (snapshot) nunca fica bloqueada indefinidamente atrás
+            # disso — estourou, o call mata o filho e cai no except abaixo
+            rc_a = subprocess.call(
+                [sys.executable, str(SEALED / "analyze_sealed.py"),
+                 "--game", args.game],
+                cwd=ROOT, timeout=1800,
+            )
+            if rc_a != 0:
+                print(f"  [analise] aviso: analyze_sealed.py saiu com código {rc_a} "
+                      "— seguindo sem análise (o scan não é afetado).")
+        except Exception as exc:  # nunca derrubar o scan por causa da análise
+            print(f"  [analise] aviso: análise falhou ({type(exc).__name__}: {exc}) "
+                  "— seguindo sem análise (o scan não é afetado).")
 
     if args.snapshot:
         print("\n== Gerando snapshots Markdown ==")

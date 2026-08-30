@@ -1,0 +1,247 @@
+{
+  "_comment": "Gerado por build_set_meta.py — publishedOn REAL do tcgcsv por group_id do registry. Idade de set nunca é inferida.",
+  "captured_at": "2026-08-29T21:57:25Z",
+  "category_id": "68",
+  "groups": {
+    "24736": {
+      "name": "The World's Strongest Warriors",
+      "abbreviation": "OP17",
+      "publishedOn": "2026-08-28",
+      "url": ""
+    },
+    "24749": {
+      "name": "Starter Deck 31: RED Monkey.D.Luffy",
+      "abbreviation": "ST-31",
+      "publishedOn": "2026-07-31",
+      "url": ""
+    },
+    "24750": {
+      "name": "Starter Deck 32: GREEN Roronoa Zoro",
+      "abbreviation": "ST-32",
+      "publishedOn": "2026-07-31",
+      "url": ""
+    },
+    "24751": {
+      "name": "Starter Deck 33: BLUE Kuzan",
+      "abbreviation": "ST-33",
+      "publishedOn": "2026-07-31",
+      "url": ""
+    },
+    "24752": {
+      "name": "Starter Deck 34: PURPLE Charlotte Katakuri",
+      "abbreviation": "ST-34",
+      "publishedOn": "2026-07-31",
+      "url": ""
+    },
+    "24753": {
+      "name": "Starter Deck 35: RED/BLACK Sabo",
+      "abbreviation": "ST-35",
+      "publishedOn": "2026-07-31",
+      "url": ""
+    },
+    "24754": {
+      "name": "Starter Deck 36: YELLOW Eustass\"Captain\"Kid",
+      "abbreviation": "ST-36",
+      "publishedOn": "2026-07-31",
+      "url": ""
+    },
+    "24678": {
+      "name": "Starter Deck EX: Luffy & Ace",
+      "abbreviation": "ST-30",
+      "publishedOn": "2026-06-12",
+      "url": ""
+    },
+    "24664": {
+      "name": "The Time of Battle",
+      "abbreviation": "OP16",
+      "publishedOn": "2026-06-12",
+      "url": ""
+    },
+    "24637": {
+      "name": "Adventure on Kami's Island",
+      "abbreviation": "OP15-EB04",
+      "publishedOn": "2026-04-03",
+      "url": ""
+    },
+    "24545": {
+      "name": "Extra Booster: One Piece Heroines Edition",
+      "abbreviation": "EB-03-04",
+      "publishedOn": "2026-02-20",
+      "url": ""
+    },
+    "24575": {
+      "name": "Starter Deck 29: Egghead",
+      "abbreviation": "ST-29",
+      "publishedOn": "2026-01-16",
+      "url": ""
+    },
+    "24537": {
+      "name": "The Azure Sea's Seven",
+      "abbreviation": "OP14",
+      "publishedOn": "2026-01-16",
+      "url": ""
+    },
+    "24303": {
+      "name": "Carrying On His Will",
+      "abbreviation": "OP13",
+      "publishedOn": "2025-11-07",
+      "url": ""
+    },
+    "24305": {
+      "name": "Premium Booster -The Best- Vol. 2",
+      "abbreviation": "PRB-02",
+      "publishedOn": "2025-10-03",
+      "url": ""
+    },
+    "24304": {
+      "name": "Starter Deck 22: Ace & Newgate",
+      "abbreviation": "ST-22",
+      "publishedOn": "2025-09-05",
+      "url": ""
+    },
+    "24302": {
+      "name": "Legacy of the Master",
+      "abbreviation": "OP12",
+      "publishedOn": "2025-08-22",
+      "url": ""
+    },
+    "24241": {
+      "name": "A Fist of Divine Speed",
+      "abbreviation": "OP11",
+      "publishedOn": "2025-06-06",
+      "url": ""
+    },
+    "24282": {
+      "name": "Starter Deck 23: RED Shanks",
+      "abbreviation": "ST-23",
+      "publishedOn": "2025-06-06",
+      "url": ""
+    },
+    "24283": {
+      "name": "Starter Deck 24: GREEN Jewelry Bonney",
+      "abbreviation": "ST-24",
+      "publishedOn": "2025-06-06",
+      "url": ""
+    },
+    "24284": {
+      "name": "Starter Deck 25: BLUE Buggy",
+      "abbreviation": "ST-25",
+      "publishedOn": "2025-06-06",
+      "url": ""
+    },
+    "24285": {
+      "name": "Starter Deck 26: PURPLE/BLACK Monkey.D.Luffy",
+      "abbreviation": "ST-26",
+      "publishedOn": "2025-06-06",
+      "url": ""
+    },
+    "24286": {
+      "name": "Starter Deck 27: BLACK Marshall.D.Teach",
+      "abbreviation": "ST-27",
+      "publishedOn": "2025-06-06",
+      "url": ""
+    },
+    "24287": {
+      "name": "Starter Deck 28: GREEN/YELLOW Yamato",
+      "abbreviation": "ST-28",
+      "publishedOn": "2025-06-06",
+      "url": ""
+    },
+    "23834": {
+      "name": "Extra Booster: Anime 25th Collection",
+      "abbreviation": "EB-02",
+      "publishedOn": "2025-05-09",
+      "url": ""
+    },
+    "23766": {
+      "name": "Royal Blood",
+      "abbreviation": "OP10",
+      "publishedOn": "2025-03-21",
+      "url": ""
+    },
+    "23991": {
+      "name": "Starter Deck EX: Gear 5",
+      "abbreviation": "ST-21",
+      "publishedOn": "2025-03-14",
+      "url": ""
+    },
+    "23589": {
+      "name": "Emperors in the New World",
+      "abbreviation": "OP09",
+      "publishedOn": "2024-12-13",
+      "url": ""
+    },
+    "23496": {
+      "name": "Premium Booster -The Best-",
+      "abbreviation": "PRB-01",
+      "publishedOn": "2024-11-08",
+      "url": ""
+    },
+    "23462": {
+      "name": "Two Legends",
+      "abbreviation": "OP08",
+      "publishedOn": "2024-09-13",
+      "url": ""
+    },
+    "23387": {
+      "name": "500 Years in the Future",
+      "abbreviation": "OP07",
+      "publishedOn": "2024-06-28",
+      "url": ""
+    },
+    "23333": {
+      "name": "Extra Booster: Memorial Collection",
+      "abbreviation": "EB-01",
+      "publishedOn": "2024-05-03",
+      "url": ""
+    },
+    "23272": {
+      "name": "Wings of the Captain",
+      "abbreviation": "OP06",
+      "publishedOn": "2024-03-15",
+      "url": ""
+    },
+    "23213": {
+      "name": "Awakening of the New Era",
+      "abbreviation": "OP05",
+      "publishedOn": "2023-12-08",
+      "url": ""
+    },
+    "23304": {
+      "name": "One Piece Collection Sets",
+      "abbreviation": "OP-CS",
+      "publishedOn": "2023-11-03",
+      "url": ""
+    },
+    "23024": {
+      "name": "Kingdoms of Intrigue",
+      "abbreviation": "OP04",
+      "publishedOn": "2023-09-22",
+      "url": ""
+    },
+    "22890": {
+      "name": "Pillars of Strength",
+      "abbreviation": "OP03",
+      "publishedOn": "2023-06-30",
+      "url": ""
+    },
+    "17698": {
+      "name": "Paramount War",
+      "abbreviation": "OP02",
+      "publishedOn": "2023-03-10",
+      "url": ""
+    },
+    "3188": {
+      "name": "Romance Dawn",
+      "abbreviation": "OP01",
+      "publishedOn": "2022-12-02",
+      "url": ""
+    },
+    "17675": {
+      "name": "One Piece Promotion Cards",
+      "abbreviation": "OP-PR",
+      "publishedOn": "2022-09-30",
+      "url": ""
+    }
+  }
+}

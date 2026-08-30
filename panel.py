@@ -228,6 +228,70 @@ def products(game: str = Query("pokemon"),
     return {"game": game, "scan_dir": scan_dir.name, "count": len(out), "products": out}
 
 
+@app.get("/api/analysis")
+def analysis(game: str = Query("pokemon")):
+    """Última ANÁLISE TÉCNICA (hold vs sell) do jogo — read-only, informativa.
+
+    Lê o `results/[jogo]/analysis_*/analysis.json` mais recente (gerado por
+    analyze_sealed.py). Nunca recomenda compra: rótulos são classificação
+    técnica neutra; a decisão de capital é do operador."""
+    import json as _json
+    game = _check_game(game)
+    root = snapshot.results_root_for(game)
+    dirs = sorted(root.glob("analysis_*"), key=lambda d: d.stat().st_mtime,
+                  reverse=True)
+    for d in dirs:
+        p = d / "analysis.json"
+        if not p.exists():
+            continue
+        try:
+            data = _json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        products = []
+        for prod in data.get("products") or []:
+            rec = prod.get("recommendation") or {}
+            exp = prod.get("expected") or {}
+            best_h = rec.get("best_horizon_days")
+            best = (exp.get("por_horizonte") or {}).get(str(best_h)) if best_h else None
+            products.append({
+                "sku": prod.get("sku_id"),
+                "produto": prod.get("produto"),
+                "tipo": prod.get("product_type"),
+                "state": rec.get("state"),
+                "confidence_pct": rec.get("confidence_pct"),
+                "score": (prod.get("score") or {}).get("total"),
+                "compra_brl": (prod.get("buy") or {}).get("price_brl"),
+                # venda_base = o preço que entrou no cálculo do lucro (projeção
+                # p/ a realização quando há cenário do ciclo; senão o de hoje)
+                "venda_base_usd": (prod.get("sell_now") or {}).get(
+                    "gross_usd_realizacao",
+                    (prod.get("sell_now") or {}).get("gross_usd")),
+                "venda_hoje_usd": (prod.get("sell_now") or {}).get("gross_usd"),
+                "lucro_hoje_brl": exp.get("lucro_hoje_brl"),
+                "lucro_esperado_brl": (best or {}).get("lucro_esperado_brl"),
+                "valor_de_esperar_brl": (best or {}).get("valor_de_esperar_brl"),
+                "best_horizon_days": best_h,
+                "next_review": rec.get("next_review_date"),
+                "catalisador": rec.get("catalyst"),
+                "risco": rec.get("risk"),
+                "tendencia": ((prod.get("signals") or {}).get("price_trend") or {}).get("label"),
+                "oferta": ((prod.get("signals") or {}).get("supply") or {}).get("label"),
+                "reprint": ((prod.get("signals") or {}).get("reprint_risk") or {}).get("label"),
+            })
+        return {"game": game, "analysis_dir": d.name,
+                "generated_at": data.get("generated_at"),
+                "scan_dir": data.get("scan_dir"),
+                "simulated": bool(data.get("simulated")),
+                "cycle_days": data.get("cycle_days"),
+                "net_factor": data.get("net_factor"),
+                "count": len(products), "products": products}
+    raise HTTPException(
+        status_code=404,
+        detail=(f"Nenhuma análise encontrada para {game!r} — rode "
+                f"`python analyze_sealed.py --game {game}` primeiro."))
+
+
 # ── página única (JS vanilla, sem build, sem CDN) ───────────────────────────
 INDEX_HTML = """<!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8">
@@ -251,6 +315,7 @@ INDEX_HTML = """<!DOCTYPE html>
 </style></head><body>
 <header>
  <h1>📦 Sealed Arbitrage — painel local <small style="color:#7787a6">(somente leitura)</small></h1>
+ <label>Visão <select id="view"><option value="deals">Deals</option><option value="analysis">Análise</option></select></label>
  <label>Jogo <select id="game"><option value="pokemon">Pokémon</option><option value="onepiece">One Piece</option></select></label>
  <label>Status <select id="bucket"><option value="">todos</option><option>GREEN</option><option>YELLOW</option><option>RED</option></select></label>
  <label>Margem ≥ <input id="minm" type="number" step="5" style="width:70px" placeholder="%"></label>
@@ -267,8 +332,39 @@ INDEX_HTML = """<!DOCTYPE html>
 <script>
 const $=s=>document.querySelector(s);
 const fmt=(v,d=2)=>v==null||v===''?'-':Number(v).toFixed(d).replace('.',',');
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const DEALS_HEAD=document.querySelector('#tbl thead').innerHTML;
+const ANALYSIS_HEAD='<tr><th>#</th><th>Decisão</th><th>Produto</th><th>Tipo</th>'+
+ '<th class="num">Compra (R$)</th><th class="num">Venda base (US$)</th><th class="num">Lucro hoje (R$)</th>'+
+ '<th class="num">Lucro esperado (R$)</th><th class="num">Valor de esperar (R$)</th>'+
+ '<th class="num">Conf.%</th><th class="num">Score</th><th>Tendência</th><th>Oferta</th><th>Reprint</th><th>Próx. revisão</th></tr>';
+const ST_CLASS={JANELA_VENDA:'GREEN',EVITAR_COMPRA:'RED',DADOS_INSUFICIENTES:'YELLOW'};
 async function j(u){const r=await fetch(u);if(!r.ok){throw new Error((await r.json()).detail||r.status)}return r.json()}
+async function refreshAnalysis(){
+ const game=$('#game').value;
+ const st=await j('/api/analysis?game='+game);
+ $('#tbl thead').innerHTML=ANALYSIS_HEAD;
+ $('#status').innerHTML=`<b>${esc(st.analysis_dir)}</b> · scan ${esc(st.scan_dir)} · gerada ${esc(st.generated_at)} ·
+  ciclo ~${esc(st.cycle_days)}d · fator líquido ×${esc(st.net_factor)}`+
+  (st.simulated?' · <span class="warn">⚠️ DADOS SIMULADOS</span>':'')+
+  ' · análise INFORMATIVA (rótulos neutros; decisão de capital é do operador)';
+ const tb=$('#tbl tbody');tb.innerHTML='';
+ st.products.forEach((p,i)=>{
+  const cls=ST_CLASS[p.state]||(String(p.state||'').startsWith('MANTER')?'':'');
+  tb.insertAdjacentHTML('beforeend',`<tr><td>${i+1}</td><td class="${cls}">${esc(p.state)}</td>
+   <td>${esc(p.produto)}</td><td>${esc(p.tipo)}</td><td class="num">${fmt(p.compra_brl)}</td>
+   <td class="num">${fmt(p.venda_base_usd)}</td><td class="num">${fmt(p.lucro_hoje_brl)}</td>
+   <td class="num">${fmt(p.lucro_esperado_brl)}</td><td class="num">${fmt(p.valor_de_esperar_brl)}</td>
+   <td class="num">${esc(p.confidence_pct)}</td><td class="num">${p.score==null?'-':esc(p.score)}</td>
+   <td>${esc(p.tendencia)}</td><td>${esc(p.oferta)}</td><td>${esc(p.reprint)}</td>
+   <td>${esc(p.next_review)}</td></tr>`)});
+}
 async function refresh(){
+ if($('#view').value==='analysis'){
+  try{await refreshAnalysis()}catch(e){$('#status').innerHTML='<span class="warn">'+esc(e.message)+'</span>';$('#tbl tbody').innerHTML=''}
+  return;
+ }
+ $('#tbl thead').innerHTML=DEALS_HEAD;
  const game=$('#game').value,b=$('#bucket').value,m=$('#minm').value,q=$('#q').value;
  const ps=new URLSearchParams({game});if(b)ps.set('bucket',b);if(m)ps.set('min_margin',m);if(q)ps.set('q',q);
  try{
@@ -291,7 +387,7 @@ async function refresh(){
     <td class="num">${p.n_ofertas}</td><td>${p.suspect?'⚠️':''}</td><td>${links}</td></tr>`)});
  }catch(e){$('#status').innerHTML='<span class="warn">'+e.message+'</span>';$('#tbl tbody').innerHTML=''}
 }
-['game','bucket','minm','q'].forEach(id=>$('#'+id).addEventListener('input',refresh));
+['view','game','bucket','minm','q'].forEach(id=>$('#'+id).addEventListener('input',refresh));
 refresh();
 </script></body></html>"""
 

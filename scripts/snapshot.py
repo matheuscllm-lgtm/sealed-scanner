@@ -452,6 +452,66 @@ def group_risco(g: dict) -> str:
     return "match ambíguo (1 anúncio casa com 2+ SKUs)"
 
 
+# ──────────────────────────────────────────────────────────────────────────
+# 3ª tabela: Decisão de venda (análise técnica US) — ADITIVA (2026-08-29)
+# ──────────────────────────────────────────────────────────────────────────
+def analysis_for_scan(results_root: Path, scan_dir_used: Path | None) -> dict | None:
+    """analysis.json do `analysis_*` mais recente CUJO scan_dir casa a run
+    entregue (gerado por analyze_sealed.py). Sem artefato casando → None e a
+    entrega sai BYTE-IDÊNTICA à de sempre (travado em teste). Qualquer erro de
+    leitura = None (a análise é informativa; nunca derruba a entrega)."""
+    if scan_dir_used is None:
+        return None
+    try:
+        dirs = sorted(results_root.glob("analysis_*"),
+                      key=lambda d: d.stat().st_mtime, reverse=True)
+    except OSError:
+        return None
+    for d in dirs:
+        p = d / "analysis.json"
+        # try POR ARQUIVO: um analysis.json truncado (run interrompida) não
+        # pode esconder um artefato VÁLIDO mais antigo do mesmo scan.
+        try:
+            if not p.exists():
+                continue
+            data = json.loads(p.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if isinstance(data, dict) and data.get("scan_dir") == scan_dir_used.name:
+            return data
+    return None
+
+
+def analysis_section_lines(analysis: dict) -> list[str]:
+    """Seção "Decisão de venda" — o render vem de lib/analysis/report.py
+    (fonte única de formato; aqui só embutimos). lib ausente → seção vazia."""
+    import sys as _sys
+    root = str(ROOT)
+    if root not in _sys.path:
+        _sys.path.insert(0, root)
+    try:
+        from lib.analysis.report import decision_table_lines
+    except ImportError:
+        return []
+    lines = ["## 📊 Decisão de venda por produto (análise técnica US — informativa)", ""]
+    lines.extend(decision_table_lines(analysis))
+    lines.append("")
+    lines.append(
+        "_Classificação TÉCNICA (rótulos neutros) da camada de análise "
+        "(`analyze_sealed.py`): 🟢 JANELA_VENDA = listar ao chegar (~ciclo de "
+        f"{analysis.get('cycle_days', '?')}d) · 🔵 MANTER_xxD = segurar além do "
+        "ciclo · ⛔ EVITAR_COMPRA = lucro líquido negativo hoje e em todos os "
+        "horizontes · ⚪ DADOS_INSUFICIENTES = sem base (nunca estimamos no "
+        "chute). Lucros LÍQUIDOS usam o fator agregado "
+        f"×{analysis.get('net_factor', '?')} — diferente da margem BRUTA das "
+        "tabelas acima, que segue intocada. NÃO altera GREEN/YELLOW/RED. "
+        "Detalhe completo (sinais, cenários, evidências): "
+        "`python scripts/analysis_report.py`. Decisão de capital é do operador._"
+    )
+    lines.append("")
+    return lines
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description="Gera a tabela de ENTREGA (Markdown) do scan de selados.")
     ap.add_argument(
@@ -699,6 +759,11 @@ def main() -> None:
             )
 
     lines.append("")
+    # ── 3ª tabela (ADITIVA): decisão de venda, quando a análise do MESMO scan
+    # existir (analyze_sealed.py). Sem artefato → nada muda na entrega.
+    analysis = analysis_for_scan(results_root, scan_dir_used)
+    if analysis is not None:
+        lines.extend(analysis_section_lines(analysis))
     lines.append("## Notas")
     lines.append("")
     lines.append("- A entrega é **agrupada por produto** (SKU canônico): cada linha consolida todas as ofertas BR do mesmo produto. O nº entre parênteses no topo mostra quantos anúncios brutos viraram quantos produtos.")

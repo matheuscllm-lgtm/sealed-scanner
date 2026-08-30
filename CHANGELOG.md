@@ -3,6 +3,66 @@
 Registro datado de mudanças relevantes. O repo não usa versionamento semântico
 (SemVer); as entradas são por data. Fonte única de estado segue o `README.md`.
 
+## 2026-08-29 — Análise técnica US (hold vs sell): camada informativa pós-scan
+
+Pedido do operador: usar o resultado do scan da Liga e, olhando o mercado
+AMERICANO (a oferta tende a encolher → valorização, ou crescer → queda?),
+evitar venda prematura — **vender ao chegar, segurar 30/60/90 dias além do
+ciclo (~24d = 10 chegada + 7 envio US + 7 listar, configurável), evitar a
+compra, ou dados insuficientes**. Tudo preservando os invariantes: a camada é
+INFORMATIVA (o scan sai byte-idêntico, travado em
+`tests/test_analysis_noninterference.py`), rótulos NEUTROS (🟢 JANELA_VENDA ·
+🔵 MANTER_xxD · ⛔ EVITAR_COMPRA · ⚪ DADOS_INSUFICIENTES — decisão de capital
+é do operador) e nada é estimado no chute.
+
+- **Motor:** `analyze_sealed.py` + pacote `lib/analysis/` (sinais, custos,
+  cenários, decisão, score, stores, importadores, render) +
+  `lib/tcgcsv_history.py` (port do pokemon-longterm-outlook: arquivo diário
+  REAL do TCGplayer desde 2024-02-08, por productId; py7zr lazy → `n/d`).
+- **5 sinais separados** com fonte+data em toda evidência: tendência de preço
+  (tcgcsv + Terapeak) · volume/liquidez (SÓ vendas; Market Price nunca mede
+  volume) · evolução da oferta (snapshots de ativos eBay — `total` da Browse
+  API; <2 pontos = HISTORICO_INSUFICIENTE) · risco de reprint (eventos curados
+  `data/events_*.yaml` com fonte OBRIGATÓRIA + estrutural; SEM_EVIDENCIA ≠
+  risco baixo; "esgotado" ≠ descontinuado) · chases (indicador auxiliar).
+- **Financeiro simplificado** (decisão do operador): fator líquido único
+  `net_factor: 0.70`; `valor_de_esperar = lucro_esperado − lucro_hoje −
+  custo_capital(dias extras)`; MANTER só com valor positivo; lucro "hoje"
+  projetado para a data de realização (~fim do ciclo).
+- **Probabilidades de comparáveis, nunca arbitrárias:** percentis p20/p50/p80
+  dos retornos REAIS de produtos do mesmo tipo alinhados por idade (arquivo
+  tcgcsv) + ajustes documentados por sinal; coorte < 8 → DADOS_INSUFICIENTES.
+  Log de previsões + `scripts/evaluate_forecasts.py` (previsão vs realizado,
+  retroativo) calibram os percentis.
+- **eBay Sold sem API:** fluxo validado pelo operador (2026-08-29) —
+  `scripts/terapeak_scrape.js` (console da aba Sold do Product Research; a UI
+  não tem export nem seller) → `scripts/import_terapeak.py` (seller via Browse
+  `getItem` + cache `data/cache/ebay_sellers.json`; encerrado >90d sem seller
+  → captura mensal; `is_probstein` = probstein123). **Sales sheets da
+  Probstein NÃO são usadas** (decisão do operador).
+- **Entrega inalterada + 3ª tabela:** `scripts/snapshot.py` embute a tabela
+  "Decisão de venda" quando existe análise do MESMO scan (sem artefato = saída
+  idêntica à histórica); `run_liga_local.py` roda a análise por default
+  (`--no-analise`); painel ganha aba "Análise" (`/api/analysis`, read-only);
+  `scripts/analysis_report.py` reimprime. `--mock` = exemplo completo com
+  DADOS SIMULADOS rotulados (`mock_data/analysis_sim/`).
+- **Dados/refs novos:** `build_set_meta.py` → `data/set_meta*.json`
+  (publishedOn REAL por group_id; versionado); `data/events_*.yaml`
+  (versionado); séries/imports/caches gitignored (`data/history|forecasts|
+  cache|terapeak`). `build_ebay_reference.py` ganhou campos ADITIVOS de oferta
+  (`active_count`/`sellers`/`ladder_usd`) + 1 ponto da série de oferta por run
+  (regras de degradação intactas). `lib/ebay_client.py` ganhou `search_page`
+  (total da busca) e `get_item` — `search` intocado.
+- **Fase 2 declarada (não construída):** probes de varejistas (PC/Walmart/
+  Target/BestBuy/GameStop) e GTS/Southern Hobby; PriceCharting selado via
+  `pc_url`; Google Trends automatizado (fase 1 = CSV manual via
+  `scripts/import_trends.py`); calibração/ativação One Piece (perfil OP nasce
+  `analysis.enabled: false`).
+- **Testes:** 500 → 587 (87 novos: não-interferência, fórmulas, sinais,
+  reprint, eventos, importadores, stores, score, port do histórico, CLI mock/
+  offline, avaliador, painel, extensão do builder). Doc do operador:
+  `ANALISE-TECNICA.md`; seção 📈 no CLAUDE.md.
+
 ## 2026-08-03 — Plataforma de colecionáveis: rotas + referência de VENDA (eBay), perfil One Piece e painel local
 
 Evolução pedida pelo operador ("aplicar a ideia da Skip": scanners → plataforma

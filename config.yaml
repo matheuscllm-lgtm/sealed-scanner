@@ -280,3 +280,93 @@ scope:
   # listado p/ quando o adapter for construído; inócuo enquanto não for fonte.
   sealed_only_sources:
     - enjoei
+
+# ── ANÁLISE TÉCNICA US (hold vs sell) — camada INFORMATIVA pós-scan ────────
+# Roda por `python analyze_sealed.py` sobre o unified_deals.csv da última run
+# (o run_liga_local.py chama por default; --no-analise desliga). NADA aqui
+# muda matching/margem/classificação GREEN-YELLOW-RED — travado em teste.
+# Todos os números das regras são editáveis aqui; nenhum threshold é hardcoded.
+# Detalhe das fórmulas/fontes/limitações: ANALISE-TECNICA.md.
+analysis:
+  enabled: true
+  # Base da venda bruta: menor anúncio ativo eBay US quando houver (o canal
+  # real do operador é o eBay via Probstein); senão o market do TCGplayer.
+  #   ebay_then_tcg | tcg_only
+  sale_price_basis: ebay_then_tcg
+  # Modelo financeiro SIMPLIFICADO (operador 2026-08-29): fator líquido único.
+  # receita_liquida = venda_bruta × net_factor (custos agregados ~30% —
+  # Probstein/PayPal/logística/imposto ficam POR FORA, na mão).
+  net_factor: 0.70
+  # Delay natural de uma venda imediata (operador 2026-08-29): o ciclo total é
+  # a SOMA dos componentes (~24d), nunca hardcoded.
+  cycle:
+    delivery_br_days: 10     # compra → produto chega
+    us_forwarding_days: 7    # envio/chegada aos EUA
+    listing_days: 7          # até listar
+  capital:
+    annual_cost_pct: 0.15    # custo de oportunidade anual (fração) — valor_de_esperar
+  buy_price:
+    min_margin_over_cost: 0.25   # preço_max_compra = receita_líquida_BRL / (1+isto)
+  horizons_days: [30, 60, 90]    # dias de hold ALÉM do ciclo
+  # Cenários derivados de COMPARÁVEIS históricos (nunca chute): percentis dos
+  # retornos de produtos do MESMO tipo, alinhados por idade, no arquivo tcgcsv.
+  comparables:
+    min_cohort: 8            # < isto → DADOS_INSUFICIENTES (sem probabilidade arbitrária)
+    max_cohort: 40
+    percentiles: {pessimista: 20, base: 50, otimista: 80}
+    base_probs: {pessimista: 0.25, base: 0.50, otimista: 0.25}
+  scenarios:                 # ajustes DOCUMENTADOS por sinal (ver forecast.py)
+    prob_shift: 0.10
+    reprint_high_extra_downside: -0.10
+    supply_falling_extra_upside: 0.05
+  signals:
+    trend_windows_days: [30, 90, 180]
+    trend_flat_band: 0.05          # |Δ| ≤ 5% = estável
+    supply_windows_days: [7, 30, 90]
+    supply_falling_strong: -0.25   # queda ≥25% dos ativos = "caindo forte"
+    supply_rising_strong: 0.25
+    liquidity_active_high: 8
+    liquidity_active_low: 3
+    chases_top_n: 10               # top cards do set (indicador AUXILIAR de demanda)
+    chases_concentration_top: 3
+    print_cycle_late_months: 18
+    print_cycle_old_months: 30
+  confidence:                # qualidade dos DADOS → confiança 0-100 (pesos somam 1)
+    weights:
+      price_history_180d: 0.25
+      price_history_90d: 0.15
+      supply_series: 0.20
+      ebay_ref_fresh: 0.10
+      sold_data_imported: 0.15
+      set_meta_known: 0.10
+      events_reviewed: 0.05
+    events_reviewed_max_age_days: 45
+    min_confidence_for_call: 40    # abaixo → DADOS_INSUFICIENTES
+  data_quality:
+    min_history_points: 2
+    min_history_span_days: 60
+  score_weights:             # score 0-100 informativo (componentes separados)
+    margem: 0.20
+    demanda_liquidez: 0.15
+    tendencia: 0.15
+    forca_colecao: 0.10
+    risco_reprint: 0.15
+    risco_mercado: 0.10
+    confianca: 0.15
+  hold:
+    min_wait_value_brl: 0    # MANTER só se valor_de_esperar > isto
+  files:                     # stores por jogo (history/forecasts = gitignored)
+    supply_history: data/history/supply_pokemon.jsonl
+    sold_imports: data/history/ebay_sold_pokemon.jsonl
+    trends_imports: data/history/trends_pokemon.jsonl
+    forecast_log: data/forecasts/forecasts_pokemon.jsonl
+    events: data/events_pokemon.yaml
+    set_meta: data/set_meta.json
+    intel_candidates: data/history/market_intel_pokemon.jsonl
+  tcgcsv:
+    category_id: "3"         # Pokémon (One Piece = "68" no config_onepiece)
+    cache_dir: data/cache/tcgcsv_history
+  market_intel:              # feeds públicos (candidatos a evento; 1 GET/feed)
+    feeds:
+      - {name: PokeBeach, url: "https://www.pokebeach.com/feed", source_type: news, classification: SINAL_DE_MERCADO}
+      - {name: PokeGuardian, url: "https://www.pokeguardian.com/blog-feed.xml", source_type: news, classification: SINAL_DE_MERCADO}

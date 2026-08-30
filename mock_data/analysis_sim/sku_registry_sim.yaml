@@ -1,0 +1,93 @@
+# REGISTRY SIMULADO — só para o exemplo `analyze_sealed.py --mock`.
+# NENHUM destes produtos existe; ids/preços são fictícios.
+skus:
+- id: sim-aaa-etb
+  name: Simul Alpha Elite Trainer Box (SIMULADO)
+  product_type: Elite Trainer Box
+  set: Simul Alpha
+  set_code: SIMA
+  language: EN
+  tcgplayer_group_id: 80001
+  tcgplayer_product_id: 900001
+  match: {set_terms: [simul alpha], type_terms: [elite trainer box], exclude_terms: []}
+- id: sim-bbb-bb
+  name: Simul Beta Booster Box (SIMULADO)
+  product_type: Booster Box
+  set: Simul Beta
+  set_code: SIMB
+  language: EN
+  tcgplayer_group_id: 80002
+  tcgplayer_product_id: 900002
+  match: {set_terms: [simul beta], type_terms: [booster box], exclude_terms: []}
+- id: sim-c1-etb
+  name: Simul C1 Elite Trainer Box (SIMULADO)
+  product_type: Elite Trainer Box
+  set: Simul C1
+  set_code: SC1
+  language: EN
+  tcgplayer_group_id: 80100
+  tcgplayer_product_id: 900011
+  match: {set_terms: [simul c1], type_terms: [elite trainer box], exclude_terms: []}
+- id: sim-c2-etb
+  name: Simul C2 Elite Trainer Box (SIMULADO)
+  product_type: Elite Trainer Box
+  set: Simul C2
+  set_code: SC2
+  language: EN
+  tcgplayer_group_id: 80101
+  tcgplayer_product_id: 900012
+  match: {set_terms: [simul c2], type_terms: [elite trainer box], exclude_terms: []}
+- id: sim-c3-etb
+  name: Simul C3 Elite Trainer Box (SIMULADO)
+  product_type: Elite Trainer Box
+  set: Simul C3
+  set_code: SC3
+  language: EN
+  tcgplayer_group_id: 80102
+  tcgplayer_product_id: 900013
+  match: {set_terms: [simul c3], type_terms: [elite trainer box], exclude_terms: []}
+- id: sim-c4-etb
+  name: Simul C4 Elite Trainer Box (SIMULADO)
+  product_type: Elite Trainer Box
+  set: Simul C4
+  set_code: SC4
+  language: EN
+  tcgplayer_group_id: 80103
+  tcgplayer_product_id: 900014
+  match: {set_terms: [simul c4], type_terms: [elite trainer box], exclude_terms: []}
+- id: sim-c5-etb
+  name: Simul C5 Elite Trainer Box (SIMULADO)
+  product_type: Elite Trainer Box
+  set: Simul C5
+  set_code: SC5
+  language: EN
+  tcgplayer_group_id: 80104
+  tcgplayer_product_id: 900015
+  match: {set_terms: [simul c5], type_terms: [elite trainer box], exclude_terms: []}
+- id: sim-c6-etb
+  name: Simul C6 Elite Trainer Box (SIMULADO)
+  product_type: Elite Trainer Box
+  set: Simul C6
+  set_code: SC6
+  language: EN
+  tcgplayer_group_id: 80105
+  tcgplayer_product_id: 900016
+  match: {set_terms: [simul c6], type_terms: [elite trainer box], exclude_terms: []}
+- id: sim-c7-etb
+  name: Simul C7 Elite Trainer Box (SIMULADO)
+  product_type: Elite Trainer Box
+  set: Simul C7
+  set_code: SC7
+  language: EN
+  tcgplayer_group_id: 80106
+  tcgplayer_product_id: 900017
+  match: {set_terms: [simul c7], type_terms: [elite trainer box], exclude_terms: []}
+- id: sim-c8-etb
+  name: Simul C8 Elite Trainer Box (SIMULADO)
+  product_type: Elite Trainer Box
+  set: Simul C8
+  set_code: SC8
+  language: EN
+  tcgplayer_group_id: 80107
+  tcgplayer_product_id: 900018
+  match: {set_terms: [simul c8], type_terms: [elite trainer box], exclude_terms: []}
