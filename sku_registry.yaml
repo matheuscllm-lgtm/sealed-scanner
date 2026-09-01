@@ -2634,7 +2634,7 @@ skus:
     - blister
 - id: jtg-pack-en
   name: Journey Together Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Journey Together
   set_code: JTG
   language: EN
@@ -2700,7 +2700,7 @@ skus:
     - display
 - id: svi-pack-en
   name: Scarlet & Violet Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Scarlet & Violet
   set_code: SVI
   language: EN
@@ -2772,7 +2772,7 @@ skus:
     - code card
 - id: tot-2023-pack
   name: Trick or Trade BOOster 2023 Mini Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Trick or Trade 2023
   set_code: TOT23
   language: EN
@@ -2824,7 +2824,7 @@ skus:
     - lote
 - id: tot-2024-pack
   name: Trick or Trade BOOster 2024 Mini Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Trick or Trade 2024
   set_code: TOT24
   language: EN
@@ -2876,7 +2876,7 @@ skus:
     - lote
 - id: ssp-pack-en
   name: Surging Sparks Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Surging Sparks
   set_code: SSP
   language: EN
@@ -2942,7 +2942,7 @@ skus:
     - display
 - id: scr-pack-en
   name: Stellar Crown Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Stellar Crown
   set_code: SCR
   language: EN
@@ -3008,7 +3008,7 @@ skus:
     - display
 - id: pre-pack-en
   name: Prismatic Evolutions Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Prismatic Evolutions
   set_code: PRE
   language: EN
@@ -3075,7 +3075,7 @@ skus:
     - display
 - id: ah-pack-en
   name: Ascended Heroes Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Ascended Heroes
   set_code: AH
   language: EN
@@ -3144,7 +3144,7 @@ skus:
     - display
 - id: po-pack-en
   name: Perfect Order Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Perfect Order
   set_code: PO
   language: EN
@@ -3213,7 +3213,7 @@ skus:
     - display
 - id: cr-pack-en
   name: Chaos Rising Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Chaos Rising
   set_code: CR
   language: EN
@@ -3281,7 +3281,7 @@ skus:
     - display
 - id: pb-pack-en
   name: Pitch Black Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Pitch Black
   set_code: PB
   language: EN
@@ -3348,7 +3348,7 @@ skus:
     - display
 - id: phf-pack-en
   name: Phantasmal Flames Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Phantasmal Flames
   set_code: PHF
   language: EN
@@ -3415,7 +3415,7 @@ skus:
     - display
 - id: tef-pack-en
   name: Temporal Forces Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Temporal Forces
   set_code: TEF
   language: EN
@@ -3482,7 +3482,7 @@ skus:
     - display
 - id: twm-pack-en
   name: Twilight Masquerade Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Twilight Masquerade
   set_code: TWM
   language: EN
@@ -3549,7 +3549,7 @@ skus:
     - display
 - id: dri-pack-en
   name: Destined Rivals Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Destined Rivals
   set_code: DRI
   language: EN
@@ -3615,7 +3615,7 @@ skus:
     - display
 - id: mew-pack-en
   name: Scarlet & Violet 151 Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Scarlet & Violet 151
   set_code: MEW
   language: EN
@@ -3738,7 +3738,7 @@ skus:
 - id: meg-sleeved-booster
   name: Mega Evolution Sleeved Booster (English)
   era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Mega Evolution
   set_code: MEG
   language: EN
@@ -3933,7 +3933,7 @@ skus:
     exclude_terms: *id002
 - id: blk-sleeved-booster
   name: Black Bolt Sleeved Booster (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Black Bolt
   set_code: BLK
   language: EN
@@ -4031,7 +4031,7 @@ skus:
     exclude_terms: *id002
 - id: wht-sleeved-booster
   name: White Flare Sleeved Booster (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: White Flare
   set_code: WHT
   language: EN
@@ -4127,7 +4127,7 @@ skus:
     exclude_terms: *id002
 - id: sfa-sleeved-booster
   name: Shrouded Fable Sleeved Booster (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Shrouded Fable
   set_code: SFA
   language: EN
@@ -4197,7 +4197,7 @@ skus:
     exclude_terms: *id002
 - id: par-sleeved-booster
   name: Paradox Rift Sleeved Booster (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Paradox Rift
   set_code: PAR
   language: EN
@@ -4252,7 +4252,7 @@ skus:
     exclude_terms: *id002
 - id: obf-sleeved-booster
   name: Obsidian Flames Sleeved Booster (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Obsidian Flames
   set_code: OBF
   language: EN
@@ -4335,7 +4335,7 @@ skus:
     exclude_terms: *id002
 - id: pal-sleeved-booster
   name: Paldea Evolved Sleeved Booster (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Paldea Evolved
   set_code: PAL
   language: EN
@@ -6140,7 +6140,7 @@ skus:
     - premium
 - id: paf-sleeved-en
   name: Paldean Fates Sleeved Booster (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Paldean Fates
   set_code: PAF
   language: EN
@@ -9304,7 +9304,7 @@ skus:
     - league battle
 - id: astral-radiance-pack
   name: Astral Radiance Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Astral Radiance
   set_code: SWSH10
   language: EN
@@ -9367,7 +9367,7 @@ skus:
     - case
 - id: silver-tempest-pack
   name: Silver Tempest Booster Pack (English)
-  product_type: Sleeved Booster
+  product_type: Booster Pack
   set: Silver Tempest
   set_code: SWSH12
   language: EN

@@ -154,10 +154,10 @@ def test_bloqueio_total_levanta_source_blocked(monkeypatch):
 
 
 def test_nao_aborta_no_primeiro_block_se_outra_query_passa(monkeypatch, html):
-    # registry com Booster Box + Sleeved Booster → 3 queries; uma falha, resto OK.
+    # registry com Booster Box + Booster Pack → 3 queries; uma falha, resto OK.
     reg = [
         {"id": "a", "product_type": "Booster Box", "language": "EN"},
-        {"id": "b", "product_type": "Sleeved Booster", "language": "EN"},
+        {"id": "b", "product_type": "Booster Pack", "language": "EN"},
     ]
     calls = {"n": 0}
 

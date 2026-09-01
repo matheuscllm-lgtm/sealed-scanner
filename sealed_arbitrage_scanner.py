@@ -188,7 +188,8 @@ def looks_like_single_card(title: str) -> bool:
 #   - 'binder'/'fichario'/'album' → os 4 "Collection Box" (blk/wht/pre/mew) têm
 #     type_term 'binder collection'; suas listagens BR usam "fichário"/"álbum".
 #     Rejeitá-los barraria produto selado real.
-#   - 'sleeve' → 'Sleeved Booster' = 20 SKUs selados.
+#   - 'sleeve' → anúncio EN de pacote costuma dizer "Sleeved Booster Pack"
+#     (26 SKUs 'Booster Pack' selados; rótulo corrigido em 2026-09-01).
 #   - 'collection'/'box' → caixas seladas reais.
 # (O "Fichário Binder" +440% do scan NÃO é acessório nem bug de dado: auditoria
 #  2026-06-09 via tcgcsv confirmou que 502004 = "151 Binder Collection" e o
@@ -205,9 +206,10 @@ _ACCESSORY_TOKENS = (
 # (65 Sleeves)" R$64,50 casava ah-etb-en e dava +1600% (o guard margem_anomala
 # pegava como RED, mas a oferta envenenava a entrega do grupo — virava a oferta de
 # referência e escondia o ETB GREEN real). 'sleeve' nu é PROIBIDO aqui (colide com
-# 'Sleeved Booster', 20 SKUs selados); um CONTADOR de sleeves ("65 Sleeves") é o
-# sinal seguro: nenhum selado real diz "N sleeves" (o Sleeved Booster é 1 pacote, e
-# normaliza pra "sleeved", nunca "N sleeves").
+# anúncio EN de pacote, "Sleeved Booster Pack" — 26 SKUs 'Booster Pack');
+# um CONTADOR de sleeves ("65 Sleeves") é o
+# sinal seguro: nenhum selado real diz "N sleeves" (o booster pack é 1 pacote —
+# anúncio EN diz "sleeved", nunca "N sleeves").
 _SLEEVE_PACK_RE = re.compile(r"\b\d+\s*sleeves?\b")
 
 

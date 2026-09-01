@@ -54,7 +54,7 @@ TYPE_RULES = [
     (r"booster bundle$", "Booster Bundle", ["combo de pacotes", "booster bundle"], 6),
     (r"elite trainer box$", "Elite Trainer Box", ["coleção treinador avançado", "colecao treinador avancado", "elite trainer box"], 1),
     (r"booster box$", "Booster Box", ["caixa de booster", "booster box", "booster display"], 36),
-    (r"\bbooster pack$", "Sleeved Booster", ["booster avulso", "booster pack", "blister unitário", "blister unitario"], 1),
+    (r"\bbooster pack$", "Booster Pack", ["booster avulso", "booster pack", "blister unitário", "blister unitario"], 1),
     (r"binder collection$", "Collection Box", ["binder collection", "kit colecionável"], 1),
     (r"mini tin", "Tin", ["mini lata", "mini tin"], 1),
     (r"premium collection", "Premium Collection", ["box coleção premium", "premium collection"], 1),

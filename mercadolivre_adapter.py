@@ -331,7 +331,7 @@ TYPE_TO_QUERY = {
     "Collection Box":     ["pokemon-collection-box-ingles"],
     "Premium Collection": ["pokemon-premium-collection-ingles"],
     "Tin":                ["pokemon-tin-ingles"],
-    "Sleeved Booster":    ["pokemon-sleeved-booster-ingles"],
+    "Booster Pack":       ["pokemon-sleeved-booster-ingles"],
     "Blister Pack":       ["pokemon-blister-ingles"],
 }
 
