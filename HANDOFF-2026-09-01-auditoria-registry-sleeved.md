@@ -53,6 +53,16 @@ A correção certa depende do que cada listagem da Liga fisicamente é:
   nesses SKUs) e revisar os 6 blisters junto.
 - **Opção C** — manter como está e tratar caso a caso.
 
+> ✅ **DECIDIDO (operador, 2026-09-01): Opção A.** "A Liga vende pacote avulso
+> sim" — os productIds atuais estão corretos; corrigidos apenas os RÓTULOS
+> (`product_type: Sleeved Booster` → `Booster Pack` nos 26 SKUs; nomes já eram
+> honestos). Nenhum preço de referência mudou. Os 6 blisters de 1 pack ficam
+> como estão: o mapeamento blister→"Sleeved Booster Pack" já era decisão
+> deliberada do operador (2026-08-15, travada em
+> `tests/test_translate_match_roundtrip.py` — o Sleeved Pack do TCGplayer é o
+> produto físico do "Blister Unitário"), ou seja, a hipótese de "troca em
+> bloco" do §2 estava errada para essa família.
+
 ⚠️ Consequência enquanto não decidido: análises técnicas/margens de SKUs
 "Sleeved Booster" usam a referência do avulso (mais barata → margens
 CONSERVADORAS, nunca infladas — o erro atual é no sentido seguro). Para

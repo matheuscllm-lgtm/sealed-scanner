@@ -3,6 +3,29 @@
 Registro datado de mudanças relevantes. O repo não usa versionamento semântico
 (SemVer); as entradas são por data. Fonte única de estado segue o `README.md`.
 
+## 2026-09-01 — Registry: rótulo honesto `Booster Pack` nos 26 SKUs de pacote (Opção A da auditoria)
+
+A auditoria de 2026-09-01 (`HANDOFF-2026-09-01-auditoria-registry-sleeved.md`)
+mostrou que os 26 SKUs rotulados `product_type: Sleeved Booster` apontam para o
+productId do **booster avulso** do TCGplayer. O operador decidiu (2026-09-01):
+**a Liga vende o pacote avulso** → os productIds estão CERTOS; o que mentia era
+o rótulo. Aplicada a **Opção A** — rótulos corrigidos, **zero mudança de preço,
+matching ou classificação**:
+
+- `sku_registry.yaml`: `product_type: Sleeved Booster` → `Booster Pack` (26
+  SKUs; nomes já diziam "Booster Pack"; `type_terms`/`exclude_terms` intocados
+  — já caçavam o avulso e excluíam "sleeved").
+- Chaves de query renomeadas junto (mesmas queries): `olx_adapter.TYPE_TO_QUERY`,
+  `mercadolivre_adapter.TYPE_TO_QUERY`, `scope.include` do `config.yaml`
+  (lista documental) e o gerador `scripts/expand_registry_modern.py` (origem
+  do rótulo errado).
+- Sanity band: `"Booster Pack" (2.0, 60.0)` já existia, idêntica à antiga —
+  guard inalterado.
+- Os 6 SKUs `*-blister-1pack` (→ productId "Sleeved Booster Pack") ficam como
+  estão: mapeamento deliberado do operador (2026-08-15, travado em
+  `tests/test_translate_match_roundtrip.py`).
+- Coorte de comparáveis da análise técnica: mesma composição, novo nome de tipo.
+
 ## 2026-08-29 — Análise técnica US (hold vs sell): camada informativa pós-scan
 
 Pedido do operador: usar o resultado do scan da Liga e, olhando o mercado
