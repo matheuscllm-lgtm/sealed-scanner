@@ -1,10 +1,14 @@
-"""Regressão das duas diretrizes do operador em 2026-08-15 (perfil One Piece):
+"""Regressão das diretrizes do operador sobre referência e escopo (perfil OP):
 
-1. "para one piece vamos tomar como referência eBay apenas" —
-   `references.classification_source: ebay` faz a CLASSIFICAÇÃO (margem/GREEN)
-   usar o menor anúncio ATIVO do eBay US; SKU sem anúncio plausível fica sem
-   referência -> RED sem_referencia_us (nunca inventamos preço). Default
-   ('tcg' / chave ausente) preserva o comportamento histórico do Pokémon.
+1. Fonte de classificação configurável (`references.classification_source`):
+   'ebay' faz a CLASSIFICAÇÃO (margem/GREEN) usar o menor anúncio ATIVO do
+   eBay US; SKU sem anúncio plausível fica sem referência -> RED
+   sem_referencia_us (nunca inventamos preço). Default ('tcg' / chave ausente)
+   = comportamento histórico do Pokémon. Histórico no perfil OP: 2026-08-15
+   virou ebay ("para one piece vamos tomar como referência eBay apenas");
+   2026-09-02 REVERTIDO ("vamos tomar o tcg player como referencia principal
+   e ebay secundaria") — o config real volta a 'tcg', e a máquina do modo
+   ebay segue testada aqui com configs sintéticos.
 
 2. "deixa decks de fora" — product_type listado em `scope.exclude` vira
    barreira DURA no classify (tipo_fora_do_escopo). No Pokémon o exclude só
@@ -129,12 +133,17 @@ def test_exclude_pokemon_e_noop():
 
 
 def test_config_onepiece_do_repo_esta_com_as_diretrizes():
-    """Trava o config real: referência = eBay; decks fora (categorias e scope)."""
+    """Trava o config real: classificação = TCG (operador 2026-09-02, reverte
+    2026-08-15); eBay secundária/informativa; decks fora (categorias e scope)."""
     import yaml
     cfg = yaml.safe_load((pathlib.Path(__file__).resolve().parents[1]
                           / "config_onepiece.yaml").read_text(encoding="utf-8"))
-    assert cfg["references"]["classification_source"] == "ebay"
-    assert cfg["references"]["ebay_file"] == "data/ebay_reference_onepiece.json"
+    assert cfg["references"]["classification_source"] == "tcg"
+    assert cfg["references"]["us_file"] == "data/us_reference_onepiece.json"
+    # eBay segue como referência de VENDA secundária (colunas + link [eBay]).
+    assert cfg["route"]["extra_sell_references"]["ebay"]["enabled"] is True
+    assert (cfg["route"]["extra_sell_references"]["ebay"]["reference_file"]
+            == "data/ebay_reference_onepiece.json")
     assert 36 not in cfg["liga"]["categorias"]
     assert "Starter Deck" in cfg["scope"]["exclude"]
     # Operador 2026-08-17 (lista BUSCAR): cases/collections/tins/gift no
