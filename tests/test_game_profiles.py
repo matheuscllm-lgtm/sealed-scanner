@@ -56,12 +56,15 @@ def test_orchestrator_onepiece_mock_end_to_end(tmp_path, monkeypatch):
     monkeypatch.setattr(ORQ, "SCRIPT_DIR", tmp_path)
     (tmp_path / "data").mkdir()
     today = S.datetime.now(S.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    # Referência OP PINADA (não depende do preço vivo commitado). Desde
-    # 2026-08-15 o perfil OP CLASSIFICA pelo eBay (classification_source: ebay);
-    # o us_reference segue existindo só p/ o piso anti-lixo do builder.
+    # Referência OP PINADA (não depende do preço vivo commitado). Operador
+    # 2026-09-02: o perfil OP voltou a CLASSIFICAR pelo TCGplayer
+    # (classification_source: tcg, reverte 2026-08-15); o ebay_reference vira
+    # referência de VENDA secundária/informativa (colunas + link [eBay]).
     (tmp_path / "data" / "us_reference_onepiece.json").write_text(
         json.dumps({"captured_at": today,
-                    "prices": {"op16-booster-box-en": 200.0}}), encoding="utf-8")
+                    "prices": {"op16-booster-box-en": 200.0,
+                               "op16-booster-box-case-en": 1200.0}}),
+        encoding="utf-8")
     (tmp_path / "data" / "ebay_reference_onepiece.json").write_text(
         json.dumps({"captured_at": today,
                     "entries": {
@@ -94,13 +97,14 @@ def test_orchestrator_onepiece_mock_end_to_end(tmp_path, monkeypatch):
     verdict = {r["ID Anúncio"]: r["Confiança do deal"] for r in rows}
     assert verdict["OP-GOOD"] == "GREEN"      # 200*5.05/500 → ~102% na banda
     # Operador 2026-08-17: case é SKU de 1ª classe — classifica de ponta a
-    # ponta com referência eBay própria (1200*5.05/4000 → ~51,5% GREEN).
+    # ponta com referência própria (1200*5.05/4000 → ~51,5% GREEN).
     assert verdict["OP-CASE"] == "GREEN"
     meta = json.loads((op_dirs[-1] / "run_meta.json").read_text(encoding="utf-8"))
     assert meta["game"] == "onepiece"
     assert "One Piece" in meta["route_label"]
-    # Operador 2026-08-15: a classificação do perfil OP é vs eBay.
-    assert meta["classification_reference"] == "ebay"
+    # Operador 2026-09-02: classificação do perfil OP voltou ao TCGplayer
+    # (reverte a diretriz eBay de 2026-08-15; eBay = secundária/informativa).
+    assert meta["classification_reference"] == "tcg"
 
 
 def test_orchestrator_default_sources_come_from_profile_config(tmp_path, monkeypatch):

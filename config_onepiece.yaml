@@ -34,7 +34,8 @@ deal_criteria:
   # pedida > 1.5x a ref TCG (us_file) = provável pedida órfã que não acompanhou
   # queda de preço. GREEN cuja margem vs TCG não passa o mínimo vira RED
   # `ref_venda_descolada_tcg` (auditável). Só existe no modo
-  # classification_source=ebay; simétrico do guard de anúncio-lixo (<50%).
+  # classification_source=ebay — INERTE desde 2026-09-02 (classificação voltou
+  # ao TCG); a chave fica p/ eventual retorno ao modo ebay.
   max_sell_ref_vs_tcg_ratio: 1.5
 
 sources:
@@ -45,8 +46,8 @@ sources:
 
 route:
   name: ligaop_to_ebay_us
-  label: "BR (Liga One Piece) → venda eBay US via Probstein · classificação vs eBay menor anúncio ativo"
-  sell_reference: "eBay US menor anúncio ativo (Browse API) — referência única do perfil OP"
+  label: "BR (Liga One Piece) → venda eBay US via Probstein · classificação vs TCGplayer"
+  sell_reference: "TCGplayer US (Market, tcgcsv cat 68) — referência principal; eBay menor anúncio ativo = secundária/informativa"
   extra_sell_references:
     ebay:
       enabled: true
@@ -56,13 +57,15 @@ route:
 
 references:
   us_file: data/us_reference_onepiece.json
-  # Operador 2026-08-15: "para one piece vamos tomar como referência eBay
-  # apenas" — a CLASSIFICAÇÃO (margem/GREEN) usa o menor anúncio ATIVO do eBay
-  # US (data/ebay_reference_onepiece.json, rebuildado no dia via
-  # build_ebay_reference.py --game onepiece). SKU sem anúncio plausível fica
-  # sem referência -> RED (nunca inventamos preço). O us_file acima segue
-  # existindo só p/ o piso anti-lixo do próprio build_ebay_reference.
-  classification_source: ebay
+  # Operador 2026-09-02: "vamos tomar o tcg player como referencia principal e
+  # ebay secundaria" — REVERTE a diretriz de 2026-08-15 (que classificava pelo
+  # menor anúncio ativo do eBay). A CLASSIFICAÇÃO (margem/GREEN) volta ao
+  # TCGplayer US (Market via tcgcsv cat 68, us_file acima, rebuildado no dia
+  # via build_us_reference.py --game onepiece) — mesmo comportamento do perfil
+  # Pokémon. O eBay segue como referência SECUNDÁRIA/informativa (colunas
+  # Ref. eBay/Margem vs eBay + link [eBay] via route.extra_sell_references —
+  # nunca classifica). ebay_file fica p/ eventual retorno ao modo ebay.
+  classification_source: tcg
   ebay_file: data/ebay_reference_onepiece.json
 
 # Fontes default DESTE perfil: só Liga (OLX/ML/Amazon têm queries de busca

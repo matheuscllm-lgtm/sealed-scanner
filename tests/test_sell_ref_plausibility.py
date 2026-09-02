@@ -30,6 +30,9 @@ SKU_ID = "ilbox-vol7-en"
 
 def _config_ebay(ratio=1.5):
     config = yaml.safe_load((ROOT / "config_onepiece.yaml").read_text(encoding="utf-8"))
+    # Desde 2026-09-02 o config real do perfil OP classifica pelo TCG; o guard
+    # só existe no modo ebay — força aqui p/ seguir testando a máquina dele.
+    config["references"]["classification_source"] = "ebay"
     config["currency"]["usd_brl"] = 5.0
     if ratio is None:
         config["deal_criteria"].pop("max_sell_ref_vs_tcg_ratio", None)

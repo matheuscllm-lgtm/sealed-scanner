@@ -199,6 +199,14 @@ Erros recorrentes (3 famílias — detalhe no manual):
 - Seleção: `--game {pokemon,onepiece}` nos 2 runners, no `run_liga_local.py` e
   no `scripts/snapshot.py` (mesma flag nos DOIS passos do fluxo!). Sem a flag,
   vale `game:` do config; sem nada, Pokémon.
+- **Referência de classificação do perfil OP** (`references.classification_source`
+  no `config_onepiece.yaml`): histórico — 2026-08-15 o operador mudou p/ `ebay`
+  (menor anúncio ativo); **2026-09-02 REVERTIDO p/ `tcg`** ("vamos tomar o tcg
+  player como referencia principal e ebay secundaria") — os DOIS perfis voltam a
+  classificar pelo TCGplayer Market, e o eBay é referência de venda
+  secundária/informativa nos dois (colunas + link `[eBay]`, nunca classifica).
+  O guard `ref_venda_descolada_tcg` (PR #78) só roda no modo `ebay` — hoje
+  INERTE, mantido no código p/ eventual retorno.
 - **Registry OP = 100% dados reais do tcgcsv** (gerado/ampliável por
   `scripts/gen_onepiece_registry.py`): escopo seed = PRB-01 (2024-11) → OP17;
   Case/DON!!/Dash/Bonus/lotes ficam FORA e contados. **ZERO alias PT de set**
