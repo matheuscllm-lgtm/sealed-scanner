@@ -126,7 +126,9 @@ liga:
   keep_languages: ["EN"]
   # Teto de produtos por categoria. Mode local: sem custo, pode subir
   # bem. Mode scraperapi: cada produto = ~25-50 credits, dose com cuidado.
-  max_products_per_category: 30
+  # 2026-09-02: 30 cortava a categoria Blisters (37 EN) — o Blister Unitário do
+  # JTG (31º) nunca entrou em scan. Catálogo EN real ~40-50/categoria; 200 = folga.
+  max_products_per_category: 200
   delay_seconds: 1.0
 
 amazon:

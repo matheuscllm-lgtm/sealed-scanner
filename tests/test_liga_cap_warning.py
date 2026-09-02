@@ -32,7 +32,7 @@ class _FakeFetcher:
 
     def get(self, url, **kw):
         self.urls.append(url)
-        if "categ=" in url:
+        if "cards/search" in url:          # URL de listagem de categoria
             return self.cat_html
         return b"<html></html>"          # página de produto vazia → 0 anúncios
 

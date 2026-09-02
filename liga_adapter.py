@@ -755,6 +755,14 @@ def fetch_listings(config: dict) -> list[dict]:
             products = parse_category_products(cat_html, base=base)
             filtered = [p for p in products if _name_lang(p["name"]) in keep_langs]
             print(f"    produtos: {len(products)} ({len(filtered)} {sorted(keep_langs)})")
+            cut = len(filtered) - max_products_per_cat
+            if cut > 0:
+                # Gap real 2026-09-02: teto 30 escondia o 31º..37º da categoria
+                # Blisters (Blister Unitário JTG) sem nenhum aviso. Corte é
+                # decisão de config, mas nunca silencioso.
+                print(f"    [aviso] categoria {categ}: {cut} produto(s) {sorted(keep_langs)} "
+                      f"acima do teto max_products_per_category={max_products_per_cat} "
+                      f"ficaram FORA do scan (suba o teto no config.yaml ou --max-por-categoria)")
             for prod in filtered[:max_products_per_cat]:
                 if prod["pcode"] in seen_pcodes:
                     continue
