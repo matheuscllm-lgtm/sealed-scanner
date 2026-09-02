@@ -718,6 +718,13 @@ def fetch_listings(config: dict) -> list[dict]:
     liga_cfg = config.get("liga", {}) or {}
     delay = liga_cfg.get("delay_seconds", 1.0)
     max_products_per_cat = liga_cfg.get("max_products_per_category", 30)
+    mode = (os.environ.get("LIGA_MODE") or liga_cfg.get("mode") or "local").lower()
+    if mode == "scraperapi":
+        # Modo PAGO (~25-50 créditos por produto): o teto generoso do modo local
+        # não pode vazar pra cá. Chave própria, default conservador 30.
+        max_products_per_cat = liga_cfg.get("max_products_per_category_scraperapi", 30)
+        print(f"  [liga] mode=scraperapi: teto por categoria = {max_products_per_cat} "
+              f"(max_products_per_category_scraperapi; o teto local não se aplica)")
     keep_langs = set(liga_cfg.get("keep_languages") or ["EN"])
     base = (liga_cfg.get("base_url") or LIGA_BASE).rstrip("/")
     cat_names = liga_cfg.get("categorias_nomes") or DEFAULT_CATEGORIES
@@ -760,7 +767,7 @@ def fetch_listings(config: dict) -> list[dict]:
                 # Gap real 2026-09-02: teto 30 escondia o 31º..37º da categoria
                 # Blisters (Blister Unitário JTG) sem nenhum aviso. Corte é
                 # decisão de config, mas nunca silencioso.
-                print(f"    [aviso] categoria {categ}: {cut} produto(s) {sorted(keep_langs)} "
+                print(f"    [aviso] categoria {categ}: {cut} produto(s) {'/'.join(sorted(keep_langs))} "
                       f"acima do teto max_products_per_category={max_products_per_cat} "
                       f"ficaram FORA do scan (suba o teto no config.yaml ou --max-por-categoria)")
             for prod in filtered[:max_products_per_cat]:
