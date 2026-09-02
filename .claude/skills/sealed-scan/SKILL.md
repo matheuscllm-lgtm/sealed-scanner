@@ -121,9 +121,13 @@ argumentos pega o `results/unified_*` **mais recente do jogo** e escreve
   célula `Links` = `[oferta](url BR) · [TCG](url TCGplayer) · [eBay](menor
   anúncio ativo US)` — o `[eBay]` aparece só quando a referência de venda cobriu
   o SKU. Links lidos do CSV/registry — **nunca invente URL**.
-- **Mostre TODAS as linhas**: a seção "Produtos acionáveis (GREEN+YELLOW)" **e**
-  o "Ranking completo por produto" (inclui RED). Entrega "vazia" (0 GREEN) ainda
-  é a tabela completa — nunca texto solto.
+- **No chat vai SÓ a primeira tabela** (operador, 2026-09-02): cole o cabeçalho
+  do snapshot + a seção "🟢🟡 Produtos acionáveis (GREEN + YELLOW)" completa,
+  verbatim. **NÃO** cole por default a escada "Quantidades e preços por unidade",
+  o "Ranking completo por produto" (RED) nem a "Decisão de venda por produto" —
+  esses blocos ficam no `.md` e só entram no chat quando o operador **pedir
+  análise de um produto específico** (aí cole o bloco `#N — nome` daquele
+  produto). Entrega "vazia" (0 GREEN) ainda é a tabela (vazia) — nunca texto solto.
 - Entrega **agrupada por produto** (SKU canônico) com a escada de ofertas por
   unidade; colunas canônicas travadas em `tests/test_snapshot_links.py` e
   `tests/test_snapshot_grouping.py` — a fonte de verdade do layout é o próprio

@@ -135,8 +135,10 @@ Erros recorrentes (3 famílias — detalhe no manual):
 
 - **Entrega = colar VERBATIM o markdown do `scripts/snapshot.py` no chat.**
   NUNCA montar tabela à mão, nunca XLSX/CSV por padrão (arquivo só se o operador
-  pedir explicitamente), mostrar TODAS as linhas (acionáveis GREEN+YELLOW **e** o
-  ranking completo com os RED).
+  pedir explicitamente). **No chat vai só o cabeçalho + a tabela "Produtos
+  acionáveis (GREEN+YELLOW)" completa** (operador, 2026-09-02); escada por
+  unidade, ranking com os RED e "Decisão de venda" ficam no `.md` e só entram
+  no chat quando o operador pedir análise de um produto específico.
 - Formato = modelo MYP cross-scanner (padrão do operador, 2026-06-20) **adaptado
   a selados**: tabela **agrupada por produto/SKU canônico** (não lista plana de
   anúncios), com status 🟢 GREEN / 🟡 YELLOW / 🔴 RED, Ref. Nacional (R$),
