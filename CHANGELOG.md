@@ -3,6 +3,28 @@
 Registro datado de mudanças relevantes. O repo não usa versionamento semântico
 (SemVer); as entradas são por data. Fonte única de estado segue o `README.md`.
 
+## 2026-09-04 — referência do DIA garantida pelo runner canônico
+
+**Problema:** desde 2026-08-15 o config exige referência de no máximo 1 dia
+(`deal_criteria.max_reference_age_days: 1`, decisão do operador "SÓ dado do
+dia"), mas o `run_liga_local.py` — o caminho canônico de scan — não reconstruía
+nada. Um scan com `data/us_reference.json` de dias atrás rebaixava todo GREEN
+para YELLOW sem que o motivo aparecesse no pedido do operador.
+
+**Mudança:** `run_liga_local.py` roda `build_us_reference.py` (classifica) e
+`build_ebay_reference.py` (venda, informativa) ANTES da coleta, com o `--game`
+do run. Ligado por default; `--no-refresh-refs` usa os arquivos existentes.
+
+- Best-effort por decisão: código de saída != 0 ou exceção só AVISA e o scan
+  segue — os builders nunca sobrescrevem o arquivo anterior num run degradado
+  (regra inviolável nº 8), então o pior caso é a degradação honesta de sempre.
+- Timeout de 30 min por builder: a entrega nunca fica pendurada atrás da rede.
+- `tests/test_run_liga_local_refresh.py` (7 testes) trava ordem US→eBay,
+  repasse do `--game`, o timeout e o contrato de não-propagação. Suíte: 606.
+- Doc: regra inviolável nº 4 do CLAUDE.md corrigida (dizia 14 dias; o config
+  está em 1 desde 2026-08-15).
+
+
 ## 2026-09-01 — Registry: rótulo honesto `Booster Pack` nos 26 SKUs de pacote (Opção A da auditoria)
 
 A auditoria de 2026-09-01 (`HANDOFF-2026-09-01-auditoria-registry-sleeved.md`)

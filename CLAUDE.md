@@ -67,9 +67,13 @@ Erros recorrentes (3 famílias — detalhe no manual):
    SKU "151 Binder Collection" US$240 = 432% fantasma). Match HIGH acima do teto
    NÃO vira GREEN — cai em RED auditável para verificação manual.
 4. **Referência US velha rebaixa GREEN → YELLOW**
-   (`deal_criteria.max_reference_age_days: 14`). O fluxo canônico refresca a
-   referência antes do scan (tcgcsv atualiza diário), então só dispara em scan
-   sem refresh.
+   (`deal_criteria.max_reference_age_days: **1**` — decisão do operador
+   2026-08-15: "SÓ dado do dia"; era 14 até então). O fluxo canônico refresca as
+   DUAS referências antes do scan — desde 2026-09-04 o próprio
+   `run_liga_local.py` roda `build_us_reference.py` + `build_ebay_reference.py`
+   por default (`--no-refresh-refs` desliga) —, então só dispara em scan sem
+   refresh. O refresh é best-effort: falha de rede/chave só AVISA e o scan segue
+   com a referência anterior (degradação honesta da regra nº 8).
 5. **YELLOW nunca é faixa de margem** — vem de match ambíguo (1 anúncio casa
    2+ SKUs) ou do rebaixamento GREEN→YELLOW por referência velha (regra 4).
    A classificação por margem é só GREEN/RED.
@@ -116,10 +120,14 @@ Erros recorrentes (3 famílias — detalhe no manual):
   `--no-snapshot` / `--no-janela` só para debug do coletor). Flags úteis:
   `--game {pokemon,onepiece}` (default pokemon — define config/registry/
   referências/raiz de resultados), `--categorias 10,27`, `--max-por-categoria N`,
-  `--skip-check`. O orquestrador aceita `--game`, `--config`, `--registry` e
-  `--mock` (fixture JSON de `mock_data/`; a de OP é `onepiece_listings.json`).
-  Refresh opcional da referência de VENDA: `python build_ebay_reference.py`
-  (exige chaves eBay — `SETUP-VALIDACAO.md §A`; sem elas nada quebra).
+  `--skip-check`, `--no-refresh-refs`. O orquestrador aceita `--game`,
+  `--config`, `--registry` e `--mock` (fixture JSON de `mock_data/`; a de OP é
+  `onepiece_listings.json`).
+  **Referências do DIA são reconstruídas por default** pelo `run_liga_local.py`
+  (US/TCGplayer que classifica + eBay que é informativa) — o config exige
+  referência de no máximo 1 dia. Rodar à mão continua valendo:
+  `python build_us_reference.py` e `python build_ebay_reference.py` (esta exige
+  chaves eBay — `SETUP-VALIDACAO.md §A`; sem elas nada quebra).
 - **Setup 1ª vez:** `pip install -r requirements.txt` (+ `patchright` e Google
   Chrome instalado para o modo local da Liga). Guia passo a passo do PC do
   operador: `SETUP-WINDOWS.md`. Nuvem/servidor: a Liga bloqueia IP de datacenter
@@ -298,7 +306,7 @@ painel nunca recomenda compra. Endpoints: `/` (página), `/health`, `/api/deals`
 ## Testes
 
 ```bash
-python -m pytest -q     # 597 testes (verificado 2026-08-30), 100% offline
+python -m pytest -q     # 606 testes (verificado 2026-09-04), 100% offline
 ```
 
 - A suíte roda inteira sem rede/credencial/browser: adapters testados contra
@@ -319,7 +327,8 @@ sealed_arbitrage_scanner.py  pipeline: match título↔SKU + gate de condição 
                              + GAME_PROFILES/resolve_game (perfis por jogo)
 run_all_sources.py           orquestrador multi-fonte (--game; default_sources do perfil; amazon opt-in)
                              → results/[<jogo>/]unified_*/ + sidecar run_meta.json (rota + referências)
-run_liga_local.py            atalho canônico do scan Liga local (--game; Chrome headful + snapshot no fim)
+run_liga_local.py            atalho canônico do scan Liga local (--game; refresh das referências do DIA +
+                             Chrome headful + análise + snapshot no fim)
 liga_adapter.py              plataforma LigaMagic (patchright + Chrome headful; modo scraperapi p/ servidor);
                              parametrizado por PERFIL (base_url/categorias/traduções; defaults = Liga Pokémon)
 olx_adapter.py               OLX (rota Firecrawl fura o WAF) — queries Pokémon (cobertura OP = backlog)
