@@ -8,6 +8,7 @@ scripts/analysis_report.py (reimprime) e scripts/snapshot.py (embute a
 Nunca montar tabela de análise à mão fora daqui (regra de entrega da frota).
 """
 from __future__ import annotations
+from ..chat_format import reference_price
 
 _STATE_EMOJI = {
     "JANELA_VENDA": "🟢", "MANTER_30D": "🔵", "MANTER_60D": "🔵",
@@ -46,9 +47,9 @@ def decision_table_lines(analysis: dict) -> list[str]:
     lines.append(
         "| # | Decisão | Produto | Compra (R$) | Venda base (US$) | "
         "Lucro líq. hoje (R$) | Lucro esperado (R$) | Valor de esperar (R$) | "
-        "Conf. % | Score | Próx. revisão |"
+        "Conf. % | Score | Próx. revisão | Links |"
     )
-    lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|---:|---|")
+    lines.append("|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---|")
     any_projected = False
     for i, p in enumerate(analysis.get("products") or [], start=1):
         rec = p.get("recommendation") or {}
@@ -68,11 +69,12 @@ def decision_table_lines(analysis: dict) -> list[str]:
         lines.append(
             f"| {i} | {state_label(rec.get('state', '?'))} | "
             f"{_esc(p.get('produto'))[:55]} | {_brl((p.get('buy') or {}).get('price_brl'))} | "
-            f"{_usd(sell_base)}{mark} | {_brl(exp.get('lucro_hoje_brl'))} | "
+            f"{reference_price(_usd(sell_base) + mark, sell.get('reference_url'))} | {_brl(exp.get('lucro_hoje_brl'))} | "
             f"{_brl(best.get('lucro_esperado_brl')) if best else '-'} | "
             f"{_brl(best.get('valor_de_esperar_brl')) if best else '-'} | "
             f"{rec.get('confidence_pct', '-')} | {score if score is not None else '-'} | "
-            f"{rec.get('next_review_date', '-')} |"
+            f"{rec.get('next_review_date', '-')} | "
+            f"{reference_price('oferta', (p.get('buy') or {}).get('url'))} · {reference_price('referência', sell.get('reference_url'))} |"
         )
     if any_projected:
         lines.append("")
