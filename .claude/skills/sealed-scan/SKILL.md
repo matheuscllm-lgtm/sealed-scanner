@@ -3,6 +3,10 @@ name: sealed-scan
 description: Use when the operator wants to run the sealed products arbitrage scanner ("roda o selados", "scan sealed", "roda o sealed scanner", "deals de selados", "roda o Liga selados", "selados da Liga", "panorama de selados"). O scanner tem 4 fontes BR (Liga, OLX, MercadoLivre, Amazon); ao pedir o scan, PERGUNTE qual fonte rodar (AskUserQuestion — Liga $0 é o default recomendado; Amazon é opt-in pago), rode via run_liga_local.py (só Liga) ou run_all_sources.py (multi-fonte), e entregue SEMPRE via scripts/snapshot.py — tabela markdown modelo MYP adaptado a selados, agrupada por produto, com Ref. Nacional (R$), Ref. TCG (US$→R$), Margem bruta % por linha e os dois links [oferta](BR) · [TCG](TCGplayer) em toda linha, colada VERBATIM no chat. Nunca montar tabela à mão.
 ---
 
+REGRA VIGENTE DO OPERADOR: ler DELIVERY_CHAT.md na raiz do repositório. Entrega somente no chat, preço de referência clicável, coleta nova sob demanda; não executar scans no GitHub Actions nem publicar resultados. Esta regra substitui instruções antigas conflitantes abaixo.
+
+
+
 # Sealed Products Scanner — caminho único de execução e entrega (multi-fonte)
 
 ## Overview

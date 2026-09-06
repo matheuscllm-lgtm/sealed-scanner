@@ -3,6 +3,10 @@ description: Mostra status do GOALS.md (sem args) OU executa o plan ativo ponta-
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob, Task, TaskCreate, TaskUpdate, TaskList
 ---
 
+REGRA VIGENTE DO OPERADOR: ler DELIVERY_CHAT.md na raiz do repositório. Entrega somente no chat, preço de referência clicável, coleta nova sob demanda; não executar scans no GitHub Actions nem publicar resultados. Esta regra substitui instruções antigas conflitantes abaixo.
+
+
+
 Você foi invocado pelo comando `/goal` do projeto TCG Sealed Arbitrage Scanner.
 
 **Argumento recebido:** `$ARGUMENTS`

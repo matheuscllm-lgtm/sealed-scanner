@@ -262,6 +262,11 @@ def is_suspect(r: dict) -> bool:
     return any(t in risco for t in ("anômal", "anomal", "trocad", "variante", "verifique", "confirm"))
 
 
+import sys
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from lib.chat_format import reference_price
+
 def md_link(label: str, url: str) -> str:
     """Link markdown clicável. Percent-encoda chars inválidos (espaço, aspas,
     apóstrofo, parênteses) sem re-encodar %XX existentes — o site Liga One Piece
@@ -671,7 +676,7 @@ def main() -> None:
             if ebay_is_ref:
                 lines.append(
                     f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | {g['tipo']} | "
-                    f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | "
+                    f"{fmt_brl(g['br_ref'])} | {reference_price(fmt_brl(g['tcg_brl']), ebay_link(g['ref']) if ebay_is_ref else tcg_link(g['ref']))} | "
                     f"{fmt_pct(g['margem'])} | "
                     f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
                     f"{g['n_ofertas']} | {flag} | {group_links_cell(g)} |"
@@ -679,7 +684,7 @@ def main() -> None:
             else:
                 lines.append(
                     f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | {g['tipo']} | "
-                    f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | {fmt_brl(g['ebay_brl'])} | "
+                    f"{fmt_brl(g['br_ref'])} | {reference_price(fmt_brl(g['tcg_brl']), ebay_link(g['ref']) if ebay_is_ref else tcg_link(g['ref']))} | {reference_price(fmt_brl(g['ebay_brl']), ebay_link(g['ref']))} | "
                     f"{fmt_pct(g['margem'])} | {fmt_pct(g['ebay_margem'])} | "
                     f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
                     f"{g['n_ofertas']} | {flag} | {group_links_cell(g)} |"
@@ -695,7 +700,7 @@ def main() -> None:
         )
         lines.append("")
         for i, g in enumerate(actionable, start=1):
-            ref_tcg = fmt_brl(g["tcg_brl"])
+            ref_tcg = reference_price(fmt_brl(g["tcg_brl"]), ebay_link(g["ref"]) if ebay_is_ref else tcg_link(g["ref"]))
             med = fmt_brl(g["br_median"])
             lines.append(
                 f"**#{i} — {g['produto']}** · {g['tipo']} · Coleção: {g['colecao']} · "
@@ -744,7 +749,7 @@ def main() -> None:
         if ebay_is_ref:
             lines.append(
                 f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | "
-                f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | "
+                f"{fmt_brl(g['br_ref'])} | {reference_price(fmt_brl(g['tcg_brl']), ebay_link(g['ref']) if ebay_is_ref else tcg_link(g['ref']))} | "
                 f"{fmt_pct(g['margem'])} | "
                 f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
                 f"{g['n_ofertas']} | {group_links_cell(g)} |"
@@ -752,7 +757,7 @@ def main() -> None:
         else:
             lines.append(
                 f"| {i} | {group_status_label(g)} | {g['produto'][:60]} | "
-                f"{fmt_brl(g['br_ref'])} | {fmt_brl(g['tcg_brl'])} | {fmt_brl(g['ebay_brl'])} | "
+                f"{fmt_brl(g['br_ref'])} | {reference_price(fmt_brl(g['tcg_brl']), ebay_link(g['ref']) if ebay_is_ref else tcg_link(g['ref']))} | {reference_price(fmt_brl(g['ebay_brl']), ebay_link(g['ref']))} | "
                 f"{fmt_pct(g['margem'])} | "
                 f"{fmt_brl(g['delta'])} | {fmt_qtd_total(g)} | "
                 f"{g['n_ofertas']} | {group_links_cell(g)} |"
