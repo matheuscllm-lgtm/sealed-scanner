@@ -23,7 +23,7 @@ histórico) e **One Piece TCG** (primeira expansão de nicho). Repo GitHub:
 
 ## 🛰️ Convenções da frota (cross-scanner)
 
-> **Manual completo** (repo privado): https://github.com/matheuscllm-lgtm/scanners-commons — erros comuns, referências de preço, chaves, GitHub Actions e modelo de entrega de TODOS os scanners. Cópia-mestra local (PC do operador): `C:\Users\mathe\scanners-commons\`.
+> **Manual completo** (repo público): https://github.com/matheuscllm-lgtm/scanners-commons — erros comuns, referências de preço, chaves, GitHub Actions e modelo de entrega de TODOS os scanners. Cópia-mestra local (PC do operador): `C:\Users\mathe\scanners-commons\`.
 
 Invariantes que valem para TODOS os scanners:
 
