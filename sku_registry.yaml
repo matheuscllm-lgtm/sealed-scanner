@@ -3736,7 +3736,7 @@ skus:
     - protetor
     - enhanced
 - id: meg-sleeved-booster
-  name: Mega Evolution Sleeved Booster (English)
+  name: Mega Evolution Booster Pack (English)
   era_umbrella: true          # set-base da era Mega — perde p/ sub-set específico
   product_type: Booster Pack
   set: Mega Evolution
@@ -3747,11 +3747,9 @@ skus:
   tcgplayer_product_id: 644352
   match:
     set_terms: *id001
-    type_terms: &id005
+    type_terms: &loose_pack_type   # pacote SOLTO: set tem Sleeved separado no tcgcsv -> Blister Unitário NÃO entra aqui (2026-09-02)
     - booster avulso
     - booster pack
-    - blister unitário
-    - blister unitario
     exclude_terms: &id002
     - japones
     - japonesa
@@ -3932,7 +3930,7 @@ skus:
     type_terms: *id004
     exclude_terms: *id002
 - id: blk-sleeved-booster
-  name: Black Bolt Sleeved Booster (English)
+  name: Black Bolt Booster Pack (English)
   product_type: Booster Pack
   set: Black Bolt
   set_code: BLK
@@ -3942,7 +3940,11 @@ skus:
   tcgplayer_product_id: 630434
   match:
     set_terms: *id003
-    type_terms: *id005
+    type_terms: &id005   # set SEM Sleeved separado no tcgcsv: Blister Unitário cai no único pid mapeável
+    - booster avulso
+    - booster pack
+    - blister unitário
+    - blister unitario
     exclude_terms: *id002
 - id: blk-tech-sticker
   name: Black Bolt Tech Sticker (English)
@@ -4030,7 +4032,7 @@ skus:
     type_terms: *id004
     exclude_terms: *id002
 - id: wht-sleeved-booster
-  name: White Flare Sleeved Booster (English)
+  name: White Flare Booster Pack (English)
   product_type: Booster Pack
   set: White Flare
   set_code: WHT
@@ -4126,7 +4128,7 @@ skus:
     type_terms: *id007
     exclude_terms: *id002
 - id: sfa-sleeved-booster
-  name: Shrouded Fable Sleeved Booster (English)
+  name: Shrouded Fable Booster Pack (English)
   product_type: Booster Pack
   set: Shrouded Fable
   set_code: SFA
@@ -4196,7 +4198,7 @@ skus:
     type_terms: *id015
     exclude_terms: *id002
 - id: par-sleeved-booster
-  name: Paradox Rift Sleeved Booster (English)
+  name: Paradox Rift Booster Pack (English)
   product_type: Booster Pack
   set: Paradox Rift
   set_code: PAR
@@ -4206,7 +4208,7 @@ skus:
   tcgplayer_product_id: 512822
   match:
     set_terms: *id014
-    type_terms: *id005
+    type_terms: *loose_pack_type
     exclude_terms: *id002
 - id: mew-collection-box
   name: Scarlet & Violet 151 Collection Box (English)
@@ -4251,7 +4253,7 @@ skus:
     type_terms: *id007
     exclude_terms: *id002
 - id: obf-sleeved-booster
-  name: Obsidian Flames Sleeved Booster (English)
+  name: Obsidian Flames Booster Pack (English)
   product_type: Booster Pack
   set: Obsidian Flames
   set_code: OBF
@@ -4263,7 +4265,7 @@ skus:
     set_terms: &id017
     - obsidiana em chamas
     - obsidian flames
-    type_terms: *id005
+    type_terms: *loose_pack_type
     exclude_terms: *id002
 - id: obf-booster-box
   name: Obsidian Flames Booster Box (English)
@@ -4334,7 +4336,7 @@ skus:
     type_terms: *id015
     exclude_terms: *id002
 - id: pal-sleeved-booster
-  name: Paldea Evolved Sleeved Booster (English)
+  name: Paldea Evolved Booster Pack (English)
   product_type: Booster Pack
   set: Paldea Evolved
   set_code: PAL
@@ -4344,7 +4346,7 @@ skus:
   tcgplayer_product_id: 493976
   match:
     set_terms: *id018
-    type_terms: *id005
+    type_terms: *loose_pack_type
     exclude_terms: *id002
 - id: pal-booster-bundle
   name: Paldea Evolved Booster Bundle (English)
@@ -6139,7 +6141,7 @@ skus:
     - mini
     - premium
 - id: paf-sleeved-en
-  name: Paldean Fates Sleeved Booster (English)
+  name: Paldean Fates Booster Pack (English)
   product_type: Booster Pack
   set: Paldean Fates
   set_code: PAF
@@ -10224,7 +10226,7 @@ skus:
     - protetor
     - capa para
 - id: jtg-blister-1pack
-  name: Journey Together Single Pack Blister (English)
+  name: Journey Together Sleeved Booster Pack (English)
   product_type: Blister
   set: Journey Together
   set_code: JTG
@@ -10293,7 +10295,7 @@ skus:
     - protetor
     - storage
 - id: po-blister-1pack
-  name: Perfect Order Single Pack Blister (English)
+  name: Perfect Order Sleeved Booster Pack (English)
   product_type: Blister
   set: Perfect Order
   set_code: PO
@@ -10311,7 +10313,7 @@ skus:
     type_terms: *blister1_type
     exclude_terms: *blister1_excl
 - id: cr-blister-1pack
-  name: Chaos Rising Single Pack Blister (English)
+  name: Chaos Rising Sleeved Booster Pack (English)
   product_type: Blister
   set: Chaos Rising
   set_code: CR
@@ -10328,7 +10330,7 @@ skus:
     type_terms: *blister1_type
     exclude_terms: *blister1_excl
 - id: pb-blister-1pack
-  name: Pitch Black Single Pack Blister (English)
+  name: Pitch Black Sleeved Booster Pack (English)
   product_type: Blister
   set: Pitch Black
   set_code: PB
@@ -10344,7 +10346,7 @@ skus:
     type_terms: *blister1_type
     exclude_terms: *blister1_excl
 - id: phf-blister-1pack
-  name: Phantasmal Flames Single Pack Blister (English)
+  name: Phantasmal Flames Sleeved Booster Pack (English)
   product_type: Blister
   set: Phantasmal Flames
   set_code: PHF
@@ -10360,7 +10362,7 @@ skus:
     type_terms: *blister1_type
     exclude_terms: *blister1_excl
 - id: dri-blister-1pack
-  name: Destined Rivals Single Pack Blister (English)
+  name: Destined Rivals Sleeved Booster Pack (English)
   product_type: Blister
   set: Destined Rivals
   set_code: DRI
