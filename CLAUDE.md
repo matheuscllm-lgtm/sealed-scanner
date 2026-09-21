@@ -1,3 +1,11 @@
+<!-- FLEET:ESTILO-RESPOSTA v1 (2026-09-14) — cópia-mestra: scanners-commons/08-ESTILO-RESPOSTA.md. Editar LÁ e replicar; não divergir nesta cópia. -->
+> **Estilo de resposta obrigatório (operador, 2026-09-14): CONCISO — teto de 200 palavras.**
+> Toda resposta no chat, nesta ordem: **1) Objetivo** — 1 linha do que foi pedido · **2) O que foi feito** — bullets curtos, cada um com o *porquê* da decisão · **3) Dependências/pendências** — o que falta, o que bloqueia, de quem depende (`nenhuma` quando não houver).
+> O teto conta **só prosa**. **Fora do teto** (nunca resumir, cortar nem "amostrar" pra caber): a tabela de entrega gerada pela ferramenta do repo (colada VERBATIM), blocos de comando/código, saída de teste colada como prova e artefato canônico do repo (brief, relatório, análise).
+> Sem preâmbulo, sem repetir o pedido, sem recapitular o que já foi dito. Não cabe em 200 palavras? Entregue o essencial dentro do teto e ofereça o detalhe ("quer o detalhe de X?") — nunca estoure em silêncio.
+
+> **Regra vigente de entrega:** [DELIVERY_CHAT.md](DELIVERY_CHAT.md). Resultados somente no chat, referência clicável e coleta nova por solicitação; substitui orientações antigas de entrega via GitHub ou preços reutilizados.
+
 # CLAUDE.md — sealed-scanner
 
 Instruções para qualquer sessão Claude Code (local ou nuvem) que trabalhe neste repo.
@@ -15,7 +23,7 @@ histórico) e **One Piece TCG** (primeira expansão de nicho). Repo GitHub:
 
 ## 🛰️ Convenções da frota (cross-scanner)
 
-> **Manual completo** (repo privado): https://github.com/matheuscllm-lgtm/scanners-commons — erros comuns, referências de preço, chaves, GitHub Actions e modelo de entrega de TODOS os scanners. Cópia-mestra local (PC do operador): `C:\Users\mathe\scanners-commons\`.
+> **Manual completo** (repo público): https://github.com/matheuscllm-lgtm/scanners-commons — erros comuns, referências de preço, chaves, GitHub Actions e modelo de entrega de TODOS os scanners. Cópia-mestra local (PC do operador): `C:\Users\mathe\scanners-commons\`.
 
 Invariantes que valem para TODOS os scanners:
 
@@ -26,6 +34,7 @@ Invariantes que valem para TODOS os scanners:
 - **Nunca recomendar compra** — o scanner reporta margem, flags e fontes; a decisão de capital é do operador.
 - **Entrega = tabela markdown no chat** (nunca XLSX/CSV por padrão), gerada pela ferramenta do repo — nunca montada à mão —, mostrando TODAS as linhas (aprovadas + rejeitadas). Coluna `Carta` = nome + número; coluna `Links` combinada = `[oferta](url) · [TCG/referência](url)`.
 - ⚠️ **Convenção de threshold:** percentual inteiro (`30`) = MYP, Liga, eBay; fração (`0.30`) = CardTrader, COMC, Selados.
+- **Sem check-ins automáticos de PR** (operador, 2026-09-12): depois de abrir um PR, a sessão reporta o link no chat e **para** — sem `subscribe_pr_activity`, sem check-in agendado (`send_later`/Routine/cron), sem poll de CI/review. Assinatura de PR criada pelo harness deve ser cancelada. Exceção única: pedido explícito do operador ("acompanha esse PR").
 
 Erros recorrentes (3 famílias — detalhe no manual):
 
@@ -67,9 +76,13 @@ Erros recorrentes (3 famílias — detalhe no manual):
    SKU "151 Binder Collection" US$240 = 432% fantasma). Match HIGH acima do teto
    NÃO vira GREEN — cai em RED auditável para verificação manual.
 4. **Referência US velha rebaixa GREEN → YELLOW**
-   (`deal_criteria.max_reference_age_days: 14`). O fluxo canônico refresca a
-   referência antes do scan (tcgcsv atualiza diário), então só dispara em scan
-   sem refresh.
+   (`deal_criteria.max_reference_age_days: **1**` — decisão do operador
+   2026-08-15: "SÓ dado do dia"; era 14 até então). O fluxo canônico refresca as
+   DUAS referências antes do scan — desde 2026-09-04 o próprio
+   `run_liga_local.py` roda `build_us_reference.py` + `build_ebay_reference.py`
+   por default (`--no-refresh-refs` desliga) —, então só dispara em scan sem
+   refresh. O refresh é best-effort: falha de rede/chave só AVISA e o scan segue
+   com a referência anterior (degradação honesta da regra nº 8).
 5. **YELLOW nunca é faixa de margem** — vem de match ambíguo (1 anúncio casa
    2+ SKUs) ou do rebaixamento GREEN→YELLOW por referência velha (regra 4).
    A classificação por margem é só GREEN/RED.
@@ -116,10 +129,14 @@ Erros recorrentes (3 famílias — detalhe no manual):
   `--no-snapshot` / `--no-janela` só para debug do coletor). Flags úteis:
   `--game {pokemon,onepiece}` (default pokemon — define config/registry/
   referências/raiz de resultados), `--categorias 10,27`, `--max-por-categoria N`,
-  `--skip-check`. O orquestrador aceita `--game`, `--config`, `--registry` e
-  `--mock` (fixture JSON de `mock_data/`; a de OP é `onepiece_listings.json`).
-  Refresh opcional da referência de VENDA: `python build_ebay_reference.py`
-  (exige chaves eBay — `SETUP-VALIDACAO.md §A`; sem elas nada quebra).
+  `--skip-check`, `--no-refresh-refs`. O orquestrador aceita `--game`,
+  `--config`, `--registry` e `--mock` (fixture JSON de `mock_data/`; a de OP é
+  `onepiece_listings.json`).
+  **Referências do DIA são reconstruídas por default** pelo `run_liga_local.py`
+  (US/TCGplayer que classifica + eBay que é informativa) — o config exige
+  referência de no máximo 1 dia. Rodar à mão continua valendo:
+  `python build_us_reference.py` e `python build_ebay_reference.py` (esta exige
+  chaves eBay — `SETUP-VALIDACAO.md §A`; sem elas nada quebra).
 - **Setup 1ª vez:** `pip install -r requirements.txt` (+ `patchright` e Google
   Chrome instalado para o modo local da Liga). Guia passo a passo do PC do
   operador: `SETUP-WINDOWS.md`. Nuvem/servidor: a Liga bloqueia IP de datacenter
@@ -300,7 +317,7 @@ painel nunca recomenda compra. Endpoints: `/` (página), `/health`, `/api/deals`
 ## Testes
 
 ```bash
-python -m pytest -q     # 607 testes (verificado 2026-09-02), 100% offline
+python -m pytest -q     # 614 testes (verificado 2026-09-21), 100% offline
 ```
 
 - A suíte roda inteira sem rede/credencial/browser: adapters testados contra
@@ -321,7 +338,8 @@ sealed_arbitrage_scanner.py  pipeline: match título↔SKU + gate de condição 
                              + GAME_PROFILES/resolve_game (perfis por jogo)
 run_all_sources.py           orquestrador multi-fonte (--game; default_sources do perfil; amazon opt-in)
                              → results/[<jogo>/]unified_*/ + sidecar run_meta.json (rota + referências)
-run_liga_local.py            atalho canônico do scan Liga local (--game; Chrome headful + snapshot no fim)
+run_liga_local.py            atalho canônico do scan Liga local (--game; refresh das referências do DIA +
+                             Chrome headful + análise + snapshot no fim)
 liga_adapter.py              plataforma LigaMagic (patchright + Chrome headful; modo scraperapi p/ servidor);
                              parametrizado por PERFIL (base_url/categorias/traduções; defaults = Liga Pokémon)
 olx_adapter.py               OLX (rota Firecrawl fura o WAF) — queries Pokémon (cobertura OP = backlog)
@@ -356,7 +374,7 @@ watchdog.py, register_task.ps1                            apoio de execução no
 probe_liga_sealed.py / probe_olx_local.py                 sondas manuais de coleta
 SETUP-VALIDACAO.md           runbook das validações que exigem o PC/chaves do operador (§A–§D)
 mock_data/                   fixtures de listing p/ rodar sem rede (--mock; onepiece_listings.json p/ OP)
-tests/                       607 testes offline (gaps, matcher, gates, snapshot, adapters, eBay, perfis, painel, análise)
+tests/                       614 testes offline (gaps, matcher, gates, snapshot, adapters, eBay, perfis, painel, análise)
 ```
 
 Todas as premissas do scan (câmbio + fonte usada, filtros, critérios) ficam no

@@ -16,6 +16,9 @@ Configuração via flags (todas opcionais):
                                 # headless (0 produtos; validado 2026-05-29)
     --no-snapshot               # NÃO gerar as notas Markdown (snapshot é default:
                                 # a entrega canônica é a tabela do snapshot.py)
+    --no-refresh-refs           # NÃO reconstruir as referências antes do scan
+                                # (refresh é default: o config exige referência
+                                # do DIA — deal_criteria.max_reference_age_days)
 
 O scan roda via run_all_sources.py (fonte liga) e grava a saída canônica
 results/unified_<stamp>/unified_deals.csv — exatamente o que scripts/snapshot.py
@@ -78,6 +81,53 @@ def check_environment() -> bool:
     return ok
 
 
+# --- Referências do DIA -------------------------------------------------------
+# O config exige referência fresca (deal_criteria.max_reference_age_days: 1 —
+# decisão do operador 2026-08-15: "SÓ dado do dia"). Referência vencida NÃO
+# invalida o scan: ela rebaixa GREEN -> YELLOW, então um scan com arquivo velho
+# entrega tudo em revisão manual sem dizer por quê. Este passo reconstrói as
+# duas referências ANTES da coleta, para que a classificação do scan use os
+# preços de hoje.
+#
+# BEST-EFFORT por decisão: falha de rede/chave aqui só AVISA e o scan segue —
+# os builders nunca sobrescrevem o arquivo anterior num run degradado (regra
+# inviolável nº 8), então o pior caso é a degradação honesta de sempre.
+REFRESH_TIMEOUT_S = 1800
+
+
+def refresh_references(game: str, *, python: str | None = None,
+                       runner=subprocess.call) -> dict[str, str]:
+    """Reconstrói referência US (classifica) e eBay (venda, informativa).
+
+    Devolve {builder: status} com status em {"ok", "falhou", "erro"}.
+    NUNCA levanta exceção: a entrega não pode morrer por causa do refresh.
+    """
+    python = python or sys.executable
+    results: dict[str, str] = {}
+    builders = [
+        ("build_us_reference.py", "referência US (TCGplayer — CLASSIFICA)"),
+        ("build_ebay_reference.py", "referência de venda eBay (informativa)"),
+    ]
+    for script, label in builders:
+        print(f"  → {label}")
+        try:
+            rc = runner(
+                [python, str(SEALED / script), "--game", game],
+                cwd=ROOT, timeout=REFRESH_TIMEOUT_S,
+            )
+            if rc == 0:
+                results[script] = "ok"
+            else:
+                results[script] = "falhou"
+                print(f"    [aviso] {script} saiu com código {rc} — mantida a "
+                      "referência anterior (scan segue; pode rebaixar GREEN->YELLOW).")
+        except Exception as exc:  # nunca derrubar o scan por causa do refresh
+            results[script] = "erro"
+            print(f"    [aviso] {script} falhou ({type(exc).__name__}: {exc}) — "
+                  "mantida a referência anterior (scan segue).")
+    return results
+
+
 def main() -> int:
     # Console do Windows é cp1252 por padrão e quebra acentos do Liga/PT.
     # Não afeta CSV/XLSX (sempre UTF-8); só o que aparece no terminal.
@@ -104,6 +154,12 @@ def main() -> int:
                         "na entrega). LIGADA por default; também respeita "
                         "analysis.enabled do config. Falha da análise NUNCA derruba "
                         "o scan (só avisa). --no-analise desliga neste run.")
+    p.add_argument("--refresh-refs", action=argparse.BooleanOptionalAction, default=True,
+                   help="Reconstruir as referências (TCGplayer + eBay) ANTES do scan. "
+                        "LIGADO por default: o config exige referência do DIA "
+                        "(deal_criteria.max_reference_age_days) e referência vencida "
+                        "rebaixa GREEN->YELLOW. Falha do refresh NUNCA derruba o scan "
+                        "(só avisa). --no-refresh-refs usa os arquivos que já existem.")
     p.add_argument("--skip-check", action="store_true", help="Pular verificação de dependências.")
     args = p.parse_args()
 
@@ -133,6 +189,15 @@ def main() -> int:
     print(f"  Máx por categoria: {liga_cfg.get('max_products_per_category')}")
     print(f"  Janela visível   : {args.janela}")
     print()
+
+    if args.refresh_refs:
+        print("== Referências do dia (o config exige referência fresca) ==")
+        refresh_references(args.game)
+        print()
+    else:
+        print("== Refresh de referências PULADO (--no-refresh-refs) ==")
+        print("   O scan usará os arquivos existentes; se estiverem vencidos, "
+              "GREEN é rebaixado p/ YELLOW.\n")
 
     # run_all_sources grava a saída canônica results/[<jogo>/]unified_<stamp>/ —
     # é o que snapshot.py (com o mesmo --game) lê por default. O standalone

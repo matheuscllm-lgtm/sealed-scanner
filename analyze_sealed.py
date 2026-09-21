@@ -313,6 +313,8 @@ def build_analysis(config: dict, acfg: dict, game: str, scan_dir: Path,
 
         # ── financeiro (fator único configurável) ──────────────────────────
         sell_now: dict = {"basis": basis, "gross_usd": gross_today,
+                          "reference_url": (ebay_entry.get("url") if basis == "ebay_active_min"
+                                            else f"https://www.tcgplayer.com/product/{pid}" if pid.isdigit() else None),
                           "gross_usd_realizacao": sell_gross,
                           "projecao_aplicada": sell_gross_applied,
                           "net_factor": net_factor}
