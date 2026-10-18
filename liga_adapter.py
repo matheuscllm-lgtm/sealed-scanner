@@ -45,7 +45,7 @@ from pathlib import Path
 
 from lib.env import load_dotenv_if_present
 
-SCRAPERAPI_BASE = "http://api.scraperapi.com/"
+SCRAPERAPI_BASE = "https://api.scraperapi.com/"  # TLS: a chave vai como query param (desenho da ScraperAPI) — nunca em claro
 LIGA_BASE = "https://www.ligapokemon.com.br"
 
 # Liga PT name (substring) -> canonical product_type used by the scanner registry.
